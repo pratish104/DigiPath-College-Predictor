@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DigiPath Login</title>
+</head>
+<body>
+    <h2>DigiPath College Predictor</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, msg in messages %}
+            <li>{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <form method="POST">
+        <label>Email:</label>
+        <input type="email" name="email" required>
+        <button type="submit">Enter</button>
+    </form>
+</body>
+</html>

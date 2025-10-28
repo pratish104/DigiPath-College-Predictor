@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DigiPath College Predictor</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2 { color: #2c3e50; }
+        form { margin-bottom: 20px; }
+        label { display: inline-block; width: 100px; }
+        select, input[type="number"] { padding: 5px; margin-bottom: 10px; }
+        button { padding: 5px 15px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .welcome { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>DigiPath College Predictor</h2>
+
+    <div class="welcome">
+        Logged in as: <strong>{{ user }}</strong> | 
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <form method="POST">
+        <label>Percentage:</label>
+        <input type="number" name="percentage" step="0.01" value="{{ selected_percentage }}" placeholder="Enter %"><br>
+
+        <label>City:</label>
+        <select name="city">
+            <option value="">All</option>
+            {% for c in cities %}
+                <option value="{{ c }}" {% if selected_city==c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Branch:</label>
+        <select name="branch">
+            <option value="">All</option>
+            {% for b in branches %}
+                <option value="{{ b }}" {% if selected_branch==b %}selected{% endif %}>{{ b }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Category:</label>
+        <select name="category">
+            <option value="">All</option>
+            {% for cat in categories %}
+                <option value="{{ cat }}" {% if selected_category==cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select><br>
+
+        <button type="submit">Predict Colleges</button>
+    </form>
+
+    {% if colleges %}
+        <h3>Predicted Colleges:</h3>
+        <table>
+            <tr>
+                <th>College Name</th>
+                <th>City</th>
+                <th>Branch</th>
+                <th>Category</th>
+                <th>Cutoff (%)</th>
+            </tr>
+            {% for college in colleges %}
+                <tr>
+                    <td>{{ college["College Name"] }}</td>
+                    <td>{{ college["City"] }}</td>
+                    <td>{{ college["Branch"] }}</td>
+                    <td>{{ college["Category"] }}</td>
+                    <td>{{ college["Cutoff"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+</body>
+</html>
