@@ -1,81 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>DigiPath College Predictor</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h2 { color: #2c3e50; }
-        form { margin-bottom: 20px; }
-        label { display: inline-block; width: 100px; }
-        select, input[type="number"] { padding: 5px; margin-bottom: 10px; }
-        button { padding: 5px 15px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .welcome { margin-bottom: 20px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGIPATH_AI // NEXT-GEN_CAREER_INTELLIGENCE</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --neon-green: #00ff41;
+    --neon-cyan: #00e5ff;
+    --neon-magenta: #ff00ff;
+    --neon-amber: #ffb300;
+    --bg-dark: #000000;
+    --bg-panel: #050f05;
+    --bg-card: #020a02;
+    --border-green: #00ff4133;
+    --border-green-solid: #00ff41;
+    --text-dim: #006620;
+    --text-mid: #00aa2b;
+    --scan-line: rgba(0, 255, 65, 0.03);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-dark);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  /* CRT scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      var(--scan-line) 0px,
+      var(--scan-line) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* grid bg */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-section {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .logo-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(40px, 10vw, 80px);
+    font-weight: 900;
+    color: var(--neon-green);
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 30px rgba(0,255,65,0.7);
+    margin-bottom: 20px;
+  }
+
+  .hero-sub {
+    font-size: clamp(14px, 2vw, 20px);
+    color: var(--neon-cyan);
+    letter-spacing: 0.3em;
+    max-width: 800px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 24px;
+  }
+
+  .btn-primary {
+    background: transparent;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    padding: 16px 40px;
+    font-size: 18px;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+  .btn-primary:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 30px var(--neon-green);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-family: 'Share Tech Mono', monospace;
+    padding: 16px 40px;
+    font-size: 18px;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+  .btn-secondary:hover {
+    background: var(--neon-cyan);
+    color: #000;
+    box-shadow: 0 0 30px var(--neon-cyan);
+  }
+
+  /* ─── STATUS BAR ─── */
+  .status-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 32px;
+    background: #000;
+    border-bottom: 1px solid var(--border-green);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-size: 11px;
+    color: var(--text-mid);
+    z-index: 100;
+  }
+
+  @media (max-width: 600px) {
+    .cta-group { flex-direction: column; gap: 15px; }
+  }
+</style>
 </head>
 <body>
 
-    <h2>DigiPath College Predictor</h2>
+<div class="status-bar">
+  <div>SYSTEM_STATUS: ONLINE</div>
+  <div id="clock"></div>
+</div>
 
-    <div class="welcome">
-        Logged in as: <strong>{{ user }}</strong> | 
-        <a href="{{ url_for('logout') }}">Logout</a>
-    </div>
+<main class="hero-section">
+  <h1 class="logo-title">DIGIPATH_AI</h1>
+  <p class="hero-sub">Empowering Students with AI-Driven Admission Predictions, Career Roadmaps, and Recruitment Security.</p>
+  
+  <div class="cta-group">
+    <a href="/login" class="btn-primary">[ INITIALIZE_AUTH ]</a>
+    <a href="/institutes" class="btn-secondary">[ BROWSE_COLLEGES ]</a>
+  </div>
+</main>
 
-    <form method="POST">
-        <label>Percentage:</label>
-        <input type="number" name="percentage" step="0.01" value="{{ selected_percentage }}" placeholder="Enter %"><br>
-
-        <label>City:</label>
-        <select name="city">
-            <option value="">All</option>
-            {% for c in cities %}
-                <option value="{{ c }}" {% if selected_city==c %}selected{% endif %}>{{ c }}</option>
-            {% endfor %}
-        </select><br>
-
-        <label>Branch:</label>
-        <select name="branch">
-            <option value="">All</option>
-            {% for b in branches %}
-                <option value="{{ b }}" {% if selected_branch==b %}selected{% endif %}>{{ b }}</option>
-            {% endfor %}
-        </select><br>
-
-        <label>Category:</label>
-        <select name="category">
-            <option value="">All</option>
-            {% for cat in categories %}
-                <option value="{{ cat }}" {% if selected_category==cat %}selected{% endif %}>{{ cat }}</option>
-            {% endfor %}
-        </select><br>
-
-        <button type="submit">Predict Colleges</button>
-    </form>
-
-    {% if colleges %}
-        <h3>Predicted Colleges:</h3>
-        <table>
-            <tr>
-                <th>College Name</th>
-                <th>City</th>
-                <th>Branch</th>
-                <th>Category</th>
-                <th>Cutoff (%)</th>
-            </tr>
-            {% for college in colleges %}
-                <tr>
-                    <td>{{ college["College Name"] }}</td>
-                    <td>{{ college["City"] }}</td>
-                    <td>{{ college["Branch"] }}</td>
-                    <td>{{ college["Category"] }}</td>
-                    <td>{{ college["Cutoff"] }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-
+<script>
+function updateClock(){
+  const now = new Date();
+  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
 </body>
 </html>

@@ -1,0 +1,83 @@
+:root {
+    --bg-dark: #020617;
+    --primary-neon: #00f2ff;
+    --secondary-blue: #3b82f6;
+    --accent-emerald: #10b981;
+    --glass-bg: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(59, 130, 246, 0.2);
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', 'Fira Code', monospace;
+}
+
+body {
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+    color: var(--text-main);
+    min-height: 100-vh;
+    overflow-x: hidden;
+}
+
+/* Glassmorphism Utility */
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+}
+
+.glow-border:hover {
+    border-color: var(--primary-neon);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+}
+
+/* Animations */
+@keyframes pulse-neon {
+    0% { box-shadow: 0 0 5px rgba(0, 242, 255, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(0, 242, 255, 0.5); }
+    100% { box-shadow: 0 0 5px rgba(0, 242, 255, 0.2); }
+}
+
+.animate-glow {
+    animation: pulse-neon 3s infinite;
+}
+
+/* Common UI Elements */
+.btn-primary {
+    background: linear-gradient(135deg, var(--secondary-blue), var(--primary-neon));
+    color: var(--bg-dark);
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 242, 255, 0.4);
+}
+
+.input-field {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
+
+.input-field:focus {
+    border-color: var(--primary-neon);
+}

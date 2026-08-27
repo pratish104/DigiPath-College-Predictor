@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGIPATH_AI // AUTHENTICATION</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --neon-green: #00ff41;
+    --neon-cyan: #00e5ff;
+    --neon-magenta: #ff00ff;
+    --neon-amber: #ffb300;
+    --bg-dark: #000000;
+    --bg-panel: #050f05;
+    --bg-card: #020a02;
+    --border-green: #00ff4133;
+    --border-green-solid: #00ff41;
+    --text-dim: #006620;
+    --text-mid: #00aa2b;
+    --scan-line: rgba(0, 255, 65, 0.03);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-dark);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  /* CRT scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      var(--scan-line) 0px,
+      var(--scan-line) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* grid bg */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* ─── TOP STATUS BAR ─── */
+  .status-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 32px;
+    background: #000;
+    border-bottom: 1px solid var(--border-green);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-size: 11px;
+    color: var(--text-mid);
+    z-index: 100;
+  }
+  .status-left { display: flex; gap: 20px; }
+  .status-dot {
+    display: inline-block; width: 7px; height: 7px;
+    border-radius: 50%; background: var(--neon-green);
+    box-shadow: 0 0 6px var(--neon-green);
+    animation: blink 2s infinite;
+    margin-right: 5px;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .status-right { display: flex; gap: 20px; color: var(--text-dim); }
+  .status-right .active { color: var(--neon-green); }
+
+  /* ─── MAIN CONTAINER ─── */
+  .login-container {
+    width: 100%;
+    max-width: 540px;
+    margin-top: 32px;
+  }
+
+  /* ─── LOGO BLOCK ─── */
+  .logo-block {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .logo-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(28px, 6vw, 48px);
+    font-weight: 900;
+    color: var(--neon-green);
+    letter-spacing: 0.12em;
+    text-shadow: 0 0 20px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.3);
+    animation: flicker 6s infinite;
+  }
+  @keyframes flicker {
+    0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1; text-shadow: 0 0 20px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.3); }
+    20%,24%,55% { opacity: 0.85; text-shadow: none; }
+  }
+  .logo-sub {
+    font-size: 12px;
+    color: var(--neon-cyan);
+    letter-spacing: 0.3em;
+    margin-top: 6px;
+  }
+  .logo-sub .cursor {
+    display: inline-block;
+    width: 8px; height: 13px;
+    background: var(--neon-cyan);
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: cursor-blink 1s step-end infinite;
+  }
+  @keyframes cursor-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid #00ff4155;
+    border-top: 2px solid var(--neon-green);
+    padding: 28px 32px 32px;
+    position: relative;
+    box-shadow: 0 0 30px rgba(0,255,65,0.08), inset 0 0 30px rgba(0,255,65,0.02);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, rgba(0,255,65,0.04) 0%, transparent 60%) border-box;
+    pointer-events: none;
+  }
+
+  /* corner decorations */
+  .corner {
+    position: absolute;
+    width: 14px; height: 14px;
+    border-color: var(--neon-green);
+    border-style: solid;
+    opacity: 0.7;
+  }
+  .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+  .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+  .card-header {
+    font-size: 11px;
+    color: var(--text-dim);
+    border-bottom: 1px solid #00ff411a;
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-header .protocol { color: var(--neon-green); }
+  .card-header .pid { color: var(--text-dim); font-size: 10px; }
+
+  /* ─── TAB ROW ─── */
+  .tab-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border: 1px solid #00ff4133;
+  }
+  .tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    padding: 9px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid #00ff4133;
+    position: relative;
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn.active {
+    background: rgba(0,255,65,0.1);
+    color: var(--neon-green);
+  }
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--neon-green);
+    box-shadow: 0 0 8px var(--neon-green);
+  }
+  .tab-btn:hover:not(.active) { color: var(--text-mid); background: rgba(0,255,65,0.03); }
+
+  /* ─── FORM ─── */
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block;
+    font-size: 11px;
+    color: var(--neon-cyan);
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+  }
+  .form-label .arrow { color: var(--neon-green); margin-right: 4px; }
+
+  .input-wrap { position: relative; }
+  .input-icon {
+    position: absolute;
+    left: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 13px; color: var(--text-mid);
+    pointer-events: none;
+  }
+  .form-input {
+    width: 100%;
+    background: #000;
+    border: 1px solid #00ff4140;
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    padding: 10px 40px 10px 36px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .form-input::placeholder { color: #00401a; }
+  .form-input:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 10px rgba(0,255,65,0.2), inset 0 0 10px rgba(0,255,65,0.04);
+  }
+  .input-suffix {
+    position: absolute;
+    right: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 11px; color: var(--text-dim); cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+  }
+  .input-suffix:hover { color: var(--neon-green); }
+
+  /* ─── ROLE SELECTOR ─── */
+  .role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .role-card {
+    background: #000;
+    border: 1px solid #00ff4130;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .role-card:hover { border-color: #00ff4166; background: rgba(0,255,65,0.04); }
+  .role-card.selected {
+    border-color: var(--neon-green);
+    background: rgba(0,255,65,0.08);
+    box-shadow: 0 0 8px rgba(0,255,65,0.15);
+  }
+  .role-radio {
+    width: 12px; height: 12px;
+    border: 1px solid #00ff4166;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .role-card.selected .role-radio {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 6px var(--neon-green);
+  }
+  .role-card.selected .role-radio::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    background: var(--neon-green);
+    box-shadow: 0 0 4px var(--neon-green);
+  }
+  .role-label { font-size: 11px; letter-spacing: 0.1em; color: var(--text-mid); }
+  .role-card.selected .role-label { color: var(--neon-green); }
+  .role-icon { font-size: 13px; }
+
+  /* ─── EXTRAS ROW ─── */
+  .extras-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+  .checkbox-wrap {
+    display: flex; align-items: center; gap: 7px; cursor: pointer; color: var(--text-mid);
+  }
+  .custom-cb {
+    width: 13px; height: 13px;
+    border: 1px solid #00ff4155;
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s;
+  }
+  .custom-cb.checked {
+    background: rgba(0,255,65,0.15);
+    border-color: var(--neon-green);
+  }
+  .custom-cb.checked::after { content: '✓'; font-size: 10px; color: var(--neon-green); }
+  .forgot-link {
+    color: var(--neon-cyan); text-decoration: none; font-size: 11px;
+    letter-spacing: 0.1em; transition: color 0.2s;
+  }
+  .forgot-link:hover { color: var(--neon-green); }
+
+  /* ─── SUBMIT BUTTON ─── */
+  .submit-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    padding: 13px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--neon-green);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+    z-index: 0;
+  }
+  .submit-btn:hover::before { transform: scaleX(1); }
+  .submit-btn:hover { color: #000; box-shadow: 0 0 20px rgba(0,255,65,0.4); }
+  .submit-btn span { position: relative; z-index: 1; }
+
+  .submit-btn.loading span::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-left: 8px;
+    height: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 16px 0; font-size: 10px; color: var(--text-dim);
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: #00ff411a;
+  }
+
+  /* ─── OAUTH BUTTONS ─── */
+  .oauth-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+  .oauth-btn {
+    background: #000;
+    border: 1px solid #00ff4130;
+    color: var(--text-mid);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 9px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+  }
+  .oauth-btn:hover { border-color: #00ff4166; color: var(--neon-green); background: rgba(0,255,65,0.04); }
+  .oauth-icon { font-size: 14px; }
+
+  /* ─── BOTTOM LINK ─── */
+  .bottom-text {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .bottom-text a { color: var(--neon-cyan); text-decoration: none; }
+  .bottom-text a:hover { color: var(--neon-green); }
+
+  /* ─── SECURITY BADGE ─── */
+  .security-row {
+    margin-top: 20px;
+    border-top: 1px solid #00ff411a;
+    padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .sec-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 10px; color: var(--text-dim); letter-spacing: 0.05em;
+  }
+  .sec-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--neon-green); flex-shrink: 0; }
+
+  /* ─── REGISTER PANEL ─── */
+  .register-panel { display: none; }
+  .register-panel.active { display: block; }
+  .login-panel.hidden { display: none; }
+
+  /* ─── TERMINAL LOG ─── */
+  .term-log {
+    background: #000;
+    border: 1px solid #00ff411a;
+    padding: 10px 14px;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 18px;
+    min-height: 44px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .term-log .log-line { color: var(--text-mid); margin-bottom: 2px; }
+  .term-log .log-line.active { color: var(--neon-green); }
+  .term-log .log-line.warn { color: var(--neon-amber); }
+  .term-log .log-line.err { color: #ff3333; }
+
+  /* ─── BOTTOM FOOTER ─── */
+  .footer-bar {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+  }
+  .footer-bar .version { color: var(--text-mid); }
+
+  /* ─── ALERT ─── */
+  .alert {
+    display: none;
+    padding: 9px 14px;
+    font-size: 11px;
+    margin-bottom: 16px;
+    border-left: 3px solid;
+    letter-spacing: 0.05em;
+  }
+  .alert.show { display: block; }
+  .alert.success { border-color: var(--neon-green); color: var(--neon-green); background: rgba(0,255,65,0.05); }
+  .alert.error { border-color: #ff3333; color: #ff5555; background: rgba(255,0,0,0.05); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 480px) {
+    .card { padding: 20px 18px 24px; }
+    .role-grid { grid-template-columns: 1fr; }
+    .oauth-row { grid-template-columns: 1fr; }
+    .security-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+  }
+
+  /* ─── LOADING OVERLAY ─── */
+  .auth-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .auth-overlay.show { display: flex; }
+  .auth-overlay .big-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 22px;
+    color: var(--neon-green);
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 20px var(--neon-green);
+  }
+  .auth-overlay .progress-bar {
+    width: 280px; height: 2px; background: #002200;
+    position: relative; overflow: hidden;
+  }
+  .auth-overlay .progress-fill {
+    height: 100%; background: var(--neon-green);
+    width: 0%; transition: width 0.1s;
+    box-shadow: 0 0 8px var(--neon-green);
+  }
+  .auth-overlay .log-stream { font-size: 11px; color: var(--text-mid); text-align: center; min-height: 18px; }
+</style>
+</head>
+<body>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="status-left">
+    <span><span class="status-dot"></span>SYSTEM_ONLINE</span>
+    <span>DIGIPATH_AI // v4.1</span>
+    <span id="clock" style="color: var(--neon-cyan)"></span>
+  </div>
+  <div class="status-right">
+    <span class="active">AUTH_MODULE</span>
+    <span>SSL_SECURE</span>
+    <span>MHT-CET READY</span>
+  </div>
+</div>
+
+<!-- AUTH LOADING OVERLAY -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="big-text">AUTHENTICATING...</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="log-stream" id="overlayLog"></div>
+</div>
+
+<div class="page-wrapper">
+  <div class="login-container">
+
+    <!-- LOGO -->
+    <div class="logo-block">
+      <div class="logo-title">DIGIPATH_AI</div>
+      <div class="logo-sub">&gt;&gt; SYSTEM.INIT: AUTH_PROTOCOL_v2.0 <span class="cursor"></span></div>
+    </div>
+
+    <!-- CARD -->
+    <div class="card">
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+
+      <div class="card-header">
+        <span>PROTOCOL: <span class="protocol">USER_AUTHENTICATION</span></span>
+        <span class="pid">SESSION_ID: <span id="sessionId"></span></span>
+      </div>
+
+      <!-- TABS -->
+      <div class="tab-row">
+        <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">[ LOGIN ]</button>
+        <button class="tab-btn" id="tabReg" onclick="switchTab('register')">[ REGISTER ]</button>
+        <button class="tab-btn" id="tabGuest" onclick="switchTab('guest')">[ GUEST ]</button>
+      </div>
+
+      <!-- TERMINAL LOG -->
+      <div class="term-log" id="termLog">
+        <div class="log-line active">&gt; AWAITING_CREDENTIALS...</div>
+        <div class="log-line">&gt; AUTH_MODULE: READY</div>
+      </div>
+
+      <!-- ALERT -->
+      <div class="alert" id="alert"></div>
+
+      <!-- LOGIN PANEL -->
+      <div class="login-panel" id="loginPanel">
+        <div class="form-group">
+          <label class="form-label"><span class="arrow">&gt;</span> USER_IDENTIFIER</label>
+          <div class="input-wrap">
+            <span class="input-icon">▸</span>
+            <input class="form-input" type="email" id="loginEmail"
+              placeholder="student@college.edu" autocomplete="email"
+              oninput="handleInput('login')">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><span class="arrow">&gt;</span> ACCESS_KEY</label>
+          <div class="input-wrap">
+            <span class="input-icon">▸</span>
+            <input class="form-input" type="password" id="loginPass"
+              placeholder="••••••••••••" autocomplete="current-password"
+              oninput="handleInput('login')">
+            <span class="input-suffix" onclick="togglePass('loginPass', this)">SHOW</span>
+          </div>
+        </div>
+
+        <div class="extras-row">
+          <div class="checkbox-wrap" onclick="toggleCb(this)">
+            <div class="custom-cb"></div>
+            <span>PERSIST_SESSION</span>
+          </div>
+          <a href="#" class="forgot-link" onclick="showForgot(event)">RESET_KEY &gt;</a>
+        </div>
+
+        <button class="submit-btn" id="loginBtn" onclick="doLogin()">
+          <span>⚡ INITIATE_AUTH</span>
+        </button>
+
+        <div class="divider">// OR AUTHENTICATE VIA //</div>
+
+        <div class="oauth-row">
+          <button class="oauth-btn" onclick="oauthLogin('GOOGLE')">
+            <span class="oauth-icon">◉</span> GOOGLE
+          </button>
+          <button class="oauth-btn" onclick="oauthLogin('GITHUB')">
+            <span class="oauth-icon">◈</span> GITHUB
+          </button>
+        </div>
+
+        <div class="bottom-text">
+          NEW TO DIGIPATH? <a href="#" onclick="switchTab('register'); return false;">REGISTER_PROTOCOL &gt;</a>
+        </div>
+      </div>
+
+      <!-- REGISTER PANEL -->
+      <div class="register-panel" id="registerPanel">
+        <div class="form-group">
+          <label class="form-label"><span class="arrow">&gt;</span> FULL_NAME</label>
+          <div class="input-wrap">
+            <span class="input-icon">▸</span>
+            <input class="form-input" type="text" id="regName"
+              placeholder="ENTER_FULL_NAME" autocomplete="name">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><span class="arrow">&gt;</span> EMAIL_ADDRESS</label>
+          <div class="input-wrap">
+            <span class="input-icon">▸</span>
+            <input class="form-input" type="email" id="regEmail"
+              placeholder="student@college.edu" autocomplete="email">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><span class="arrow">&gt;</span> ACCESS_KEY</label>
+          <div class="input-wrap">
+            <span class="input-icon">▸</span>
+            <input class="form-input" type="password" id="regPass"
+              placeholder="MIN_8_CHARS" autocomplete="new-password"
+              oninput="checkStrength(this.value)">
+            <span class="input-suffix" onclick="togglePass('regPass', this)">SHOW</span>
+          </div>
+          <div id="strengthBar" style="height:2px;background:#001500;margin-top:6px;transition:all 0.3s;">
+            <div id="strengthFill" style="height:100%;width:0%;transition:all 0.3s;"></div>
+          </div>
+          <div id="strengthLabel" style="font-size:10px;color:var(--text-dim);margin-top:3px;"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><span class="arrow">&gt;</span> SELECT_ROLE</label>
+          <div class="role-grid">
+            <div class="role-card selected" onclick="selectRole(this)" data-role="STUDENT">
+              <div class="role-radio"></div>
+              <span class="role-icon">◈</span>
+              <span class="role-label">STUDENT</span>
+            </div>
+            <div class="role-card" onclick="selectRole(this)" data-role="EDUCATOR">
+              <div class="role-radio"></div>
+              <span class="role-icon">◉</span>
+              <span class="role-label">EDUCATOR</span>
+            </div>
+            <div class="role-card" onclick="selectRole(this)" data-role="RECRUITER">
+              <div class="role-radio"></div>
+              <span class="role-icon">▣</span>
+              <span class="role-label">RECRUITER</span>
+            </div>
+            <div class="role-card" onclick="selectRole(this)" data-role="ADMIN">
+              <div class="role-radio"></div>
+              <span class="role-icon">◆</span>
+              <span class="role-label">ADMIN</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="extras-row" style="margin-bottom:18px;">
+          <div class="checkbox-wrap" onclick="toggleCb(this)">
+            <div class="custom-cb"></div>
+            <span>AGREE_TO_PROTOCOLS</span>
+          </div>
+        </div>
+
+        <button class="submit-btn" onclick="doRegister()">
+          <span>⚡ INITIALIZE_ACCOUNT</span>
+        </button>
+
+        <div class="bottom-text" style="margin-top:12px;">
+          HAVE CREDENTIALS? <a href="#" onclick="switchTab('login'); return false;">LOGIN_PROTOCOL &gt;</a>
+        </div>
+      </div>
+
+      <!-- GUEST PANEL -->
+      <div class="register-panel" id="guestPanel">
+        <div style="text-align:center; padding: 10px 0 20px;">
+          <div style="font-size:11px;color:var(--neon-cyan);letter-spacing:0.2em;margin-bottom:8px;">PROTOCOL: GUEST_ACCESS_v1</div>
+          <div style="font-size:12px;color:var(--text-mid);line-height:1.8;">
+            &gt; BASIC_PREDICTION ENABLED<br>
+            &gt; TOP_5_RESULTS ACCESS<br>
+            &gt; SCAM_REPORT REWARDS (+5)<br>
+            &gt; NO_REGISTRATION REQUIRED
+          </div>
+        </div>
+        <div style="background:#000;border:1px solid #00ff4120;padding:14px 16px;margin-bottom:20px;">
+          <div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">LIMITATIONS:</div>
+          <div style="font-size:11px;color:#ff8800;letter-spacing:0.05em;line-height:1.7;">
+            ⚠ ADVANCED_AI_MODELS: LOCKED<br>
+            ⚠ SCAN_CREDITS: 5/SESSION<br>
+            ⚠ PDF_DOWNLOAD: DISABLED<br>
+            ⚠ CAREER_ROADMAP: LOCKED
+          </div>
+        </div>
+        <button class="submit-btn" onclick="doGuest()">
+          <span>⚡ INITIATE_FREE ACCESS</span>
+        </button>
+        <div class="bottom-text" style="margin-top:12px;">
+          UNLOCK_FULL: <a href="#" onclick="switchTab('register'); return false;">REGISTER NOW &gt;</a>
+        </div>
+      </div>
+
+      <!-- SECURITY BADGES -->
+      <div class="security-row">
+        <div class="sec-item"><div class="sec-dot"></div>256_BIT_ENC</div>
+        <div class="sec-item"><div class="sec-dot"></div>MFA_READY</div>
+        <div class="sec-item"><div class="sec-dot"></div>GDPR_COMPLIANT</div>
+        <div class="sec-item"><div class="sec-dot" style="background:var(--neon-cyan)"></div>AI_SECURED</div>
+      </div>
+    </div>
+
+    <div class="footer-bar">
+      &copy; 2026 DIGIPATH_AI &nbsp;·&nbsp;
+      <span class="version">BUILD: 2026.06 // NEURAL_CORE v4.1</span> &nbsp;·&nbsp;
+      MAHARASHTRA, INDIA
+    </div>
+  </div>
+</div>
+
+<script>
+// Clock
+function updateClock(){
+  const now = new Date();
+  const s = now.toLocaleTimeString('en-IN',{hour12:false});
+  document.getElementById('clock').textContent = s;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Session ID
+document.getElementById('sessionId').textContent =
+  'SID_' + Math.random().toString(36).substr(2,8).toUpperCase();
+
+// Tab switch
+const panels = { login:'loginPanel', register:'registerPanel', guest:'guestPanel' };
+const tabs = { login:'tabLogin', register:'tabReg', guest:'tabGuest' };
+let currentTab = 'login';
+
+function switchTab(t){
+  currentTab = t;
+  Object.keys(panels).forEach(k=>{
+    document.getElementById(panels[k]).style.display = k===t ? 'block':'none';
+    document.getElementById(tabs[k]).classList.toggle('active', k===t);
+  });
+  const msgs = {
+    login:  [['&gt; LOGIN_MODULE: ACTIVE','active'],['&gt; AWAITING_CREDENTIALS...','active']],
+    register:[['&gt; REGISTER_MODULE: ACTIVE','active'],['&gt; FILL_REQUIRED_FIELDS...','']],
+    guest:  [['&gt; GUEST_PROTOCOL: ACTIVE','active'],['&gt; LIMITED_ACCESS_MODE','warn']]
+  };
+  setLog(msgs[t]);
+  clearAlert();
+}
+
+function setLog(lines){
+  document.getElementById('termLog').innerHTML =
+    lines.map(([t,c])=>`<div class="log-line ${c}">${t}</div>`).join('');
+}
+
+// Toggle password
+function togglePass(id, btn){
+  const el = document.getElementById(id);
+  const hidden = el.type === 'password';
+  el.type = hidden ? 'text' : 'password';
+  btn.textContent = hidden ? 'HIDE' : 'SHOW';
+}
+
+// Checkbox
+function toggleCb(wrap){
+  const cb = wrap.querySelector('.custom-cb');
+  cb.classList.toggle('checked');
+}
+
+// Role select
+function selectRole(card){
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+}
+
+// Input feedback
+function handleInput(mode){
+  const email = document.getElementById('loginEmail').value;
+  const pass  = document.getElementById('loginPass').value;
+  if(email && pass){
+    setLog([['&gt; CREDENTIALS_DETECTED','active'],['&gt; PRESS_AUTH_BUTTON...','']]);
+  }
+}
+
+// Password strength
+function checkStrength(v){
+  let score = 0;
+  if(v.length >= 8) score++;
+  if(/[A-Z]/.test(v)) score++;
+  if(/[0-9]/.test(v)) score++;
+  if(/[^A-Za-z0-9]/.test(v)) score++;
+  const fill = document.getElementById('strengthFill');
+  const label = document.getElementById('strengthLabel');
+  const colors = ['#ff3333','#ff8800','#ffdd00','#00ff41'];
+  const labels = ['WEAK','MODERATE','STRONG','MAXIMUM'];
+  fill.style.width = (score*25)+'%';
+  fill.style.background = colors[score-1]||'#ff3333';
+  label.textContent = v ? `KEY_STRENGTH: ${labels[score-1]||'WEAK'}` : '';
+  label.style.color = colors[score-1]||'#ff3333';
+}
+
+// Alert
+function showAlert(msg, type){
+  const el = document.getElementById('alert');
+  el.textContent = msg;
+  el.className = `alert ${type} show`;
+}
+function clearAlert(){
+  document.getElementById('alert').className = 'alert';
+}
+
+// Loading overlay
+async function runAuthOverlay(logs, duration){
+  const overlay = document.getElementById('authOverlay');
+  const fill = document.getElementById('progressFill');
+  const log = document.getElementById('overlayLog');
+  overlay.classList.add('show');
+  let progress = 0;
+  for(let i=0;i<logs.length;i++){
+    log.textContent = logs[i];
+    progress = Math.round(((i+1)/logs.length)*100);
+    fill.style.width = progress+'%';
+    await new Promise(r=>setTimeout(r,duration/logs.length));
+  }
+  return overlay;
+}
+
+// LOGIN
+async function doLogin(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  clearAlert();
+  if(!email || !pass){
+    showAlert('⚠ ERROR: CREDENTIALS_INCOMPLETE', 'error');
+    setLog([['&gt; AUTH_FAILED: MISSING_FIELDS','err'],['&gt; RETRY...','']]);
+    return;
+  }
+  if(!email.includes('@')){
+    showAlert('⚠ ERROR: INVALID_EMAIL_FORMAT', 'error');
+    return;
+  }
+  const logs = [
+    '> VALIDATING_CREDENTIALS...',
+    '> CHECKING_SESSION_TOKEN...',
+    '> VERIFYING_ACCESS_LEVEL...',
+    '> LOADING_USER_PROFILE...',
+    '> INITIALIZING_DASHBOARD...',
+    '> ACCESS_GRANTED ✓'
+  ];
+  const overlay = await runAuthOverlay(logs, 2400);
+  setTimeout(()=>{
+    overlay.classList.remove('show');
+    showAlert('✓ AUTH_SUCCESS: REDIRECTING TO DASHBOARD...', 'success');
+    setLog([['&gt; ACCESS_GRANTED','active'],['&gt; WELCOME BACK, AGENT','active']]);
+  }, 400);
+}
+
+// REGISTER
+async function doRegister(){
+  const name  = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass  = document.getElementById('regPass').value;
+  clearAlert();
+  if(!name||!email||!pass){
+    showAlert('⚠ ERROR: ALL_FIELDS_REQUIRED', 'error');
+    return;
+  }
+  if(pass.length < 8){
+    showAlert('⚠ ERROR: KEY_TOO_SHORT (MIN 8 CHARS)', 'error');
+    return;
+  }
+  const logs = [
+    '> VALIDATING_INPUT...',
+    '> CHECKING_EMAIL_AVAILABILITY...',
+    '> GENERATING_USER_HASH...',
+    '> CREATING_PROFILE...',
+    '> SENDING_VERIFICATION...',
+    '> ACCOUNT_INITIALIZED ✓'
+  ];
+  const overlay = await runAuthOverlay(logs, 2800);
+  setTimeout(()=>{
+    overlay.classList.remove('show');
+    showAlert('✓ ACCOUNT_CREATED: CHECK_EMAIL FOR VERIFICATION', 'success');
+  }, 400);
+}
+
+// GUEST
+async function doGuest(){
+  const logs = [
+    '> INITIATING_GUEST_SESSION...',
+    '> ALLOCATING_SCAN_CREDITS...',
+    '> LOADING_BASIC_MODULES...',
+    '> GUEST_ACCESS_GRANTED ✓'
+  ];
+  const overlay = await runAuthOverlay(logs, 1800);
+  setTimeout(()=>{
+    overlay.classList.remove('show');
+    showAlert('✓ GUEST_SESSION_ACTIVE: REDIRECTING...', 'success');
+  }, 400);
+}
+
+// FORGOT
+function showForgot(e){
+  e.preventDefault();
+  showAlert('> RESET_LINK: ENTER YOUR EMAIL AND WE WILL SEND ACCESS_KEY_RESET', 'success');
+  setLog([['&gt; RESET_MODE: ACTIVE','warn'],['&gt; ENTER_EMAIL_TO_PROCEED...','']]);
+}
+
+// OAUTH
+async function oauthLogin(provider){
+  const logs = [
+    `> CONNECTING_TO_${provider}...`,
+    '> OAUTH_HANDSHAKE...',
+    '> VERIFYING_TOKEN...',
+    '> ACCESS_GRANTED ✓'
+  ];
+  const overlay = await runAuthOverlay(logs, 2000);
+  setTimeout(()=>{
+    overlay.classList.remove('show');
+    showAlert(`✓ ${provider}_AUTH_SUCCESS: LOADING_DASHBOARD...`, 'success');
+  }, 400);
+}
+
+// Typing glitch effect on logo
+const title = document.querySelector('.logo-title');
+const original = 'DIGIPATH_AI';
+function glitch(){
+  const chars = '!@#$%^&*<>?/|\\[]{}0123456789ABCDEFGHIJKLMNOP';
+  let out = '';
+  for(let i=0;i<original.length;i++){
+    out += Math.random()<0.08 ? chars[Math.floor(Math.random()*chars.length)] : original[i];
+  }
+  title.textContent = out;
+  setTimeout(()=>{ title.textContent = original; }, 80);
+}
+setInterval(glitch, 3500);
+
+// Init - show login panel
+switchTab('login');
+</script>
+</body>
+</html>

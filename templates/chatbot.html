@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGIPATH_AI // PLACEMENT_ASSISTANT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --neon-green: #00ff41;
+    --neon-cyan: #00e5ff;
+    --neon-magenta: #ff00ff;
+    --neon-amber: #ffb300;
+    --bg-dark: #000000;
+    --bg-panel: #050f05;
+    --bg-card: #020a02;
+    --border-green: #00ff4133;
+    --border-green-solid: #00ff41;
+    --text-dim: #006620;
+    --text-mid: #00aa2b;
+    --scan-line: rgba(0, 255, 65, 0.03);
+    --sidebar-width: 260px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-dark);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+  }
+
+  /* CRT scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      var(--scan-line) 0px,
+      var(--scan-line) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* grid bg */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── LAYOUT ─── */
+  .app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-green);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-green);
+    text-align: center;
+  }
+
+  .logo-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--neon-green);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 10px rgba(0,255,65,0.5);
+  }
+
+  .nav-list {
+    flex: 1;
+    padding: 20px 0;
+    list-style: none;
+    overflow-y: auto;
+  }
+
+  .nav-item {
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: rgba(0,255,65,0.05);
+    color: var(--neon-green);
+  }
+
+  .nav-item.active {
+    background: rgba(0,255,65,0.1);
+    color: var(--neon-green);
+    border-left-color: var(--neon-green);
+    box-shadow: inset 5px 0 15px rgba(0,255,65,0.05);
+  }
+
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* ─── MAIN CONTENT ─── */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0,0,0,0.6);
+    overflow: hidden;
+  }
+
+  .header {
+    height: 64px;
+    border-bottom: 1px solid var(--border-green);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    background: rgba(5, 15, 5, 0.8);
+    backdrop-filter: blur(10px);
+  }
+
+  /* ─── CHAT INTERFACE ─── */
+  .chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .chat-window {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border-green);
+    border-top: 2px solid var(--neon-green);
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    margin-bottom: 24px;
+  }
+
+  .message {
+    max-width: 80%;
+    padding: 12px 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    position: relative;
+  }
+
+  .msg-ai {
+    align-self: flex-start;
+    background: rgba(0,255,65,0.05);
+    border-left: 2px solid var(--neon-green);
+    color: var(--neon-green);
+  }
+
+  .msg-user {
+    align-self: flex-end;
+    background: rgba(0,229,255,0.05);
+    border-right: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    text-align: right;
+  }
+
+  .msg-header {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .chat-input-area {
+    display: flex;
+    gap: 15px;
+  }
+
+  .chat-input {
+    flex: 1;
+    background: #000;
+    border: 1px solid #00ff4140;
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    padding: 15px;
+    outline: none;
+  }
+  .chat-input:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 15px rgba(0,255,65,0.1);
+  }
+
+  .send-btn {
+    background: transparent;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .send-btn:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 20px var(--neon-green);
+  }
+
+  /* corner decorations */
+  .corner {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-color: var(--neon-green);
+    border-style: solid;
+    opacity: 0.5;
+  }
+  .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+  .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+  /* Typing Indicator */
+  .typing {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 10px;
+    display: none;
+  }
+  .typing::after {
+    content: '...';
+    animation: dots 1s infinite;
+  }
+  @keyframes dots {
+    0% { content: '.'; }
+    33% { content: '..'; }
+    66% { content: '...'; }
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-dark); }
+  ::-webkit-scrollbar-thumb { background: var(--border-green); }
+
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-title">DIGIPATH_AI</div>
+    </div>
+    <nav class="nav-list">
+      <a href="/dashboard" class="nav-item">
+        <span class="nav-icon">▣</span>
+        <span>DASHBOARD</span>
+      </a>
+      <a href="/predictor" class="nav-item">
+        <span class="nav-icon">◈</span>
+        <span>PREDICTOR</span>
+      </a>
+      <a href="/institutes" class="nav-item">
+        <span class="nav-icon">◉</span>
+        <span>INSTITUTES</span>
+      </a>
+      <a href="/resume-analyzer" class="nav-item">
+        <span class="nav-icon">▦</span>
+        <span>RESUME_AI</span>
+      </a>
+      <a href="/roadmap" class="nav-item">
+        <span class="nav-icon">➹</span>
+        <span>ROADMAP</span>
+      </a>
+      <a href="/chatbot" class="nav-item active">
+        <span class="nav-icon">◈</span>
+        <span>AI_ASSISTANT</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <header class="header">
+      <div style="font-size: 14px; color: var(--neon-cyan)" id="clock"></div>
+      <div style="font-size: 11px; color: var(--neon-green)">NEURAL_CORE: ACTIVE</div>
+    </header>
+
+    <div class="chat-container">
+      <div class="chat-window" id="chatWindow">
+        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+
+        <!-- AI Message -->
+        <div class="message msg-ai">
+          <div class="msg-header">SYSTEM // PLACEMENT_AI</div>
+          Greetings, Agent. I am your specialized Placement Assistant. I can help you with college analysis, resume optimization, or interview preparation. How shall we proceed?
+        </div>
+
+        <!-- Suggestion Chips -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;" id="suggestions">
+          <button class="view-btn" onclick="sendMsg('Predict my college')">PREDICT_COLLEGE</button>
+          <button class="view-btn" onclick="sendMsg('Review my resume')">REVIEW_RESUME</button>
+          <button class="view-btn" onclick="sendMsg('Mock interview')">MOCK_INTERVIEW</button>
+        </div>
+      </div>
+
+      <div class="typing" id="typingIndicator">AI_PROCESSING</div>
+
+      <div class="chat-input-area">
+        <input type="text" class="chat-input" id="userInput" placeholder="TYPE_MESSAGE_HERE..." onkeydown="if(event.key==='Enter') sendMsg()">
+        <button class="send-btn" onclick="sendMsg()">[ SEND ]</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+// Clock
+function updateClock(){
+  const now = new Date();
+  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+const chatWindow = document.getElementById('chatWindow');
+const userInput = document.getElementById('userInput');
+const typingIndicator = document.getElementById('typingIndicator');
+
+// Configure marked
+marked.setOptions({
+  breaks: true,
+  gfm: true
+});
+
+function appendMessage(text, side) {
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `message msg-${side}`;
+  const header = side === 'ai' ? 'SYSTEM // PLACEMENT_AI' : 'USER // AGENT_01';
+  
+  // Use marked for AI messages
+  const renderedText = side === 'ai' ? marked.parse(text) : text;
+  
+  msgDiv.innerHTML = `
+    <div class="msg-header">${header}</div>
+    <div class="msg-content">${renderedText}</div>
+  `;
+  chatWindow.appendChild(msgDiv);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+async function sendMsg(overrideText) {
+  const text = overrideText || userInput.value.trim();
+  if(!text) return;
+
+  userInput.value = '';
+  appendMessage(text, 'user');
+
+  // Show typing
+  typingIndicator.style.display = 'block';
+  
+  try {
+    const response = await fetch('/api/chat/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: text })
+    });
+    
+    if(!response.ok) throw new Error("Chat Failed");
+    
+    const data = await response.json();
+    typingIndicator.style.display = 'none';
+    appendMessage(data.response, 'ai');
+  } catch (err) {
+    typingIndicator.style.display = 'none';
+    appendMessage("SYSTEM_ERROR: Connection to Neural Core lost. Please try again later.", 'ai');
+  }
+}
+</script>
+</body>
+</html>

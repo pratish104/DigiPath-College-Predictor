@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGIPATH_AI // CUTOFF_PREDICTOR</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --neon-green: #00ff41;
+    --neon-cyan: #00e5ff;
+    --neon-magenta: #ff00ff;
+    --neon-amber: #ffb300;
+    --bg-dark: #000000;
+    --bg-panel: #050f05;
+    --bg-card: #020a02;
+    --border-green: #00ff4133;
+    --border-green-solid: #00ff41;
+    --text-dim: #006620;
+    --text-mid: #00aa2b;
+    --scan-line: rgba(0, 255, 65, 0.03);
+    --sidebar-width: 260px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-dark);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+  }
+
+  /* CRT scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      var(--scan-line) 0px,
+      var(--scan-line) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* grid bg */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── LAYOUT ─── */
+  .app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-green);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-green);
+    text-align: center;
+  }
+
+  .logo-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--neon-green);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 10px rgba(0,255,65,0.5);
+  }
+
+  .nav-list {
+    flex: 1;
+    padding: 20px 0;
+    list-style: none;
+    overflow-y: auto;
+  }
+
+  .nav-item {
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: rgba(0,255,65,0.05);
+    color: var(--neon-green);
+  }
+
+  .nav-item.active {
+    background: rgba(0,255,65,0.1);
+    color: var(--neon-green);
+    border-left-color: var(--neon-green);
+    box-shadow: inset 5px 0 15px rgba(0,255,65,0.05);
+  }
+
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* ─── MAIN CONTENT ─── */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.6);
+  }
+
+  .header {
+    height: 64px;
+    border-bottom: 1px solid var(--border-green);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    background: rgba(5, 15, 5, 0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  /* ─── PREDICTOR CONTAINER ─── */
+  .content-area {
+    padding: 32px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border-green);
+    padding-bottom: 20px;
+  }
+
+  .page-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    color: var(--neon-green);
+    letter-spacing: 2px;
+  }
+
+  .predictor-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 32px;
+  }
+
+  /* ─── FORM CARD ─── */
+  .input-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-green);
+    border-top: 2px solid var(--neon-green);
+    padding: 24px;
+    position: sticky;
+    top: 96px;
+    height: fit-content;
+  }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label {
+    display: block;
+    font-size: 11px;
+    color: var(--neon-cyan);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: #000;
+    border: 1px solid #00ff4140;
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    padding: 12px;
+    outline: none;
+    transition: all 0.2s;
+  }
+  .form-input:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 10px rgba(0,255,65,0.2);
+  }
+
+  .predict-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    padding: 14px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+  }
+  .predict-btn:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 20px var(--neon-green);
+  }
+
+  /* ─── RESULTS ─── */
+  .results-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .result-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-green);
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .result-card:hover {
+    border-color: var(--neon-green);
+    background: rgba(0,255,65,0.03);
+  }
+
+  .college-info { flex: 1; }
+  .college-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    color: var(--neon-green);
+    margin-bottom: 6px;
+  }
+  .college-meta {
+    font-size: 12px;
+    color: var(--text-mid);
+    display: flex;
+    gap: 15px;
+  }
+
+  .cutoff-gauge {
+    text-align: center;
+    padding: 0 24px;
+    border-left: 1px solid var(--border-green);
+  }
+  .cutoff-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px var(--neon-cyan);
+  }
+  .cutoff-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .probability-chip {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(0,255,65,0.1);
+    color: var(--neon-green);
+    border: 1px solid var(--neon-green);
+  }
+
+  .loading-overlay {
+    display: none;
+    text-align: center;
+    padding: 40px;
+  }
+
+  /* ─── CORNERS ─── */
+  .corner {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-color: var(--neon-green);
+    border-style: solid;
+    opacity: 0.5;
+  }
+  .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+  .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+  @media (max-width: 850px) {
+    .predictor-grid { grid-template-columns: 1fr; }
+    .input-card { position: relative; top: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-title">DIGIPATH_AI</div>
+    </div>
+    <nav class="nav-list">
+      <a href="/dashboard" class="nav-item">
+        <span class="nav-icon">▣</span>
+        <span>DASHBOARD</span>
+      </a>
+      <a href="/predictor" class="nav-item active">
+        <span class="nav-icon">◈</span>
+        <span>PREDICTOR</span>
+      </a>
+      <a href="/institutes" class="nav-item">
+        <span class="nav-icon">◉</span>
+        <span>INSTITUTES</span>
+      </a>
+      <a href="/resume-analyzer" class="nav-item">
+        <span class="nav-icon">▦</span>
+        <span>RESUME_AI</span>
+      </a>
+      <a href="/roadmap" class="nav-item">
+        <span class="nav-icon">➹</span>
+        <span>ROADMAP</span>
+      </a>
+      <a href="/scam-detector" class="nav-item">
+        <span class="nav-icon">⚠</span>
+        <span>SCAM_DETECTOR</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <header class="header">
+      <div id="clock" style="font-size: 14px; color: var(--neon-cyan)"></div>
+      <div class="user-profile">
+        <span class="user-name">PRATIK_PATIL</span>
+        <div class="user-avatar">P</div>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <div class="page-header">
+        <h1 class="page-title">ADMISSION_PREDICTOR_v4.0</h1>
+        <p style="font-size: 12px; color: var(--text-mid); margin-top: 5px;">Analyzing 414 Maharashtra Institutes | MHT-CET 2026 Forecast Mode</p>
+      </div>
+
+      <!-- TABS -->
+      <div style="display: flex; gap: 10px; margin-bottom: 24px; border-bottom: 1px solid var(--border-green);">
+        <button id="tabCET" class="tab-btn active" onclick="switchTab('CET')" style="padding: 10px 20px; background: none; border: none; color: var(--neon-green); cursor: pointer; border-bottom: 2px solid var(--neon-green);">[ MHT-CET ]</button>
+        <button id="tabDiploma" class="tab-btn" onclick="switchTab('DIPLOMA')" style="padding: 10px 20px; background: none; border: none; color: var(--text-dim); cursor: pointer;">[ DIPLOMA / DSE ]</button>
+      </div>
+
+      <div class="predictor-grid">
+        <!-- Input Section -->
+        <div class="input-card">
+          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+
+          <div class="form-group">
+            <label id="scoreLabel" class="form-label">MHT-CET PERCENTILE</label>
+            <input type="number" class="form-input" id="score" placeholder="e.g. 98.45" step="0.01">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">CATEGORY</label>
+            <select class="form-input" id="category">
+              <option value="">Select Category</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">PREFERRED BRANCH</label>
+            <select class="form-input" id="branch">
+              <option value="">All Branches</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">CITY PREFERENCE</label>
+            <select class="form-input" id="city">
+              <option value="">All Cities</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">COLLEGE TYPE</label>
+            <select class="form-input" id="collegeType">
+              <option value="">Any Type</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">CAREER INTERESTS</label>
+            <div id="interestsContainer" style="display: flex; flex-wrap: wrap; gap: 5px;">
+                <!-- Interest chips will be here -->
+            </div>
+            <input type="text" class="form-input" id="interestInput" placeholder="Add interest (e.g. AI, Astronomy) and press Enter" style="margin-top: 5px; font-size: 11px;">
+          </div>
+
+          <!-- ADVANCED FILTERS CONTAINER -->
+          <div id="advancedFilters"></div>
+
+          <button class="predict-btn" onclick="runPrediction()">⚡ RUN_ANALYSIS</button>
+          
+          <div id="reportControls" style="display: none; margin-top: 20px; border-top: 1px solid var(--border-green); padding-top: 20px;">
+            <label class="form-label">GENERATE REPORT</label>
+            <div style="display: flex; gap: 5px;">
+                <button class="predict-btn" style="padding: 8px; font-size: 10px;" onclick="downloadReport('pdf')">PDF</button>
+                <button class="predict-btn" style="padding: 8px; font-size: 10px;" onclick="downloadReport('csv')">CSV</button>
+                <button class="predict-btn" style="padding: 8px; font-size: 10px;" onclick="downloadReport('xlsx')">EXCEL</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="results">
+          <!-- Default State -->
+          <div style="text-align: center; padding: 60px; border: 1px dashed var(--border-green); color: var(--text-dim);">
+            <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
+            <div>AWAITING_INPUT_FOR_SIMULATION...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Clock
+function updateClock(){
+  const now = new Date();
+  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+document.addEventListener('DOMContentLoaded', async () => {
+    console.warn("🚨 FORENSIC_DEBUG_START");
+    
+    const elements = {
+        category: document.getElementById('category'),
+        branch: document.getElementById('branch'),
+        city: document.getElementById('city'),
+        collegeType: document.getElementById('collegeType'),
+        adv: document.getElementById('advancedFilters')
+    };
+
+    for (const [name, el] of Object.entries(elements)) {
+        if (!el) console.error(`❌ MISSING_ELEMENT: #${name}`);
+        else console.log(`✅ FOUND_ELEMENT: #${name}`);
+    }
+
+    try {
+        console.log("📡 FETCHING_USER_PROFILE");
+        const userResp = await fetch('/api/auth/me');
+        if (userResp.ok) {
+            const userData = await userResp.json();
+            if (userData.career_interests) {
+                interests.push(...userData.career_interests);
+                renderInterests();
+            }
+        }
+    } catch (err) { console.warn("User profile fetch failed", err); }
+
+    try {
+        console.log("📡 FETCHING_FROM: /api/predict/filters");
+        const response = await fetch('/api/predict/filters');
+        console.log("📡 STATUS:", response.status, response.statusText);
+        
+        if (!response.ok) throw new Error(`HTTP_${response.status}`);
+
+        const filters = await response.json();
+        console.log("📦 RAW_DATA:", filters);
+
+        const populate = (id, values, name) => {
+            const el = elements[id];
+            if (!el) return;
+            console.log(`🛠 POPULATING_${name}:`, values ? values.length : 0, "items");
+            
+            let html = `<option value="">Select ${name}</option>`;
+            if (values && values.length > 0) {
+                html += values.map(v => `<option value="${v}">${v}</option>`).join('');
+            } else {
+                html += '<option value="">ERR: NO_DATA</option>';
+            }
+            el.innerHTML = html;
+            console.log(`✅ ${name}_POPULATED (Length: ${el.options.length})`);
+        };
+
+        populate('category', filters.categories, 'CATEGORY');
+        populate('branch', filters.branches, 'BRANCH');
+        populate('city', filters.cities, 'CITY');
+        populate('collegeType', filters.college_types, 'TYPE');
+
+        if (filters.advanced && elements.adv) {
+            console.log("🛠 POPULATING_ADVANCED...");
+            elements.adv.innerHTML = '';
+            for (const [col, values] of Object.entries(filters.advanced)) {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+                group.innerHTML = `
+                    <label class="form-label">${col.toUpperCase()}</label>
+                    <select class="form-input adv-filter" data-col="${col}">
+                        <option value="">All ${col}</option>
+                        ${values.map(v => `<option value="${v}">${v}</option>`).join('')}
+                    </select>
+                `;
+                elements.adv.appendChild(group);
+            }
+        }
+        console.warn("🏁 FORENSIC_DEBUG_COMPLETE");
+    } catch (err) {
+        console.error('💥 CRITICAL_FAILURE:', err);
+        alert("CRITICAL_UI_FAILURE: CHECK CONSOLE");
+    }
+});
+
+let currentMode = 'CET';
+
+function switchTab(mode) {
+    currentMode = mode;
+    document.getElementById('tabCET').classList.toggle('active', mode === 'CET');
+    document.getElementById('tabDiploma').classList.toggle('active', mode === 'DIPLOMA');
+    document.getElementById('tabCET').style.color = mode === 'CET' ? 'var(--neon-green)' : 'var(--text-dim)';
+    document.getElementById('tabDiploma').style.color = mode === 'DIPLOMA' ? 'var(--neon-green)' : 'var(--text-dim)';
+    document.getElementById('tabCET').style.borderBottom = mode === 'CET' ? '2px solid var(--neon-green)' : 'none';
+    document.getElementById('tabDiploma').style.borderBottom = mode === 'DIPLOMA' ? '2px solid var(--neon-green)' : 'none';
+    
+    document.getElementById('scoreLabel').textContent = mode === 'CET' ? 'MHT-CET PERCENTILE' : 'DIPLOMA PERCENTAGE';
+    document.getElementById('score').placeholder = mode === 'CET' ? 'e.g. 98.45' : 'e.g. 91.20';
+}
+
+// Interests logic
+const interests = [];
+const interestInput = document.getElementById('interestInput');
+const interestsContainer = document.getElementById('interestsContainer');
+
+interestInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const val = interestInput.value.trim();
+        if (val && !interests.includes(val)) {
+            interests.push(val);
+            renderInterests();
+            saveInterests();
+        }
+        interestInput.value = '';
+    }
+});
+
+function renderInterests() {
+    interestsContainer.innerHTML = interests.map(i => `
+        <span class="probability-chip" style="font-size: 10px; border-radius: 4px; display: flex; align-items: center; gap: 5px;">
+            ${i} <span onclick="removeInterest('${i}')" style="cursor: pointer; color: var(--neon-magenta)">×</span>
+        </span>
+    `).join('');
+}
+
+function removeInterest(i) {
+    const idx = interests.indexOf(i);
+    if (idx > -1) {
+        interests.splice(idx, 1);
+        renderInterests();
+        saveInterests();
+    }
+}
+
+async function saveInterests() {
+    try {
+        await fetch('/api/user/interests', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ interests })
+        });
+    } catch (err) { console.error("Interests Save Error:", err); }
+}
+
+async function downloadReport(format) {
+    window.location.href = `/api/predict/report/${format}`;
+}
+
+async function runPrediction(){
+  const resultsDiv = document.getElementById('results');
+  const reportControls = document.getElementById('reportControls');
+  const score = document.getElementById('score').value;
+  // ... rest of the function remains same but needs to show reportControls on success
+  const category = document.getElementById('category').value;
+  const branch = document.getElementById('branch').value;
+  const city = document.getElementById('city').value;
+  const collegeType = document.getElementById('collegeType').value;
+  
+  const extraFilters = {};
+  document.querySelectorAll('.adv-filter').forEach(el => {
+      if (el.value) extraFilters[el.dataset.col] = el.value;
+  });
+
+  if(!score) {
+    alert("Please enter your score.");
+    return;
+  }
+
+  resultsDiv.innerHTML = `
+    <div class="loading-overlay" style="display: block;">
+      <div style="font-size: 14px; margin-bottom: 15px;">INITIALIZING_NEURAL_MATCHING...</div>
+      <div style="width: 100%; height: 2px; background: #002200; position: relative; overflow: hidden;">
+        <div style="position: absolute; height: 100%; background: var(--neon-green); width: 30%; animation: slide 1s infinite;"></div>
+      </div>
+    </div>
+  `;
+
+  try {
+      const endpoint = currentMode === 'CET' ? '/api/predict/cet' : '/api/predict/diploma';
+      const body = currentMode === 'CET' 
+        ? { percentile: parseFloat(score), category, branch, city, college_type: collegeType, extra_filters: extraFilters }
+        : { percentage: parseFloat(score), category, branch, city, college_type: collegeType, extra_filters: extraFilters };
+
+      console.log(`📡 SENDING_PREDICTION_REQ TO: ${endpoint}`, body);
+      const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+      });
+      
+      // Check HTTP status
+      if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`❌ API ERROR: ${response.status} ${response.statusText}`, errorText);
+          
+          try {
+              const errorData = JSON.parse(errorText);
+              const errorMsg = errorData.detail || `Error (${response.status})`;
+              resultsDiv.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--neon-magenta);">ERROR: ${errorMsg}</div>`;
+          } catch {
+              resultsDiv.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--neon-magenta);">ERROR: Server returned ${response.status}</div>`;
+          }
+          return;
+      }
+      
+      const data = await response.json();
+      console.log(`✅ API_RESPONSE:`, data);
+      
+      if (!data.results || data.results.length === 0) {
+          resultsDiv.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--neon-magenta);">NO_MATCHES_FOUND: TRY_BROADER_FILTERS</div>`;
+          return;
+      }
+
+      renderResults(data.results);
+      document.getElementById('reportControls').style.display = 'block';
+  } catch (err) {
+      console.error("❌ NETWORK_ERROR:", err);
+      resultsDiv.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--neon-magenta);">NETWORK_ERROR: ${err.message || 'Unable to reach server'}</div>`;
+  }
+}
+
+function renderResults(results) {
+    const resultsDiv = document.getElementById('results');
+    
+    const categories = {
+        'Safe': results.filter(r => r.classification === 'Safe'),
+        'Moderate': results.filter(r => r.classification === 'Moderate'),
+        'Dream': results.filter(r => r.classification === 'Dream')
+    };
+
+    let html = `<div style="font-size: 13px; color: var(--neon-cyan); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>FOUND: ${results.length} UNIQUE_RECOMMENDATIONS</span>
+                    <span style="color: var(--text-dim); font-size: 10px;">RANKED_BY_ADMISSION_PROBABILITY</span>
+                </div>`;
+
+    for (const [cat, items] of Object.entries(categories)) {
+        if (items.length === 0) continue;
+        
+        const color = cat === 'Safe' ? 'var(--neon-green)' : (cat === 'Moderate' ? 'var(--neon-cyan)' : 'var(--neon-magenta)');
+        
+        html += `<div style="margin-top: 30px; border-left: 3px solid ${color}; padding-left: 20px; margin-bottom: 20px;">
+                    <div style="color: ${color}; font-family: 'Orbitron'; font-size: 16px; letter-spacing: 2px; font-weight: 700;">[ ${cat.toUpperCase()}_ZONE ]</div>
+                    <div style="font-size: 10px; color: var(--text-dim); margin-top: 5px;">COLLEGES_WITH_${cat.toUpperCase()}_ADMISSION_PROBABILITY</div>
+                 </div>`;
+        
+        html += items.map((item) => `
+            <div class="result-card" style="flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+              <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+              <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+              <div style="position: absolute; top: 10px; right: 10px; font-size: 11px; color: var(--text-mid); font-weight: bold;">#RANK_${item.rank}</div>
+              
+              <div class="college-info" style="flex: 2;">
+                <div class="college-name" style="font-size: 16px; color: var(--neon-green); margin-bottom: 8px;">${item.college_name}</div>
+                <div class="college-meta" style="flex-wrap: wrap; gap: 12px;">
+                  <span style="background: rgba(0,229,255,0.1); padding: 2px 6px;">DTE: ${item.college_code}</span>
+                  <span style="background: rgba(0,255,65,0.05); padding: 2px 6px;">BRANCH: ${item.branch}</span>
+                  <span style="background: rgba(255,179,0,0.1); padding: 2px 6px;">TYPE: ${item.college_type}</span>
+                  <span style="color: var(--neon-cyan)">LOC: ${item.city}</span>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 30px; align-items: center; flex: 1; justify-content: flex-end; min-width: 300px;">
+                  <div class="cutoff-gauge">
+                    <div class="cutoff-value" style="font-size: 20px;">${item.cutoff}</div>
+                    <div class="cutoff-label">PREV_CUTOFF</div>
+                  </div>
+                  <div class="cutoff-gauge">
+                    <div class="cutoff-value" style="font-size: 20px; color: var(--neon-magenta);">${item.predicted_cutoff}</div>
+                    <div class="cutoff-label">2026_FORECAST</div>
+                  </div>
+                  <div style="text-align: center; min-width: 80px;">
+                    <div class="probability-chip" style="border-color: ${color}; color: ${color}; font-size: 16px; padding: 5px 10px;">${item.probability_percent}%</div>
+                    <div style="font-size: 9px; color: var(--text-dim); margin-top: 5px;">PROBABILITY</div>
+                  </div>
+              </div>
+            </div>
+        `).join('');
+    }
+    
+    resultsDiv.innerHTML = html;
+}
+</script>
+</body>
+</html>

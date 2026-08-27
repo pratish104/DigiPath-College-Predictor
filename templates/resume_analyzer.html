@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGIPATH_AI // RESUME_ANALYZER</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --neon-green: #00ff41;
+    --neon-cyan: #00e5ff;
+    --neon-magenta: #ff00ff;
+    --neon-amber: #ffb300;
+    --bg-dark: #000000;
+    --bg-panel: #050f05;
+    --bg-card: #020a02;
+    --border-green: #00ff4133;
+    --border-green-solid: #00ff41;
+    --text-dim: #006620;
+    --text-mid: #00aa2b;
+    --scan-line: rgba(0, 255, 65, 0.03);
+    --sidebar-width: 260px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-dark);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+  }
+
+  /* CRT scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      var(--scan-line) 0px,
+      var(--scan-line) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* grid bg */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── LAYOUT ─── */
+  .app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-green);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-green);
+    text-align: center;
+  }
+
+  .logo-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--neon-green);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 10px rgba(0,255,65,0.5);
+  }
+
+  .nav-list {
+    flex: 1;
+    padding: 20px 0;
+    list-style: none;
+    overflow-y: auto;
+  }
+
+  .nav-item {
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: rgba(0,255,65,0.05);
+    color: var(--neon-green);
+  }
+
+  .nav-item.active {
+    background: rgba(0,255,65,0.1);
+    color: var(--neon-green);
+    border-left-color: var(--neon-green);
+    box-shadow: inset 5px 0 15px rgba(0,255,65,0.05);
+  }
+
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* ─── MAIN CONTENT ─── */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.6);
+  }
+
+  .header {
+    height: 64px;
+    border-bottom: 1px solid var(--border-green);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    background: rgba(5, 15, 5, 0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  /* ─── ANALYZER AREA ─── */
+  .content-area {
+    padding: 32px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .page-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    color: var(--neon-green);
+    margin-bottom: 32px;
+    letter-spacing: 2px;
+  }
+
+  /* ─── DROPZONE ─── */
+  .dropzone {
+    background: var(--bg-card);
+    border: 2px dashed var(--border-green);
+    padding: 60px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    margin-bottom: 40px;
+  }
+  .dropzone:hover {
+    border-color: var(--neon-green);
+    background: rgba(0,255,65,0.05);
+    box-shadow: inset 0 0 30px rgba(0,255,65,0.05);
+  }
+
+  .dropzone-icon { font-size: 48px; color: var(--neon-cyan); margin-bottom: 20px; }
+  .dropzone-text { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+  .dropzone-text span { color: var(--neon-green); font-weight: bold; }
+
+  /* ─── RESULTS GRID ─── */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 32px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s;
+  }
+  .results-grid.show { opacity: 1; transform: translateY(0); }
+
+  .score-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-green);
+    border-top: 2px solid var(--neon-green);
+    padding: 32px;
+    text-align: center;
+    height: fit-content;
+  }
+
+  .circular-progress {
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: conic-gradient(var(--neon-green) 88%, #002200 0);
+    margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,255,65,0.2);
+  }
+  .circular-progress::after {
+    content: '88%';
+    width: 130px; height: 130px;
+    background: var(--bg-card);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: bold; font-family: 'Orbitron';
+    color: var(--neon-green);
+  }
+
+  .score-label { font-size: 14px; color: var(--neon-cyan); letter-spacing: 2px; }
+
+  /* ─── FEEDBACK LIST ─── */
+  .feedback-section { display: flex; flex-direction: column; gap: 20px; }
+
+  .feedback-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-green);
+    padding: 24px;
+    position: relative;
+  }
+  .feedback-title { font-size: 14px; color: var(--neon-green); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .feedback-title::before { content: '▶'; font-size: 10px; }
+  .feedback-desc { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 10px;
+    border: 1px solid;
+    margin-right: 5px;
+    margin-top: 10px;
+  }
+  .tag-pos { color: var(--neon-green); border-color: var(--neon-green); }
+  .tag-neg { color: var(--neon-magenta); border-color: var(--neon-magenta); }
+
+  /* ─── PROGRESS BAR ─── */
+  .scan-progress {
+    display: none;
+    margin-bottom: 40px;
+  }
+  .progress-bg { height: 4px; background: #002200; width: 100%; position: relative; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--neon-green); width: 0%; transition: width 0.1s; box-shadow: 0 0 10px var(--neon-green); }
+
+  /* corner decorations */
+  .corner {
+    position: absolute;
+    width: 12px; height: 12px;
+    border-color: var(--neon-green);
+    border-style: solid;
+    opacity: 0.5;
+  }
+  .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+  .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-title">DIGIPATH_AI</div>
+    </div>
+    <nav class="nav-list">
+      <a href="/dashboard" class="nav-item">
+        <span class="nav-icon">▣</span>
+        <span>DASHBOARD</span>
+      </a>
+      <a href="/predictor" class="nav-item">
+        <span class="nav-icon">◈</span>
+        <span>PREDICTOR</span>
+      </a>
+      <a href="/institutes" class="nav-item">
+        <span class="nav-icon">◉</span>
+        <span>INSTITUTES</span>
+      </a>
+      <a href="/resume-analyzer" class="nav-item active">
+        <span class="nav-icon">▦</span>
+        <span>RESUME_AI</span>
+      </a>
+      <a href="/roadmap" class="nav-item">
+        <span class="nav-icon">➹</span>
+        <span>ROADMAP</span>
+      </a>
+      <a href="/scam-detector" class="nav-item">
+        <span class="nav-icon">⚠</span>
+        <span>SCAM_DETECTOR</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <header class="header">
+      <div id="clock" style="font-size: 14px; color: var(--neon-cyan)"></div>
+      <div class="status-tag">NEURAL_DEEP_SCAN_ACTIVE</div>
+    </header>
+
+    <div class="content-area">
+      <h2 class="page-title">RESUME_ANALYZER_v3.2</h2>
+
+      <!-- Dropzone -->
+      <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+        <input type="file" id="fileInput" hidden accept=".pdf,.docx">
+        <div class="dropzone-icon">☁</div>
+        <div class="dropzone-text">
+          DRAG_&_DROP RESUME HERE OR <span>BROWSE_FILES</span><br>
+          <small style="color:var(--text-dim)">SUPPORTED: PDF, DOCX | MAX_SIZE: 5MB</small>
+        </div>
+      </div>
+
+      <!-- Scan Progress -->
+      <div class="scan-progress" id="scanProgress">
+        <div style="font-size: 11px; margin-bottom: 10px; color: var(--neon-green)">SCANNING_VECTORS... <span id="percentText">0%</span></div>
+        <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <!-- Results -->
+      <div class="results-grid" id="resultsGrid">
+        <div class="score-card">
+          <div class="circular-progress"></div>
+          <div class="score-label">ATS_MATCH_SCORE</div>
+          <div style="font-size: 11px; color: var(--text-mid); margin-top: 15px;">Excellent! Your resume is highly optimized for target roles.</div>
+        </div>
+
+        <div class="feedback-section">
+          <div class="feedback-card">
+            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+            <div class="feedback-title">KEYWORD_OPTIMIZATION</div>
+            <div class="feedback-desc">Matched 14/18 industry-standard keywords. Strong presence of "Data Structures", "Cloud Computing", and "CI/CD".</div>
+            <span class="tag tag-pos">STRONG_TECH_STACK</span>
+            <span class="tag tag-pos">DOMAIN_RELEVANCE</span>
+          </div>
+
+          <div class="feedback-card">
+            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+            <div class="feedback-title">STRUCTURAL_ANALYSIS</div>
+            <div class="feedback-desc">Clear hierarchical structure. Sections are well-defined and machine-readable. Bullet points are concise.</div>
+            <span class="tag tag-pos">READABLE_BY_ATS</span>
+          </div>
+
+          <div class="feedback-card">
+            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+            <div class="feedback-title">IMPROVEMENT_SUGGESTIONS</div>
+            <div class="feedback-desc">Consider adding more quantifiable achievements (e.g. "Improved efficiency by 20%"). Your summary section could be more impact-driven.</div>
+            <span class="tag tag-neg">MISSING_METRICS</span>
+            <span class="tag tag-neg">SUMMARY_GENERIC</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Clock
+function updateClock(){
+  const now = new Date();
+  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const scanProgress = document.getElementById('scanProgress');
+const progressFill = document.getElementById('progressFill');
+const percentText = document.getElementById('percentText');
+const resultsGrid = document.getElementById('resultsGrid');
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(file) runAnalysis(file);
+});
+
+async function runAnalysis(file) {
+  dropzone.style.display = 'none';
+  scanProgress.style.display = 'block';
+  
+  // Create FormData
+  const formData = new FormData();
+  formData.append('file', file);
+
+  // Fake progress bar while uploading/processing
+  let progress = 0;
+  const interval = setInterval(() => {
+    if(progress < 90) {
+        progress += Math.random() * 5;
+        progressFill.style.width = progress + '%';
+        percentText.textContent = Math.round(progress) + '%';
+    }
+  }, 200);
+
+  try {
+    const response = await fetch('/api/resume/analyze', {
+        method: 'POST',
+        body: formData
+    });
+    
+    if(!response.ok) throw new Error("Analysis Failed");
+    
+    const data = await response.json();
+    clearInterval(interval);
+    progressFill.style.width = '100%';
+    percentText.textContent = '100%';
+    
+    setTimeout(() => {
+        renderResults(data);
+    }, 500);
+
+  } catch (err) {
+    alert("Error analyzing resume. Please ensure you are logged in.");
+    dropzone.style.display = 'block';
+    scanProgress.style.display = 'none';
+    clearInterval(interval);
+  }
+}
+
+function renderResults(data) {
+  scanProgress.style.display = 'none';
+  resultsGrid.classList.add('show');
+  
+  // Update Score
+  const scoreCircle = document.querySelector('.circular-progress');
+  scoreCircle.style.background = `conic-gradient(var(--neon-green) ${data.ats_score}%, #002200 0)`;
+  
+  // This is a hack to update the percentage in the CSS-based circle
+  const style = document.createElement('style');
+  style.innerHTML = `.circular-progress::after { content: '${Math.round(data.ats_score)}%'; }`;
+  document.head.appendChild(style);
+
+  // Update Feedback Cards
+  const feedbackSection = document.querySelector('.feedback-section');
+  feedbackSection.innerHTML = `
+    <div class="feedback-card">
+        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+        <div class="feedback-title">DOMAIN_&_SKILLS</div>
+        <div class="feedback-desc">Detected Domain: <b>${data.domain}</b><br>
+        Extracted Skills: ${data.extracted_skills.join(', ')}</div>
+        <span class="tag tag-pos">ATS_MATCH: ${data.skill_score}/40</span>
+    </div>
+
+    <div class="feedback-card">
+        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+        <div class="feedback-title">CAREER_RECOMMENDATIONS</div>
+        <div class="feedback-desc">
+            <b>Job Roles:</b> ${data.recommended_job_roles.join(', ')}<br>
+            <b>Target Industries:</b> ${data.industry_recommendations.join(', ')}<br>
+            <b>Skill Gaps:</b> ${data.skill_gaps.join(', ') || 'None Detected'}
+        </div>
+    </div>
+
+    <div class="feedback-card">
+        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+        <div class="feedback-title">IMPROVEMENT_SUGGESTIONS</div>
+        <div class="feedback-desc">
+            <ul style="padding-left: 20px;">
+                ${data.improvement_suggestions.map(s => `<li>${s}</li>`).join('')}
+            </ul>
+        </div>
+    </div>
+
+    <div class="feedback-card" style="border-top: 2px solid var(--neon-cyan)">
+        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+        <div class="feedback-title" style="color: var(--neon-cyan)">LEARNING_ROADMAP</div>
+        <div class="feedback-desc">
+            ${data.learning_roadmap.map(r => `<div>[STEP ${r.step}] ${r.task}</div>`).join('')}
+        </div>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>

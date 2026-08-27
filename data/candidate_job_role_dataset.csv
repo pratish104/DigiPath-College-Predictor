@@ -1,0 +1,1001 @@
+candidate_id,skills,qualification,experience_level,job_role
+1,"Python, SQL, TensorFlow, Machine Learning, Communication",Master's in Data Science,Senior,Data Scientist
+2,"HTML, CSS, JavaScript, React, Teamwork",Bachelor's in Computer Science,Mid,Frontend Developer
+3,"Java, Spring, SQL, REST APIs, Problem Solving",Bachelor's in Software Engineering,Senior,Backend Developer
+4,"Figma, Adobe XD, UI/UX Design, Creativity",Bachelor's in Design,Entry,Designer
+5,"Python, Django, JavaScript, React, Agile",Master's in Computer Science,Mid,Full Stack Python Developer
+6,"Financial Modeling, Excel, Communication, Risk Analysis",Master's in Finance,Senior,Finance
+7,"C++, Unreal Engine, Game Design, Teamwork",Bachelor's in Game Development,Mid,Game Developer
+8,"Kubernetes, Docker, AWS, CI/CD, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+9,"Java, Spring Boot, Hibernate, Microservices",Bachelor's in Software Engineering,Mid,Full Stack Java Developer
+10,"Solidity, Ethereum, JavaScript, Blockchain",Bachelor's in Computer Science,Entry,Blockchain Developer
+11,"Marketing Strategy, SEO, Content Creation, Analytics",Bachelor's in Marketing,Mid,Marketing
+12,"Recruitment, HR Policies, Communication, Leadership",Master's in Human Resources,Senior,HR
+13,"C#, .NET, SQL, ASP.NET",Bachelor's in Computer Science,Mid,C# Developer
+14,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+15,"Swift, iOS Development, Objective-C, UI/UX",Bachelor's in Computer Science,Mid,Mobile Developer
+16,"Network Security, Penetration Testing, Firewalls",Bachelor's in Cybersecurity,Senior,Cybersecurity Engineer
+17,"Agile, Scrum, Project Management, Leadership",Master's in Business Administration,Senior,Software Project Manager
+18,"C++, Unity, Game Design, 3D Modeling",Bachelor's in Game Development,Entry,Video Game Designer
+19,"Python, Pandas, SQL, Data Visualization",Master's in Data Science,Mid,Data Analyst
+20,"Kubernetes, Helm, AWS, Terraform",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+21,"HTML, CSS, JavaScript, Node.js, MongoDB",Bachelor's in Computer Science,Mid,Web Developer
+22,"Python, Machine Learning, Deep Learning, NLP",PhD in Artificial Intelligence,Senior,AIML
+23,"Java, Android Development, Kotlin, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+24,"Python, Flask, JavaScript, PostgreSQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+25,"Java, Spring, Angular, Microservices",Master's in Software Engineering,Senior,Full Stack Java Developer
+26,"Adobe Illustrator, Photoshop, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+27,"SQL, Tableau, Data Analysis, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+28,"C#, Unity, Game Physics, 3D Modeling",Bachelor's in Game Development,Mid,Game Developer
+29,"AWS, Jenkins, Docker, Ansible",Bachelor's in Computer Science,Senior,DevOps Engineer
+30,"PHP, WordPress, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+31,"Python, TensorFlow, Keras, Data Science",Master's in Data Science,Mid,Data Scientist
+32,"Blockchain, Smart Contracts, Solidity, Web3",Bachelor's in Computer Science,Senior,Blockchain Developer
+33,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+34,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+35,"Digital Marketing, Google Analytics, SEO, PPC",Bachelor's in Marketing,Mid,Marketing
+36,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+37,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+38,"Swift, iOS, Xcode, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+39,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+40,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+41,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+42,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+43,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+44,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+45,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+46,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+47,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+48,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+49,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+50,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+51,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+52,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+53,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+54,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+55,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+56,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+57,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+58,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+59,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+60,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+61,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+62,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+63,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+64,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+65,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+66,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+67,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+68,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+69,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+70,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+71,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+72,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+73,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+74,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+75,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+76,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+77,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+78,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+79,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+80,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+81,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+82,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+83,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+84,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+85,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+86,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+87,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+88,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+89,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+90,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+91,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+92,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+93,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+94,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+95,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+96,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+97,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+98,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+99,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+100,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+101,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+102,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+103,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+104,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+105,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+106,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+107,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+108,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+109,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+110,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+111,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+112,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+113,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+114,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+115,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+116,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+117,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+118,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+119,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+120,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+121,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+122,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+123,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+124,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+125,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+126,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+127,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+128,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+129,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+130,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+131,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+132,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+133,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+134,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+135,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+136,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+137,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+138,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+139,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+140,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+141,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+142,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+143,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+144,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+145,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+146,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+147,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+148,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+149,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+150,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+151,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+152,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+153,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+154,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+155,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+156,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+157,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+158,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+159,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+160,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+161,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+162,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+163,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+164,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+165,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+166,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+167,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+168,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+169,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+170,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+171,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+172,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+173,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+174,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+175,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+176,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+177,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+178,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+179,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+180,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+181,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+182,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+183,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+184,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+185,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+186,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+187,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+188,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+189,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+190,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+191,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+192,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+193,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+194,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+195,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+196,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+197,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+198,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+199,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+200,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+201,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+202,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+203,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+204,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+205,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+206,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+207,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+208,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+209,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+210,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+211,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+212,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+213,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+214,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+215,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+216,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+217,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+218,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+219,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+220,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+221,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+222,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+223,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+224,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+225,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+226,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+227,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+228,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+229,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+230,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+231,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+232,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+233,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+234,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+235,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+236,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+237,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+238,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+239,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+240,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+241,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+242,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+243,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+244,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+245,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+246,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+247,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+248,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+249,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+250,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+251,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+252,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+253,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+254,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+255,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+256,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+257,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+258,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+259,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+260,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+261,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+262,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+263,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+264,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+265,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+266,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+267,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+268,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+269,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+270,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+271,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+272,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+273,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+274,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+275,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+276,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+277,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+278,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+279,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+280,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+281,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+282,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+283,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+284,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+285,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+286,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+287,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+288,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+289,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+290,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+291,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+292,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+293,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+294,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+295,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+296,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+297,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+298,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+299,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+300,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+301,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+302,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+303,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+304,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+305,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+306,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+307,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+308,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+309,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+310,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+311,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+312,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+313,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+314,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+315,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+316,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+317,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+318,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+319,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+320,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+321,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+322,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+323,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+324,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+325,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+326,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+327,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+328,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+329,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+330,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+331,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+332,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+333,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+334,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+335,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+336,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+337,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+338,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+339,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+340,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+341,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+342,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+343,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+344,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+345,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+346,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+347,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+348,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+349,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+350,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+351,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+352,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+353,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+354,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+355,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+356,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+357,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+358,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+359,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+360,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+361,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+362,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+363,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+364,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+365,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+366,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+367,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+368,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+369,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+370,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+371,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+372,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+373,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+374,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+375,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+376,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+377,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+378,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+379,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+380,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+381,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+382,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+383,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+384,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+385,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+386,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+387,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+388,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+389,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+390,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+391,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+392,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+393,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+394,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+395,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+396,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+397,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+398,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+399,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+400,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+401,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+402,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+403,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+404,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+405,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+406,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+407,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+408,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+409,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+410,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+411,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+412,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+413,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+414,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+415,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+416,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+417,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+418,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+419,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+420,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+421,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+422,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+423,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+424,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+425,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+426,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+427,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+428,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+429,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+430,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+431,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+432,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+433,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+434,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+435,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+436,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+437,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+438,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+439,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+440,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+441,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+442,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+443,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+444,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+445,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+446,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+447,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+448,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+449,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+450,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+451,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+452,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+453,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+454,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+455,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+456,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+457,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+458,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+459,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+460,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+461,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+462,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+463,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+464,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+465,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+466,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+467,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+468,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+469,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+470,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+471,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+472,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+473,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+474,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+475,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+476,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+477,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+478,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+479,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+480,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+481,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+482,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+483,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+484,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+485,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+486,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+487,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+488,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+489,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+490,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+491,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+492,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+493,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+494,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+495,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+496,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+497,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+498,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+499,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+500,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+501,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+502,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+503,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+504,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+505,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+506,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+507,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+508,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+509,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+510,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+511,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+512,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+513,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+514,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+515,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+516,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+517,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+518,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+519,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+520,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+521,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+522,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+523,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+524,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+525,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+526,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+527,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+528,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+529,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+530,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+531,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+532,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+533,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+534,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+535,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+536,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+537,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+538,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+539,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+540,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+541,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+542,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+543,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+544,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+545,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+546,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+547,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+548,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+549,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+550,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+551,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+552,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+553,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+554,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+555,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+556,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+557,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+558,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+559,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+560,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+561,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+562,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+563,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+564,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+565,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+566,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+567,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+568,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+569,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+570,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+571,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+572,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+573,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+574,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+575,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+576,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+577,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+578,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+579,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+580,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+581,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+582,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+583,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+584,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+585,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+586,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+587,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+588,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+589,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+590,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+591,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+592,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+593,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+594,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+595,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+596,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+597,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+598,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+599,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+600,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+601,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+602,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+603,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+604,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+605,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+606,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+607,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+608,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+609,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+610,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+611,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+612,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+613,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+614,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+615,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+616,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+617,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+618,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+619,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+620,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+621,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+622,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+623,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+624,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+625,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+626,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+627,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+628,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+629,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+630,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+631,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+632,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+633,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+634,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+635,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+636,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+637,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+638,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+639,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+640,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+641,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+642,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+643,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+644,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+645,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+646,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+647,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+648,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+649,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+650,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+651,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+652,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+653,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+654,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+655,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+656,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+657,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+658,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+659,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+660,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+661,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+662,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+663,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+664,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+665,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+666,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+667,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+668,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+669,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+670,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+671,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+672,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+673,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+674,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+675,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+676,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+677,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+678,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+679,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+680,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+681,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+682,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+683,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+684,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+685,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+686,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+687,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+688,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+689,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+690,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+691,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+692,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+693,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+694,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+695,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+696,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+697,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+698,"Scrum, Agile, Project Management, Leadership",Master's in Business Administration,Mid,Software Project Manager
+699,"Python, Pandas, SQL, Data Visualization",Master's in Data Science,Entry,Data Analyst
+700,"Kubernetes, Helm, AWS, Docker, CI/CD",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+701,"HTML, CSS, JavaScript, Angular",Bachelor's in Information Technology,Mid,Web Developer
+702,"Python, TensorFlow, Deep Learning, NLP",PhD in Artificial Intelligence,Senior,AIML
+703,"Java, Kotlin, Android Development, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+704,"Python, Flask, PostgreSQL, JavaScript",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+705,"Java, Spring Boot, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+706,"Adobe XD, Figma, UI/UX Design, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+707,"SQL, R, Tableau, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+708,"C++, Unity, Game Physics, VR Development",Bachelor's in Game Development,Mid,Game Developer
+709,"AWS, Jenkins, Docker, Ansible",Bachelor's in Computer Science,Senior,DevOps Engineer
+710,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+711,"Python, TensorFlow, Keras, Machine Learning",Master's in Data Science,Mid,Data Scientist
+712,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+713,"React, JavaScript, HTML, CSS, TypeScript",Bachelor's in Computer Science,Mid,Frontend Developer
+714,"Java, Hibernate, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+715,"Digital Marketing, SEO, Content Creation, Analytics",Bachelor's in Marketing,Mid,Marketing
+716,"HR Management, Recruitment, Communication",Master's in Human Resources,Senior,HR
+717,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+718,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+719,"Network Security, Penetration Testing, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+720,"Agile, JIRA, Stakeholder Management, Scrum",Master's in Business Administration,Mid,Software Project Manager
+721,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+722,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+723,"Kubernetes, Docker, GCP, Terraform",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+724,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+725,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+726,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+727,"C++, Unreal Engine, Game Design, 3D Modeling",Bachelor's in Game Development,Mid,Game Developer
+728,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+729,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+730,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+731,"React, TypeScript, HTML, CSS, Redux",Bachelor's in Computer Science,Entry,Frontend Developer
+732,"Java, Spring, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+733,"Marketing Strategy, SEO, Social Media, PPC",Bachelor's in Marketing,Mid,Marketing
+734,"HR Policies, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+735,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+736,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+737,"Network Security, Ethical Hacking, Firewalls",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+738,"Agile, Scrum, Project Management, Leadership",Master's in Business Administration,Mid,Software Project Manager
+739,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+740,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+741,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+742,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+743,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+744,"Python, Flask, JavaScript, PostgreSQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+745,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+746,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+747,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+748,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+749,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+750,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+751,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+752,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+753,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+754,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+755,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+756,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+757,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+758,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+759,"Network Security, Penetration Testing, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+760,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+761,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+762,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+763,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+764,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+765,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+766,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+767,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+768,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+769,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+770,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+771,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+772,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+773,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+774,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+775,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+776,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+777,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+778,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+779,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+780,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+781,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+782,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+783,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+784,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,"Entry,",Full Stack Python Developer
+785,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+786,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+787,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+788,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+789,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+790,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+791,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+792,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+793,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+794,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+795,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+796,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+797,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+798,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+799,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+800,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+801,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+802,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+803,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+804,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+805,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+806,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+807,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+808,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+809,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+810,"Solidity, Web3js, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+811,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+812,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+813,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+814,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+815,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+816,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+817,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+818,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+819,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+820,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+821,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+822,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+823,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+824,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+825,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+826,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+827,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+828,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+829,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+830,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+831,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+832,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+833,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+834,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+835,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+836,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+837,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+838,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+839,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+840,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+841,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+842,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+843,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+844,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+845,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+846,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+847,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+848,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+849,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+850,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+851,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+852,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+853,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+854,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+855,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+856,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+857,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+858,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+859,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+860,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+861,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+862,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+863,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+864,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+865,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+866,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+867,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+868,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+869,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+870,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+871,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+872,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+873,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+874,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+875,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+876,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+877,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+878,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+879,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+880,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+881,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+882,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+883,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+884,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+885,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+886,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+887,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+888,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+889,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+890,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+891,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+892,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+893,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+894,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+895,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+896,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+897,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+898,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+899,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+900,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+901,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+902,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+903,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+904,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+905,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+906,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+907,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+908,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+909,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+910,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+911,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+912,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+913,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+914,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+915,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+916,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+917,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+918,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+919,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+920,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+921,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+922,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+923,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+924,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+925,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+926,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+927,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+928,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+929,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+930,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+931,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+932,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+933,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+934,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+935,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+936,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+937,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+938,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+939,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+940,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+941,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+942,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+943,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+944,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+945,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+946,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+947,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+948,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+949,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+950,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+951,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+952,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+953,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+954,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+955,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+956,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+957,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+958,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+959,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+960,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
+961,"Python, R, SQL, Machine Learning",Master's in Data Science,Senior,Data Scientist
+962,"Figma, Sketch, UI/UX, Wireframing",Bachelor's in Design,Entry,Designer
+963,"Kubernetes, Docker, GCP, CI/CD",Bachelor's in Computer Science,Mid,Kubernetes Operations Engineer
+964,"JavaScript, Node.js, Express, MongoDB",Bachelor's in Information Technology,Entry,Web Developer
+965,"Python, Django, PostgreSQL, JavaScript",Bachelor's in Computer Science,Mid,Full Stack Python Developer
+966,"Java, Spring Boot, Angular, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+967,"C++, Unreal Engine, VR Development",Bachelor's in Game Development,Mid,Game Developer
+968,"AWS, Terraform, Jenkins, Linux",Bachelor's in Computer Science,Senior,DevOps Engineer
+969,"PHP, Symfony, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+970,"Solidity, Web3, Ethereum, JavaScript",Bachelor's in Computer Science,Mid,Blockchain Developer
+971,"React, TypeScript, HTML, CSS",Bachelor's in Computer Science,Entry,Frontend Developer
+972,"Java, Spring, SQL, Microservices",Bachelor's in Software Engineering,Senior,Backend Developer
+973,"Marketing Campaigns, Social Media, Analytics",Bachelor's in Marketing,Mid,Marketing
+974,"HR Policies, Recruitment, Training",Master's in Human Resources,Senior,HR
+975,"C#, ASP.NET, SQL Server, Azure",Bachelor's in Computer Science,Mid,C# Developer
+976,"Swift, iOS Development, UI/UX, Core Data",Bachelor's in Computer Science,Entry,Mobile Developer
+977,"Penetration Testing, Firewalls, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+978,"Scrum, Agile, Project Management",Master's in Business Administration,Mid,Software Project Manager
+979,"Python, Pandas, SQL, Tableau",Master's in Data Science,Entry,Data Analyst
+980,"Kubernetes, Helm, AWS, Docker",Bachelor's in Computer Science,Senior,Kubernetes Operations Engineer
+981,"HTML, CSS, JavaScript, Vue.js",Bachelor's in Information Technology,Mid,Web Developer
+982,"Python, TensorFlow, NLP, Deep Learning",PhD in Artificial Intelligence,Senior,AIML
+983,"Java, Kotlin, Android SDK, REST APIs",Bachelor's in Software Engineering,Mid,Mobile Developer
+984,"Python, Flask, JavaScript, SQL",Bachelor's in Computer Science,Entry,Full Stack Python Developer
+985,"Java, Spring, React, AWS",Master's in Software Engineering,Senior,Full Stack Java Developer
+986,"Adobe XD, Figma, UI/UX, Prototyping",Bachelor's in Graphic Design,Mid,Designer
+987,"SQL, R, Data Visualization, Statistics",Bachelor's in Statistics,Entry,Data Analyst
+988,"C++, Unity, Game Design, VR",Bachelor's in Game Development,Mid,Game Developer
+989,"AWS, Jenkins, Docker, Terraform",Bachelor's in Computer Science,Senior,DevOps Engineer
+990,"PHP, Laravel, MySQL, JavaScript",Bachelor's in Information Technology,Entry,PHP Developer
+991,"Python, TensorFlow, Keras, NLP",Master's in Data Science,Mid,Data Scientist
+992,"Solidity, Ethereum, Web3, Blockchain",Bachelor's in Computer Science,Senior,Blockchain Developer
+993,"React, JavaScript, HTML, CSS, Redux",Bachelor's in Computer Science,Mid,Frontend Developer
+994,"Java, Hibernate, SQL, REST APIs",Bachelor's in Software Engineering,Senior,Backend Developer
+995,"Digital Marketing, SEO, PPC, Analytics",Bachelor's in Marketing,Mid,Marketing
+996,"HR Management, Recruitment, Employee Relations",Master's in Human Resources,Senior,HR
+997,"C#, .NET Core, Azure, SQL Server",Bachelor's in Computer Science,Mid,C# Developer
+998,"Swift, iOS, Xcode, UI/UX",Bachelor's in Computer Science,Entry,Mobile Developer
+999,"Network Security, Ethical Hacking, SIEM",Master's in Cybersecurity,Senior,Cybersecurity Engineer
+1000,"Agile, JIRA, Stakeholder Management",Master's in Business Administration,Mid,Software Project Manager
