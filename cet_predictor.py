@@ -1,211 +1,143 @@
-import pandas as pd
-from data_loader import DataLoader
-import os
-import math
-import numpy as np
+"""Deterministic, metric-safe CET eligibility prediction engine."""
+
+from __future__ import annotations
+
 import logging
+import re
+from typing import Any, Mapping, Optional
+
+import numpy as np
+import pandas as pd
+
+from data_loader import (
+    COL_BRANCH,
+    COL_CATEGORY,
+    COL_CITY,
+    COL_COLLEGE_CODE,
+    COL_COLLEGE_NAME,
+    COL_CUTOFF,
+    COL_EXAM_TYPE,
+    COL_QUOTA,
+    COL_SEAT_TYPE,
+    COL_STATE_RANK,
+    COL_TYPE,
+    COL_YEAR,
+    DataLoader,
+    _normalize_branch,
+)
 
 log = logging.getLogger("digipath.cet_predictor")
 
-def sanitize(obj):
-    if isinstance(obj, dict):
-        return {k: sanitize(v) for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [sanitize(v) for v in obj]
-    if isinstance(obj, float):
-        if math.isnan(obj) or math.isinf(obj):
-            return None
-    if isinstance(obj, np.generic):
-        return obj.item()
-    return obj
+
+def _literal_contains(values: pd.Series, query: str) -> pd.Series:
+    return values.astype("string").str.contains(query, case=False, regex=False, na=False)
+
+
+def _token_set_branch_match(values: pd.Series, branch: str) -> pd.Series:
+    canonical_branch = _normalize_branch(branch) or branch
+    tokens = re.findall(r"[a-z0-9]+", canonical_branch.casefold())
+    if not tokens:
+        return pd.Series(False, index=values.index)
+    masks = [_literal_contains(values, token) for token in tokens]
+    return pd.Series(np.logical_and.reduce([mask.to_numpy(dtype=bool) for mask in masks]), index=values.index)
+
+
+def _probability_frame(candidate_percentile: float, cutoffs: pd.Series) -> pd.DataFrame:
+    delta = candidate_percentile - cutoffs.astype(float)
+    probability = np.select(
+        [delta.ge(2.0), delta.ge(-1.5)],
+        [np.clip(85.0 + (delta - 2.0) * 7.0, 85.0, 99.0), np.clip(50.0 + ((delta + 1.5) / 3.5) * 34.0, 50.0, 84.0)],
+        default=np.clip(49.0 + (delta + 1.5) * 13.0, 10.0, 49.0),
+    )
+    chance = np.select([delta.ge(2.0), delta.ge(-1.5)], ["High Chance", "Moderate Chance"], default="Low / Dream Chance")
+    classification = np.select([delta.ge(2.0), delta.ge(-1.5)], ["Safe", "Moderate"], default="Dream")
+    return pd.DataFrame({"score_diff": delta.round(2), "probability_percent": np.rint(probability).astype(int), "probability_label": chance, "classification": classification}, index=cutoffs.index)
+
+
+def _predict_for_exam(
+    data_loader: DataLoader,
+    data: pd.DataFrame,
+    exam_type: str,
+    candidate_percentile: float,
+    category: str,
+    branch: Optional[str] = None,
+    city: Optional[str] = None,
+    college_type: Optional[str] = None,
+    extra_filters: Optional[Mapping[str, Any]] = None,
+) -> list[dict[str, Any]]:
+    if not np.isfinite(candidate_percentile) or not 0.0 <= candidate_percentile <= 100.0:
+        return []
+    frame = data.loc[data[COL_EXAM_TYPE].eq(exam_type)].copy()
+    if frame.empty:
+        return []
+
+    normalized_category = str(category or "").strip()
+    if normalized_category and normalized_category.casefold() != "all":
+        frame = frame.loc[_literal_contains(frame[COL_CATEGORY], normalized_category)]
+    if branch and branch.strip().casefold() != "all":
+        frame = frame.loc[_token_set_branch_match(frame[COL_BRANCH], branch)]
+    if city and city.strip().casefold() != "all":
+        frame = frame.loc[_literal_contains(frame[COL_CITY], city.strip())]
+    if college_type and college_type.strip().casefold() != "all":
+        frame = frame.loc[_literal_contains(frame[COL_TYPE], college_type.strip())]
+    if extra_filters:
+        supported = {COL_QUOTA, COL_SEAT_TYPE}
+        requested = {key: value for key, value in extra_filters.items() if key in supported and value is not None and str(value).strip().casefold() != "all"}
+        filter_masks = [_literal_contains(frame[key], str(value).strip()) for key, value in requested.items()]
+        if filter_masks:
+            frame = frame.loc[pd.Series(np.logical_and.reduce([mask.to_numpy(dtype=bool) for mask in filter_masks]), index=frame.index)]
+    if frame.empty:
+        return []
+
+    recommendation_grain = [COL_COLLEGE_CODE, COL_BRANCH, COL_CATEGORY, COL_QUOTA, COL_SEAT_TYPE, COL_EXAM_TYPE]
+    frame = frame.sort_values([COL_YEAR, COL_CUTOFF], ascending=[False, False], kind="stable").drop_duplicates(subset=recommendation_grain, keep="first")
+    probability = _probability_frame(candidate_percentile, frame[COL_CUTOFF])
+    result = pd.concat([frame, probability], axis=1)
+    result["predicted_cutoff"] = np.nan
+    result["forecast_status"] = "No forecast generated; historical cutoff shown."
+    result["college_type"] = result[COL_TYPE]
+    result["category_used"] = result[COL_CATEGORY]
+    result["placement_score"] = 0.0
+    result = result.sort_values(["probability_percent", "score_diff", COL_CUTOFF, COL_COLLEGE_NAME], ascending=[False, False, False, True], kind="stable").reset_index(drop=True)
+    result["rank"] = result.index + 1
+    output_columns = [
+        "rank", COL_COLLEGE_NAME, COL_COLLEGE_CODE, COL_BRANCH, COL_CITY, "college_type", "category_used",
+        COL_QUOTA, COL_SEAT_TYPE, COL_CUTOFF, "predicted_cutoff", "forecast_status", "probability_label",
+        "probability_percent", "classification", "score_diff", "placement_score", COL_YEAR, COL_STATE_RANK,
+    ]
+    result = result.loc[:, output_columns].replace({np.nan: None, pd.NA: None})
+    return result.to_dict(orient="records")
+
 
 class CETPredictor:
-    def __init__(self, data_loader: DataLoader):
+    """Returns deterministic CET eligibility bands from validated percentile history."""
+
+    def __init__(self, data_loader: DataLoader) -> None:
         self.data_loader = data_loader
         self.data = self.data_loader.get_combined_cet_data()
-        log.info(f"🔧 CETPredictor initialized with {len(self.data)} rows")
+        log.info("CET predictor initialized with %d canonical rows.", len(self.data))
 
-    def calculate_probability(self, user_val, cutoff_val):
-        diff = user_val - cutoff_val
-        if diff >= 3:
-            return "Very High", 95
-        elif diff >= 1:
-            return "High", 80
-        elif diff >= -1:
-            return "Moderate", 60
-        elif diff >= -3:
-            return "Low", 30
-        else:
-            return "Very Low", 10
+    def calculate_probability(self, user_val: float, cutoff_val: float) -> tuple[str, int]:
+        frame = _probability_frame(float(user_val), pd.Series([float(cutoff_val)]))
+        return str(frame.iloc[0]["probability_label"]), int(frame.iloc[0]["probability_percent"])
 
-    def predict(self, percentile, category, branch=None, city=None, college_type=None, extra_filters=None):
-        """
-        Main prediction engine with full exception handling and logging.
-        """
-        try:
-            log.info(f"📊 CET Prediction requested: percentile={percentile}, category={category}, branch={branch}, city={city}")
-            
-            # Validate input
-            if not percentile or percentile < 0 or percentile > 100:
-                log.warning(f"⚠️ Invalid percentile: {percentile}")
-                return []
-            
-            if self.data.empty:
-                log.error("❌ No CET data available")
-                return []
-
-            df = self.data.copy()
-            log.info(f"📋 Starting with {len(df)} total records")
-
-            # Core Filtering - More robust category matching
-            if category and category.lower() != "all":
-                try:
-                    # Some datasets use GOPENS, others use OPEN. We try to match the most relevant.
-                    df = df[df['category'].str.contains(category, na=False, case=False) | 
-                            (df['category'].str.contains("OPEN", na=False, case=False) if category.upper() == "OPEN" else False)]
-                    log.info(f"✓ After category filter: {len(df)} records")
-                except Exception as e:
-                    log.error(f"❌ Category filtering failed: {e}")
-                    return []
-            
-            if branch and branch.lower() != "all":
-                try:
-                    # Handle cases like "Computer Engineering" vs "Computer Science"
-                    branch_terms = branch.lower().split()
-                    # If branch has multiple words, try to match all of them or the main one
-                    pattern = "|".join(branch_terms)
-                    df = df[df['branch'].str.contains(pattern, na=False, case=False)]
-                    log.info(f"✓ After branch filter: {len(df)} records")
-                except Exception as e:
-                    log.error(f"❌ Branch filtering failed: {e}")
-                    return []
-                
-            if city and city.lower() != "all":
-                try:
-                    df = df[df['city'].str.contains(city, na=False, case=False)]
-                    log.info(f"✓ After city filter: {len(df)} records")
-                except Exception as e:
-                    log.error(f"❌ City filtering failed: {e}")
-                    return []
-
-            # Advanced Filtering
-            if extra_filters:
-                try:
-                    for col, val in extra_filters.items():
-                        if col in df.columns and val and str(val).lower() != "all":
-                            df = df[df[col].astype(str).str.contains(str(val), na=False, case=False)]
-                    log.info(f"✓ After extra filters: {len(df)} records")
-                except Exception as e:
-                    log.error(f"❌ Extra filtering failed: {e}")
-                    return []
-
-            if df.empty:
-                log.warning("⚠️ No records match the filters")
-                return []
-
-            results = []
-            
-            try:
-                # Grouping to avoid duplicates across years/stages
-                # We prefer the most recent data if year is available
-                if 'year' in df.columns:
-                    df = df.sort_values(by='year', ascending=False)
-                    
-                group_cols = ['college_code', 'branch', 'category']
-                
-                # Aggregation logic: take the most recent cutoff
-                grouped = df.groupby(group_cols).agg({
-                    'college_name': 'first',
-                    'city': 'first',
-                    'cutoff_value': 'first', # Since we sorted by year
-                    'year': 'first'
-                }).reset_index()
-
-                log.info(f"📦 Grouped into {len(grouped)} unique combinations")
-
-                for idx, row in grouped.iterrows():
-                    try:
-                        cutoff = row['cutoff_value']
-                        
-                        # Ranking & Classification Factors
-                        diff = percentile - cutoff
-                        
-                        if diff >= 3:
-                            classification = "Safe"
-                            prob_label, prob_percent = "Very High", 95
-                        elif diff >= 0:
-                            classification = "Moderate"
-                            prob_label, prob_percent = "High", 80
-                        elif diff >= -3:
-                            classification = "Dream"
-                            prob_label, prob_percent = "Low", 40
-                        else:
-                            classification = "Dream"
-                            prob_label, prob_percent = "Very Low", 15
-
-                        # Enhanced Predicted Cutoff 2026 
-                        # (Heuristic: +0.45 if high competition, +0.2 if low)
-                        increase = 0.45 if cutoff > 90 else 0.25
-                        predicted_cutoff = round(float(cutoff) + increase, 2)
-
-                        c_type = self.data_loader.get_college_type(row['college_code'])
-                        
-                        # Filter by college type if specified
-                        if college_type and college_type.lower() != "all":
-                            if college_type.lower() not in c_type.lower():
-                                continue
-
-                        # Add placement score if available from institutes.json
-                        placement_score = 0
-                        inst_info = self.data_loader.institutes_data.get(str(row['college_code']))
-                        if inst_info:
-                            stats = inst_info.get("placement_stats", {})
-                            placement_score = stats.get("placement_rate", 0)
-
-                        res_item = {
-                            "rank": 0, # Will be set after sorting
-                            "college_name": row['college_name'],
-                            "college_code": row['college_code'],
-                            "branch": row['branch'],
-                            "city": row['city'],
-                            "college_type": c_type,
-                            "category_used": row['category'],
-                            "cutoff": round(float(cutoff), 2),
-                            "predicted_cutoff": predicted_cutoff,
-                            "probability_label": prob_label,
-                            "probability_percent": prob_percent,
-                            "classification": classification,
-                            "score_diff": round(diff, 2),
-                            "placement_score": placement_score,
-                            "year": row.get('year', 'N/A')
-                        }
-                        results.append(res_item)
-                    except Exception as e:
-                        log.error(f"❌ Error processing row {idx}: {e}")
-                        continue
-
-            except Exception as e:
-                log.error(f"❌ Grouping/aggregation failed: {e}")
-                return []
-
-            if not results:
-                log.warning("⚠️ No results after processing")
-                return []
-
-            # Final Sorting Strategy: 
-            # 1. Classification (Safe > Moderate > Dream)
-            # 2. Score Diff (Descending)
-            # 3. Placement Score (Descending)
-            order = {"Safe": 0, "Moderate": 1, "Dream": 2}
-            results = sorted(results, key=lambda x: (order[x['classification']], -x['score_diff'], -x['placement_score']))
-            
-            # Assign Ranks
-            for i, item in enumerate(results):
-                item["rank"] = i + 1
-
-            log.info(f"✅ CET Prediction complete: {len(results)} results returned")
-            return sanitize(results)
-
-        except Exception as e:
-            log.exception(f"❌ CRITICAL: CET Prediction failed: {e}")
-            return []
+    def predict(
+        self,
+        percentile: float,
+        category: str,
+        branch: Optional[str] = None,
+        city: Optional[str] = None,
+        college_type: Optional[str] = None,
+        extra_filters: Optional[Mapping[str, Any]] = None,
+    ) -> list[dict[str, Any]]:
+        return _predict_for_exam(
+            data_loader=self.data_loader,
+            data=self.data_loader.get_combined_cet_data(),
+            exam_type="CET",
+            candidate_percentile=float(percentile),
+            category=category,
+            branch=branch,
+            city=city,
+            college_type=college_type,
+            extra_filters=extra_filters,
+        )

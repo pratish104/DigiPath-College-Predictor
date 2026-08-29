@@ -1,58 +1,63 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
-from sqlalchemy.orm import Session
-from database import get_db
-import models
-from resume_service import ResumeService
-from data_loader import DataLoader
+"""Authenticated, bounded resume-analysis API routes."""
+
+from __future__ import annotations
+
 import os
-import shutil
+import tempfile
+from pathlib import Path
+from typing import Any
+
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+
+import models
+from auth_routes import get_current_user
+from database import get_db
+from resume_service import DocumentValidationError, MAX_FILE_BYTES, ResumeService
 
 router = APIRouter(prefix="/resume", tags=["Resume AI"])
+resume_service = ResumeService()
+_ALLOWED_SUFFIXES = {".pdf", ".docx"}
+_CHUNK_BYTES = 1024 * 1024
 
-# Initialize Service
-base_path = os.path.dirname(os.path.abspath(__file__))
-data_dir = os.path.join(base_path, "data")
-inst_json = os.path.join(base_path, "institutes.json")
-loader = DataLoader(data_dir, inst_json)
-resume_service = ResumeService(loader)
 
-# Helper to get current user from cookies
-async def get_current_user_id(request: Request, db: Session = Depends(get_db)):
-    token = request.cookies.get("access_token")
-    if not token or not token.startswith("Bearer "):
-        return None
-    
-    from auth_service import decode_access_token
-    payload = decode_access_token(token.split(" ")[1])
-    if not payload:
-        return None
-        
-    email = payload.get("sub")
-    user = db.query(models.User).filter(models.User.email == email).first()
-    return user.id if user else None
+async def _save_upload(upload: UploadFile) -> Path:
+    suffix = Path(upload.filename or "").suffix.casefold()
+    if suffix not in _ALLOWED_SUFFIXES:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only PDF and DOCX resumes are supported.")
+    descriptor, temporary_name = tempfile.mkstemp(prefix="digipath_resume_", suffix=suffix)
+    total_size = 0
+    try:
+        with os.fdopen(descriptor, "wb") as temporary_file:
+            while True:
+                chunk = await upload.read(_CHUNK_BYTES)
+                if not chunk:
+                    break
+                total_size += len(chunk)
+                if total_size > MAX_FILE_BYTES:
+                    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Document exceeds the 10 MB upload limit.")
+                temporary_file.write(chunk)
+    except Exception:
+        Path(temporary_name).unlink(missing_ok=True)
+        raise
+    finally:
+        await upload.close()
+    return Path(temporary_name)
+
 
 @router.post("/analyze")
-async def analyze_resume(request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)):
-    user_id = await get_current_user_id(request, db)
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Authentication required for resume analysis")
-
-    # Save temp file
-    temp_path = f"temp_{file.filename}"
-    with open(temp_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
+async def analyze_resume(
+    file: UploadFile = File(...),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    temporary_path = await _save_upload(file)
     try:
-        # Get user interests
-        user = db.query(models.User).filter(models.User.id == user_id).first()
-        interests = user.career_interests if user else []
-
-        analysis = resume_service.analyze(temp_path, interests)
-        
-        # Store in DB
-        db_analysis = models.ResumeAnalysis(
-            user_id=user_id,
-            filename=file.filename,
+        analysis = resume_service.analyze(temporary_path, interests=current_user.career_interests or [])
+        record = models.ResumeAnalysis(
+            user_id=current_user.id,
+            filename=Path(file.filename or "resume").name,
             ats_score=analysis["ats_score"],
             skill_score=analysis["skill_score"],
             project_score=analysis["project_score"],
@@ -67,21 +72,37 @@ async def analyze_resume(request: Request, file: UploadFile = File(...), db: Ses
             recommended_higher_studies=analysis["recommended_higher_studies"],
             skill_gaps=analysis["skill_gaps"],
             learning_roadmap=analysis["learning_roadmap"],
-            industry_recommendations=analysis["industry_recommendations"]
+            industry_recommendations=analysis["industry_recommendations"],
         )
-        db.add(db_analysis)
+        db.add(record)
         db.commit()
-        db.refresh(db_analysis)
-
+        db.refresh(record)
         return analysis
+    except DocumentValidationError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Resume analysis could not be saved.") from exc
     finally:
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
+        temporary_path.unlink(missing_ok=True)
+
 
 @router.get("/history")
-async def get_resume_history(request: Request, db: Session = Depends(get_db)):
-    user_id = await get_current_user_id(request, db)
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Authentication required")
-    
-    return db.query(models.ResumeAnalysis).filter(models.ResumeAnalysis.user_id == user_id).order_by(models.ResumeAnalysis.created_at.desc()).all()
+async def get_resume_history(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> list[dict[str, Any]]:
+    records = db.query(models.ResumeAnalysis).filter(models.ResumeAnalysis.user_id == current_user.id).order_by(models.ResumeAnalysis.created_at.desc()).all()
+    return [
+        {
+            "id": record.id,
+            "filename": record.filename,
+            "ats_score": record.ats_score,
+            "domain": record.domain,
+            "skills_detected": record.extracted_skills or [],
+            "recommended_roles": record.recommended_job_roles or [],
+            "improvement_suggestions": record.improvement_suggestions or [],
+            "created_at": record.created_at.isoformat() if record.created_at else None,
+        }
+        for record in records
+    ]
