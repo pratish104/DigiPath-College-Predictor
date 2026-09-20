@@ -97,7 +97,11 @@ def _prepare_pymysql_connection(url: str):
     ):
         query = dict(parsed_url.query)
         query.pop("ssl-mode")
-        return parsed_url.set(query=query), {"ssl": ssl.create_default_context()}
+        ssl_context = ssl.create_default_context()
+        aiven_ca_path = pathlib.Path("/etc/secrets/ca.pem")
+        if aiven_ca_path.is_file():
+            ssl_context.load_verify_locations(cafile=str(aiven_ca_path))
+        return parsed_url.set(query=query), {"ssl": ssl_context}
 
     return url, {}
 
