@@ -3,215 +3,202 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIGIPATH_AI // CUTOFF_PREDICTOR</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+<title>DigiPath | ADMISSION_PREDICTOR_v4.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --neon-green: #00ff41;
+    --bg-dark: #030712;
+    --card-bg: rgba(3, 7, 18, 0.95);
+    --border-green: #064e3b;
+    --border-green-bright: #00ff66;
+    --neon-green: #00ff66;
     --neon-cyan: #00e5ff;
-    --neon-magenta: #ff00ff;
+    --neon-magenta: #d500f9;
+    --neon-purple: #d500f9;
     --neon-amber: #ffb300;
-    --bg-dark: #000000;
-    --bg-panel: #050f05;
-    --bg-card: #020a02;
-    --border-green: #00ff4133;
-    --border-green-solid: #00ff41;
-    --text-dim: #006620;
-    --text-mid: #00aa2b;
-    --scan-line: rgba(0, 255, 65, 0.03);
-    --sidebar-width: 260px;
+    --neon-red: #ff3366;
+    --text-main: #f3f4f6;
+    --text-dim: #6b7280;
+    --text-mid: #9ca3af;
   }
 
-  html, body {
-    height: 100%;
-    background: var(--bg-dark);
-    color: var(--neon-green);
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
     font-family: 'Share Tech Mono', monospace;
-    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
   }
 
-  /* CRT scanline overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      var(--scan-line) 0px,
-      var(--scan-line) 1px,
-      transparent 1px,
-      transparent 2px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* grid bg */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ─── LAYOUT ─── */
   .app-container {
     display: flex;
-    height: 100vh;
-    width: 100vw;
-    position: relative;
-    z-index: 1;
+    min-height: 100vh;
   }
 
   /* ─── SIDEBAR ─── */
   .sidebar {
-    width: var(--sidebar-width);
-    background: var(--bg-panel);
+    width: 220px;
+    background: #000000;
     border-right: 1px solid var(--border-green);
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
   }
-
   .sidebar-header {
-    padding: 24px;
+    padding: 20px;
     border-bottom: 1px solid var(--border-green);
-    text-align: center;
   }
-
   .logo-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 20px;
-    font-weight: 900;
+    font-weight: 700;
     color: var(--neon-green);
-    letter-spacing: 0.1em;
-    text-shadow: 0 0 10px rgba(0,255,65,0.5);
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0,255,102,0.4);
   }
-
   .nav-list {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 20px 0;
-    list-style: none;
-    overflow-y: auto;
   }
-
   .nav-item {
-    padding: 12px 24px;
     display: flex;
     align-items: center;
     gap: 12px;
-    color: var(--text-mid);
+    padding: 12px 20px;
+    color: var(--text-dim);
     text-decoration: none;
-    transition: all 0.2s;
-    font-size: 13px;
-    border-left: 3px solid transparent;
+    font-size: 12px;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
   }
-
-  .nav-item:hover {
-    background: rgba(0,255,65,0.05);
+  .nav-item:hover, .nav-item.active {
     color: var(--neon-green);
+    background: rgba(0, 255, 102, 0.05);
+    border-left: 3px solid var(--neon-green);
   }
-
-  .nav-item.active {
-    background: rgba(0,255,65,0.1);
-    color: var(--neon-green);
-    border-left-color: var(--neon-green);
-    box-shadow: inset 5px 0 15px rgba(0,255,65,0.05);
-  }
-
-  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-icon { font-size: 14px; }
 
   /* ─── MAIN CONTENT ─── */
   .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    background: rgba(0,0,0,0.6);
   }
-
   .header {
-    height: 64px;
+    height: 60px;
     border-bottom: 1px solid var(--border-green);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 32px;
-    background: rgba(5, 15, 5, 0.8);
-    backdrop-filter: blur(10px);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    padding: 0 30px;
+    background: rgba(3, 7, 18, 0.8);
+  }
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .user-name {
+    font-size: 12px;
+    color: var(--text-mid);
+    letter-spacing: 1px;
+  }
+  .user-avatar {
+    width: 32px; height: 32px;
+    border: 1px solid var(--neon-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--neon-green);
+    font-size: 12px;
   }
 
-  /* ─── PREDICTOR CONTAINER ─── */
   .content-area {
-    padding: 32px;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
+    padding: 30px;
+    flex: 1;
   }
 
   .page-header {
-    margin-bottom: 32px;
-    border-bottom: 1px solid var(--border-green);
-    padding-bottom: 20px;
+    margin-bottom: 24px;
   }
-
   .page-title {
     font-family: 'Orbitron', sans-serif;
     font-size: 24px;
+    font-weight: 700;
     color: var(--neon-green);
     letter-spacing: 2px;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(0,255,102,0.3);
   }
 
+  /* ─── TABS ─── */
+  .tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    color: var(--neon-green);
+    border-bottom: 2px solid var(--neon-green);
+    text-shadow: 0 0 8px rgba(0,255,102,0.4);
+  }
+
+  /* ─── TWO COLUMN LAYOUT ─── */
   .predictor-grid {
     display: grid;
-    grid-template-columns: 350px 1fr;
-    gap: 32px;
+    grid-template-columns: 360px 1fr;
+    gap: 25px;
+    align-items: start;
   }
 
-  /* ─── FORM CARD ─── */
+  /* ─── LEFT PANEL FORM ─── */
   .input-card {
-    background: var(--bg-card);
+    background: var(--card-bg);
     border: 1px solid var(--border-green);
-    border-top: 2px solid var(--neon-green);
     padding: 24px;
     position: sticky;
-    top: 96px;
-    height: fit-content;
+    top: 20px;
   }
-
-  .form-group { margin-bottom: 20px; }
+  .form-group {
+    margin-bottom: 16px;
+  }
   .form-label {
     display: block;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--neon-cyan);
-    margin-bottom: 8px;
-    letter-spacing: 1px;
+    margin-bottom: 6px;
+    letter-spacing: 1.5px;
   }
-
   .form-input {
     width: 100%;
-    background: #000;
-    border: 1px solid #00ff4140;
+    background: #000000;
+    border: 1px solid var(--border-green);
     color: var(--neon-green);
     font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    padding: 12px;
-    outline: none;
+    font-size: 12px;
+    padding: 9px 12px;
+    box-sizing: border-box;
     transition: all 0.2s;
   }
   .form-input:focus {
+    outline: none;
     border-color: var(--neon-green);
-    box-shadow: 0 0 10px rgba(0,255,65,0.2);
+    box-shadow: 0 0 10px rgba(0,255,102,0.2);
+  }
+  select.form-input {
+    cursor: pointer;
+  }
+  select.form-input option {
+    background: #030712;
+    color: var(--text-main);
   }
 
   .predict-btn {
@@ -219,86 +206,135 @@
     background: transparent;
     border: 1px solid var(--neon-green);
     color: var(--neon-green);
-    font-family: 'Share Tech Mono', monospace;
-    padding: 14px;
+    font-family: 'Orbitron', sans-serif;
     font-size: 13px;
+    font-weight: 700;
     letter-spacing: 2px;
+    padding: 13px;
     cursor: pointer;
-    transition: all 0.2s;
     margin-top: 10px;
+    transition: all 0.2s;
+    box-shadow: 0 0 10px rgba(0,255,102,0.15);
   }
   .predict-btn:hover {
     background: var(--neon-green);
-    color: #000;
-    box-shadow: 0 0 20px var(--neon-green);
+    color: #000000;
+    box-shadow: 0 0 20px rgba(0,255,102,0.5);
   }
 
-  /* ─── RESULTS ─── */
+  /* ─── RIGHT PANEL RESULTS ─── */
   .results-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    min-height: 400px;
   }
-
   .result-card {
-    background: var(--bg-card);
+    background: var(--card-bg);
     border: 1px solid var(--border-green);
-    padding: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 20px;
+    margin-bottom: 20px;
     position: relative;
-    transition: all 0.2s;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: transform 0.2s, border-color 0.2s;
   }
   .result-card:hover {
     border-color: var(--neon-green);
-    background: rgba(0,255,65,0.03);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,255,102,0.1);
   }
 
-  .college-info { flex: 1; }
+  .college-info {
+    flex: 2;
+    min-width: 280px;
+  }
   .college-name {
-    font-family: 'Orbitron', sans-serif;
     font-size: 16px;
+    font-weight: 600;
     color: var(--neon-green);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    text-shadow: 0 0 8px rgba(0,255,102,0.25);
   }
   .college-meta {
-    font-size: 12px;
-    color: var(--text-mid);
     display: flex;
-    gap: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--text-mid);
+  }
+  .meta-tag {
+    padding: 2px 7px;
+    font-size: 11px;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .tag-dte {
+    background: rgba(0,229,255,0.1);
+    color: var(--neon-cyan);
+    border: 1px solid rgba(0,229,255,0.3);
+  }
+  .tag-branch {
+    background: rgba(0,255,102,0.08);
+    color: var(--neon-green);
+    border: 1px solid rgba(0,255,102,0.2);
+  }
+  .tag-type {
+    background: rgba(255,179,0,0.1);
+    color: var(--neon-amber);
+    border: 1px solid rgba(255,179,0,0.25);
+  }
+  .tag-loc {
+    color: var(--neon-cyan);
   }
 
+  /* 3-Column Metric Display */
+  .metrics-cluster {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+    flex: 1;
+    justify-content: flex-end;
+    min-width: 290px;
+  }
   .cutoff-gauge {
     text-align: center;
-    padding: 0 24px;
-    border-left: 1px solid var(--border-green);
   }
   .cutoff-value {
-    font-size: 24px;
-    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+  .cutoff-val-prev {
     color: var(--neon-cyan);
-    text-shadow: 0 0 10px var(--neon-cyan);
+    text-shadow: 0 0 10px rgba(0,229,255,0.4);
+  }
+  .cutoff-val-forecast {
+    color: var(--neon-magenta);
+    text-shadow: 0 0 10px rgba(213,0,249,0.4);
   }
   .cutoff-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-dim);
-    margin-top: 4px;
+    letter-spacing: 1px;
   }
 
-  .probability-chip {
-    font-size: 11px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    background: rgba(0,255,65,0.1);
-    color: var(--neon-green);
-    border: 1px solid var(--neon-green);
-  }
-
-  .loading-overlay {
-    display: none;
+  .probability-box {
     text-align: center;
-    padding: 40px;
+    min-width: 85px;
+  }
+  .probability-chip {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border: 1px solid;
+    border-radius: 4px;
+    display: inline-block;
   }
 
   /* ─── CORNERS ─── */
@@ -314,11 +350,37 @@
   .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
   .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
 
-  @media (max-width: 850px) {
+  .load-more-btn {
+    width: 100%;
+    padding: 12px;
+    background: rgba(3, 7, 18, 0.9);
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.2s;
+  }
+  .load-more-btn:hover {
+    background: var(--neon-cyan);
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+  }
+
+  @keyframes slide {
+    0% { left: -30%; }
+    100% { left: 100%; }
+  }
+
+  @media (max-width: 960px) {
     .predictor-grid { grid-template-columns: 1fr; }
     .input-card { position: relative; top: 0; }
+    .metrics-cluster { justify-content: flex-start; }
   }
 </style>
+<link rel="stylesheet" href="/static/css/digipath-shell.css">
 </head>
 <body>
 
@@ -361,8 +423,8 @@
     <header class="header">
       <div id="clock" style="font-size: 14px; color: var(--neon-cyan)"></div>
       <div class="user-profile">
-        <span class="user-name">PRATIK_PATIL</span>
-        <div class="user-avatar">P</div>
+        <span class="user-name">{% if user %}{{ user.email.split('@')[0].upper() }}{% else %}CANDIDATE_ROOT{% endif %}</span>
+        <div class="user-avatar">{% if user %}{{ user.email[0].upper() }}{% else %}P{% endif %}</div>
       </div>
     </header>
 
@@ -374,35 +436,71 @@
 
       <!-- TABS -->
       <div style="display: flex; gap: 10px; margin-bottom: 24px; border-bottom: 1px solid var(--border-green);">
-        <button id="tabCET" class="tab-btn active" onclick="switchTab('CET')" style="padding: 10px 20px; background: none; border: none; color: var(--neon-green); cursor: pointer; border-bottom: 2px solid var(--neon-green);">[ MHT-CET ]</button>
-        <button id="tabDiploma" class="tab-btn" onclick="switchTab('DIPLOMA')" style="padding: 10px 20px; background: none; border: none; color: var(--text-dim); cursor: pointer;">[ DIPLOMA / DSE ]</button>
+        <button id="tabCET" class="tab-btn active" onclick="switchTab('CET')">[ MHT-CET ]</button>
+        <button id="tabDiploma" class="tab-btn" onclick="switchTab('DIPLOMA')">[ DIPLOMA / DSE ]</button>
       </div>
 
       <div class="predictor-grid">
-        <!-- Input Section -->
+        <!-- ─── 1. FORM INPUT PANEL ─── -->
         <div class="input-card">
           <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
           <div class="corner corner-bl"></div><div class="corner corner-br"></div>
 
+          <!-- Field 1: Score Input -->
           <div class="form-group">
             <label id="scoreLabel" class="form-label">MHT-CET PERCENTILE</label>
-            <input type="number" class="form-input" id="score" placeholder="e.g. 98.45" step="0.01">
+            <input type="number" class="form-input" id="score" placeholder="e.g. 98.45" step="0.01" min="0" max="100">
           </div>
 
+          <!-- Field 2: student-facing reservation category; CAP codes stay internal. -->
           <div class="form-group">
-            <label class="form-label">CATEGORY</label>
-            <select class="form-input" id="category">
-              <option value="">Select Category</option>
+            <label class="form-label">RESERVATION CATEGORY</label>
+            <select id="category_select" class="form-input w-full p-2.5 rounded text-sm mono cyber-input">
+                <option value="OPEN">Open</option>
             </select>
+            <p style="margin-top:6px;color:var(--text-mid);font-size:10px;line-height:1.45;">Your category can be considered against applicable Open, Reserved and (where eligible) Ladies or special CAP seat records according to Maharashtra CAP rules.</p>
           </div>
 
+          <details style="margin:2px 0 18px;border:1px solid var(--border-green);padding:10px 12px;background:rgba(0,255,102,0.025);font-size:10px;color:var(--text-mid);line-height:1.55;">
+            <summary style="cursor:pointer;color:var(--neon-cyan);font-family:'Orbitron',sans-serif;letter-spacing:.8px;font-size:10px;">UNDERSTAND CAP SEAT LABELS</summary>
+            <div style="margin-top:8px;display:grid;gap:5px;">
+              <div><strong style="color:var(--neon-green);">GOPEN</strong> — an Open-category general seat. It is not a separate student category.</div>
+              <div><strong style="color:var(--neon-green);">LOPEN</strong> — an Open-category seat reserved for eligible women candidates.</div>
+              <div><strong style="color:var(--neon-green);">GSC / LSC</strong> — SC seats for general and eligible women candidates respectively. The same G/L pattern appears for OBC, ST, VJ-A, NT and SEBC records in this data.</div>
+              <div><strong style="color:var(--neon-green);">GOBC / LOBC, GST / LST, GVJ / LVJ, GNT / LNT</strong> — the corresponding OBC (including SBC), ST, VJ/DT and NT general/ladies records. The DSE data also has GNTA/GNTB/GNTC/GNTD and matching L codes.</div>
+              <div><strong style="color:var(--neon-green);">GSEBC / LSEBC and EWS</strong> — SEBC general/ladies records and Economically Weaker Section records. They apply only when the relevant CAP claim is verified.</div>
+              <div><strong style="color:var(--neon-green);">H / O / S</strong> — Home University, Other Than Home University and State Level. They are CAP allocation scopes, not reservation categories.</div>
+              <div><strong style="color:var(--neon-green);">DEF / DEFR</strong> (for example DEFOPE, DEFOBC, DEFRSC) — defence-reservation records; only relevant with confirmed defence eligibility and the stated category.</div>
+              <div><strong style="color:var(--neon-green);">PWD / PWDR</strong> (for example PWD-O, PWDOBC, PWDR-SC) — disability-reservation records; only relevant with confirmed PwD eligibility and the stated category.</div>
+              <div><strong style="color:var(--neon-green);">EWS, TFWS, ORPHAN, MI</strong> — EWS, Tuition Fee Waiver Scheme, orphan, and minority records that occur in the bundled engineering data. Select them only when your CAP application/documents establish that eligibility.</div>
+            </div>
+          </details>
+
+          <!-- Field 3: Preferred Branch Dropdown -->
           <div class="form-group">
             <label class="form-label">PREFERRED BRANCH</label>
             <select class="form-input" id="branch">
               <option value="">All Branches</option>
+              <option value="Computer Engineering">Computer Engineering</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Artificial Intelligence & Data Science">AI & Data Science</option>
+              <option value="Cyber Security & IoT">Cyber Security & IoT</option>
+              <option value="Electronics & Telecommunication Engineering">EXTC</option>
+              <option value="Electrical Engineering">Electrical Engineering</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Chemical Engineering">Chemical Engineering</option>
+              <option value="Robotics & Automation">Robotics & Automation</option>
+              <option value="Biomedical Engineering">Biomedical Engineering</option>
+              <option value="Instrumentation Engineering">Instrumentation Engineering</option>
+              <option value="Metallurgy & Materials Engineering">Metallurgy & Materials</option>
+              <option value="Production Engineering">Production Engineering</option>
+              <option value="Textile Engineering">Textile Engineering</option>
+              <option value="Aeronautical Engineering">Aeronautical Engineering</option>
             </select>
           </div>
 
+          <!-- Field 4: City Preference Dropdown -->
           <div class="form-group">
             <label class="form-label">CITY PREFERENCE</label>
             <select class="form-input" id="city">
@@ -410,42 +508,47 @@
             </select>
           </div>
           
+          <!-- Field 5: College Type Dropdown -->
           <div class="form-group">
             <label class="form-label">COLLEGE TYPE</label>
             <select class="form-input" id="collegeType">
               <option value="">Any Type</option>
+              <option value="Government">Government</option>
+              <option value="Government Aided">Government Aided</option>
+              <option value="Autonomous">Autonomous</option>
+              <option value="Un-Aided Autonomous">Un-Aided Autonomous</option>
+              <option value="Un-Aided Non-Autonomous">Un-Aided Non-Autonomous</option>
             </select>
           </div>
 
+          <!-- Field 6: Career Interests Input + Chips -->
           <div class="form-group">
             <label class="form-label">CAREER INTERESTS</label>
-            <div id="interestsContainer" style="display: flex; flex-wrap: wrap; gap: 5px;">
-                <!-- Interest chips will be here -->
-            </div>
-            <input type="text" class="form-input" id="interestInput" placeholder="Add interest (e.g. AI, Astronomy) and press Enter" style="margin-top: 5px; font-size: 11px;">
+            <div id="interestsContainer" style="display: flex; flex-wrap: wrap; gap: 5px; min-height: 10px; margin-bottom: 4px;"></div>
+            <input type="text" class="form-input" id="interestInput" placeholder="Add interest (e.g. AI, Astronomy) and press Enter" style="font-size: 11px;">
           </div>
 
-          <!-- ADVANCED FILTERS CONTAINER -->
-          <div id="advancedFilters"></div>
-
+          <!-- Primary Trigger -->
           <button class="predict-btn" onclick="runPrediction()">⚡ RUN_ANALYSIS</button>
           
-          <div id="reportControls" style="display: none; margin-top: 20px; border-top: 1px solid var(--border-green); padding-top: 20px;">
+          <!-- Report Bar -->
+          <div id="reportControls" style="display: none; margin-top: 20px; border-top: 1px solid var(--border-green); padding-top: 16px;">
             <label class="form-label">GENERATE REPORT</label>
-            <div style="display: flex; gap: 5px;">
-                <button class="predict-btn" style="padding: 8px; font-size: 10px;" onclick="downloadReport('pdf')">PDF</button>
-                <button class="predict-btn" style="padding: 8px; font-size: 10px;" onclick="downloadReport('csv')">CSV</button>
-                <button class="predict-btn" style="padding: 8px; font-size: 10px;" onclick="downloadReport('xlsx')">EXCEL</button>
+            <div style="display: flex; gap: 8px;">
+                <button class="predict-btn" style="padding: 7px; font-size: 11px; margin: 0;" onclick="downloadReport('pdf')">[ PDF ]</button>
+                <button class="predict-btn" style="padding: 7px; font-size: 11px; margin: 0;" onclick="downloadReport('csv')">[ CSV ]</button>
+                <button class="predict-btn" style="padding: 7px; font-size: 11px; margin: 0;" onclick="downloadReport('xlsx')">[ EXCEL ]</button>
             </div>
           </div>
         </div>
 
-        <!-- Results Section -->
+        <!-- ─── 2. RIGHT PANEL RESULTS CONTAINER ─── -->
         <div class="results-section" id="results">
-          <!-- Default State -->
-          <div style="text-align: center; padding: 60px; border: 1px dashed var(--border-green); color: var(--text-dim);">
-            <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
-            <div>AWAITING_INPUT_FOR_SIMULATION...</div>
+          <!-- Default Awaiting State -->
+          <div style="text-align: center; padding: 70px 20px; border: 1px dashed var(--border-green); color: var(--text-dim); background: rgba(0,0,0,0.4);">
+            <div style="font-size: 40px; margin-bottom: 16px; color: var(--neon-cyan);">🔍</div>
+            <div style="font-family: 'Orbitron'; font-size: 14px; letter-spacing: 2px; color: var(--text-mid);">AWAITING_INPUT_FOR_SIMULATION...</div>
+            <div style="font-size: 11px; color: var(--text-dim); margin-top: 8px;">Enter your score and filters on the left panel and click RUN_ANALYSIS.</div>
           </div>
         </div>
       </div>
@@ -454,7 +557,7 @@
 </div>
 
 <script>
-// Clock
+// Real-time Clock
 function updateClock(){
   const now = new Date();
   document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
@@ -462,103 +565,41 @@ function updateClock(){
 setInterval(updateClock, 1000);
 updateClock();
 
-document.addEventListener('DOMContentLoaded', async () => {
-    console.warn("🚨 FORENSIC_DEBUG_START");
-    
-    const elements = {
-        category: document.getElementById('category'),
-        branch: document.getElementById('branch'),
-        city: document.getElementById('city'),
-        collegeType: document.getElementById('collegeType'),
-        adv: document.getElementById('advancedFilters')
-    };
-
-    for (const [name, el] of Object.entries(elements)) {
-        if (!el) console.error(`❌ MISSING_ELEMENT: #${name}`);
-        else console.log(`✅ FOUND_ELEMENT: #${name}`);
-    }
-
-    try {
-        console.log("📡 FETCHING_USER_PROFILE");
-        const userResp = await fetch('/api/auth/me');
-        if (userResp.ok) {
-            const userData = await userResp.json();
-            if (userData.career_interests) {
-                interests.push(...userData.career_interests);
-                renderInterests();
-            }
-        }
-    } catch (err) { console.warn("User profile fetch failed", err); }
-
-    try {
-        console.log("📡 FETCHING_FROM: /api/predict/filters");
-        const response = await fetch('/api/predict/filters');
-        console.log("📡 STATUS:", response.status, response.statusText);
-        
-        if (!response.ok) throw new Error(`HTTP_${response.status}`);
-
-        const filters = await response.json();
-        console.log("📦 RAW_DATA:", filters);
-
-        const populate = (id, values, name) => {
-            const el = elements[id];
-            if (!el) return;
-            console.log(`🛠 POPULATING_${name}:`, values ? values.length : 0, "items");
-            
-            let html = `<option value="">Select ${name}</option>`;
-            if (values && values.length > 0) {
-                html += values.map(v => `<option value="${v}">${v}</option>`).join('');
-            } else {
-                html += '<option value="">ERR: NO_DATA</option>';
-            }
-            el.innerHTML = html;
-            console.log(`✅ ${name}_POPULATED (Length: ${el.options.length})`);
-        };
-
-        populate('category', filters.categories, 'CATEGORY');
-        populate('branch', filters.branches, 'BRANCH');
-        populate('city', filters.cities, 'CITY');
-        populate('collegeType', filters.college_types, 'TYPE');
-
-        if (filters.advanced && elements.adv) {
-            console.log("🛠 POPULATING_ADVANCED...");
-            elements.adv.innerHTML = '';
-            for (const [col, values] of Object.entries(filters.advanced)) {
-                const group = document.createElement('div');
-                group.className = 'form-group';
-                group.innerHTML = `
-                    <label class="form-label">${col.toUpperCase()}</label>
-                    <select class="form-input adv-filter" data-col="${col}">
-                        <option value="">All ${col}</option>
-                        ${values.map(v => `<option value="${v}">${v}</option>`).join('')}
-                    </select>
-                `;
-                elements.adv.appendChild(group);
-            }
-        }
-        console.warn("🏁 FORENSIC_DEBUG_COMPLETE");
-    } catch (err) {
-        console.error('💥 CRITICAL_FAILURE:', err);
-        alert("CRITICAL_UI_FAILURE: CHECK CONSOLE");
-    }
-});
-
+// Mode Switch
 let currentMode = 'CET';
-
 function switchTab(mode) {
     currentMode = mode;
     document.getElementById('tabCET').classList.toggle('active', mode === 'CET');
     document.getElementById('tabDiploma').classList.toggle('active', mode === 'DIPLOMA');
-    document.getElementById('tabCET').style.color = mode === 'CET' ? 'var(--neon-green)' : 'var(--text-dim)';
-    document.getElementById('tabDiploma').style.color = mode === 'DIPLOMA' ? 'var(--neon-green)' : 'var(--text-dim)';
-    document.getElementById('tabCET').style.borderBottom = mode === 'CET' ? '2px solid var(--neon-green)' : 'none';
-    document.getElementById('tabDiploma').style.borderBottom = mode === 'DIPLOMA' ? '2px solid var(--neon-green)' : 'none';
-    
-    document.getElementById('scoreLabel').textContent = mode === 'CET' ? 'MHT-CET PERCENTILE' : 'DIPLOMA PERCENTAGE';
+    document.getElementById('scoreLabel').textContent = mode === 'CET' ? 'MHT-CET PERCENTILE' : 'DSE PERCENTAGE';
     document.getElementById('score').placeholder = mode === 'CET' ? 'e.g. 98.45' : 'e.g. 91.20';
+    refreshStudentCategories();
 }
 
-// Interests logic
+function populateStudentCategories(options) {
+    const select = document.getElementById('category_select');
+    if (!select || !Array.isArray(options) || !options.length) return;
+    const previous = select.value;
+    const groups = options.reduce((all, option) => {
+        const group = option.group || 'Reservation category';
+        (all[group] ||= []).push(option);
+        return all;
+    }, {});
+    select.innerHTML = Object.entries(groups).map(([group, items]) =>
+        `<optgroup label="${group}">${items.map(option => `<option value="${option.value}">${option.label}</option>`).join('')}</optgroup>`
+    ).join('');
+    select.value = options.some(option => option.value === previous) ? previous : (options.find(option => option.value === 'OPEN') || options[0]).value;
+}
+
+async function refreshStudentCategories() {
+    try {
+        const pathway = currentMode === 'CET' ? 'fe' : 'dse';
+        const response = await fetch(`/api/predict/filters?pathway=${pathway}`);
+        if (response.ok) populateStudentCategories((await response.json()).student_categories || []);
+    } catch (err) { console.warn('Category options load error:', err); }
+}
+
+// Career Interests Chips
 const interests = [];
 const interestInput = document.getElementById('interestInput');
 const interestsContainer = document.getElementById('interestsContainer');
@@ -577,8 +618,8 @@ interestInput.addEventListener('keydown', (e) => {
 
 function renderInterests() {
     interestsContainer.innerHTML = interests.map(i => `
-        <span class="probability-chip" style="font-size: 10px; border-radius: 4px; display: flex; align-items: center; gap: 5px;">
-            ${i} <span onclick="removeInterest('${i}')" style="cursor: pointer; color: var(--neon-magenta)">×</span>
+        <span style="font-size: 10px; background: rgba(0,255,102,0.1); border: 1px solid var(--neon-green); color: var(--neon-green); padding: 2px 6px; border-radius: 3px; display: inline-flex; align-items: center; gap: 5px;">
+            ${i} <span onclick="removeInterest('${i}')" style="cursor: pointer; color: var(--neon-magenta); font-weight: bold;">×</span>
         </span>
     `).join('');
 }
@@ -599,146 +640,339 @@ async function saveInterests() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ interests })
         });
-    } catch (err) { console.error("Interests Save Error:", err); }
+    } catch (err) { console.warn("Interests Save Warning:", err); }
 }
 
-async function downloadReport(format) {
-    window.location.href = `/api/predict/report/${format}`;
-}
+// Dynamic Filter Population on Page Load
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const userResp = await fetch('/api/auth/me');
+        if (userResp.ok) {
+            const userData = await userResp.json();
+            if (userData.career_interests) {
+                interests.push(...userData.career_interests);
+                renderInterests();
+            }
+        }
+    } catch (err) { console.warn("User profile fetch failed", err); }
 
-async function runPrediction(){
-  const resultsDiv = document.getElementById('results');
-  const reportControls = document.getElementById('reportControls');
-  const score = document.getElementById('score').value;
-  // ... rest of the function remains same but needs to show reportControls on success
-  const category = document.getElementById('category').value;
-  const branch = document.getElementById('branch').value;
-  const city = document.getElementById('city').value;
-  const collegeType = document.getElementById('collegeType').value;
-  
-  const extraFilters = {};
-  document.querySelectorAll('.adv-filter').forEach(el => {
-      if (el.value) extraFilters[el.dataset.col] = el.value;
-  });
+    try {
+        let cities = [];
+        let branches = [];
+        try {
+            const r = await fetch('/api/options/cities');
+            if (r.ok) cities = await r.json();
+        } catch (e) {}
 
-  if(!score) {
-    alert("Please enter your score.");
-    return;
-  }
+        try {
+            const br = await fetch('/api/options/branches');
+            if (br.ok) branches = await br.json();
+        } catch (e) {}
 
-  resultsDiv.innerHTML = `
-    <div class="loading-overlay" style="display: block;">
-      <div style="font-size: 14px; margin-bottom: 15px;">INITIALIZING_NEURAL_MATCHING...</div>
-      <div style="width: 100%; height: 2px; background: #002200; position: relative; overflow: hidden;">
-        <div style="position: absolute; height: 100%; background: var(--neon-green); width: 30%; animation: slide 1s infinite;"></div>
-      </div>
-    </div>
-  `;
+        try {
+            const fr = await fetch('/api/predict/filters');
+            if (fr.ok) {
+                const fd = await fr.json();
+                if (!cities.length) cities = fd.cities || [];
+                if (!branches.length) branches = fd.branches || [];
+                populateStudentCategories(fd.student_categories || []);
+            }
+        } catch (e) {}
 
-  try {
-      const endpoint = currentMode === 'CET' ? '/api/predict/cet' : '/api/predict/diploma';
-      const body = currentMode === 'CET' 
-        ? { percentile: parseFloat(score), category, branch, city, college_type: collegeType, extra_filters: extraFilters }
-        : { percentage: parseFloat(score), category, branch, city, college_type: collegeType, extra_filters: extraFilters };
+        const cityEl = document.getElementById('city');
+        if (cityEl && cities.length > 0) {
+            cityEl.innerHTML = '<option value="">All Cities</option>' + cities.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
 
-      console.log(`📡 SENDING_PREDICTION_REQ TO: ${endpoint}`, body);
-      const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-      });
-      
-      // Check HTTP status
-      if (!response.ok) {
-          const errorText = await response.text();
-          console.error(`❌ API ERROR: ${response.status} ${response.statusText}`, errorText);
-          
-          try {
-              const errorData = JSON.parse(errorText);
-              const errorMsg = errorData.detail || `Error (${response.status})`;
-              resultsDiv.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--neon-magenta);">ERROR: ${errorMsg}</div>`;
-          } catch {
-              resultsDiv.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--neon-magenta);">ERROR: Server returned ${response.status}</div>`;
-          }
-          return;
-      }
-      
-      const data = await response.json();
-      console.log(`✅ API_RESPONSE:`, data);
-      
-      if (!data.results || data.results.length === 0) {
-          resultsDiv.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--neon-magenta);">NO_MATCHES_FOUND: TRY_BROADER_FILTERS</div>`;
-          return;
-      }
-
-      renderResults(data.results);
-      document.getElementById('reportControls').style.display = 'block';
-  } catch (err) {
-      console.error("❌ NETWORK_ERROR:", err);
-      resultsDiv.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--neon-magenta);">NETWORK_ERROR: ${err.message || 'Unable to reach server'}</div>`;
-  }
-}
-
-function renderResults(results) {
-    const resultsDiv = document.getElementById('results');
-    
-    const categories = {
-        'Safe': results.filter(r => r.classification === 'Safe'),
-        'Moderate': results.filter(r => r.classification === 'Moderate'),
-        'Dream': results.filter(r => r.classification === 'Dream')
-    };
-
-    let html = `<div style="font-size: 13px; color: var(--neon-cyan); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                    <span>FOUND: ${results.length} UNIQUE_RECOMMENDATIONS</span>
-                    <span style="color: var(--text-dim); font-size: 10px;">RANKED_BY_ADMISSION_PROBABILITY</span>
-                </div>`;
-
-    for (const [cat, items] of Object.entries(categories)) {
-        if (items.length === 0) continue;
-        
-        const color = cat === 'Safe' ? 'var(--neon-green)' : (cat === 'Moderate' ? 'var(--neon-cyan)' : 'var(--neon-magenta)');
-        
-        html += `<div style="margin-top: 30px; border-left: 3px solid ${color}; padding-left: 20px; margin-bottom: 20px;">
-                    <div style="color: ${color}; font-family: 'Orbitron'; font-size: 16px; letter-spacing: 2px; font-weight: 700;">[ ${cat.toUpperCase()}_ZONE ]</div>
-                    <div style="font-size: 10px; color: var(--text-dim); margin-top: 5px;">COLLEGES_WITH_${cat.toUpperCase()}_ADMISSION_PROBABILITY</div>
-                 </div>`;
-        
-        html += items.map((item) => `
-            <div class="result-card" style="flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
-              <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-              <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-              <div style="position: absolute; top: 10px; right: 10px; font-size: 11px; color: var(--text-mid); font-weight: bold;">#RANK_${item.rank}</div>
-              
-              <div class="college-info" style="flex: 2;">
-                <div class="college-name" style="font-size: 16px; color: var(--neon-green); margin-bottom: 8px;">${item.college_name}</div>
-                <div class="college-meta" style="flex-wrap: wrap; gap: 12px;">
-                  <span style="background: rgba(0,229,255,0.1); padding: 2px 6px;">DTE: ${item.college_code}</span>
-                  <span style="background: rgba(0,255,65,0.05); padding: 2px 6px;">BRANCH: ${item.branch}</span>
-                  <span style="background: rgba(255,179,0,0.1); padding: 2px 6px;">TYPE: ${item.college_type}</span>
-                  <span style="color: var(--neon-cyan)">LOC: ${item.city}</span>
-                </div>
-              </div>
-
-              <div style="display: flex; gap: 30px; align-items: center; flex: 1; justify-content: flex-end; min-width: 300px;">
-                  <div class="cutoff-gauge">
-                    <div class="cutoff-value" style="font-size: 20px;">${item.cutoff}</div>
-                    <div class="cutoff-label">PREV_CUTOFF</div>
-                  </div>
-                  <div class="cutoff-gauge">
-                    <div class="cutoff-value" style="font-size: 20px; color: var(--neon-magenta);">${item.predicted_cutoff}</div>
-                    <div class="cutoff-label">2026_FORECAST</div>
-                  </div>
-                  <div style="text-align: center; min-width: 80px;">
-                    <div class="probability-chip" style="border-color: ${color}; color: ${color}; font-size: 16px; padding: 5px 10px;">${item.probability_percent}%</div>
-                    <div style="font-size: 9px; color: var(--text-dim); margin-top: 5px;">PROBABILITY</div>
-                  </div>
-              </div>
-            </div>
-        `).join('');
+        // Rebuild the branch dropdown from the live dataset so filter values always
+        // match the strings actually stored on each row (prevents empty target/dream
+        // zones caused by a stale, hand-typed branch list going out of sync with data).
+        const branchEl = document.getElementById('branch');
+        if (branchEl && branches.length > 0) {
+            branchEl.innerHTML = '<option value="">All Branches</option>' +
+                branches.map(b => `<option value="${b}">${b}</option>`).join('');
+        }
+    } catch (err) {
+        console.error('Filter options load error:', err);
     }
-    
+});
+
+// Download Report
+async function downloadReport(format) {
+    const score = document.getElementById('score').value;
+    const categoryEl = document.getElementById('category_select') || document.getElementById('category');
+    const category = categoryEl ? categoryEl.value : 'OPEN';
+    const branch = document.getElementById('branch').value;
+    const city = document.getElementById('city').value;
+    const collegeType = document.getElementById('collegeType').value;
+
+    const params = new URLSearchParams();
+    if (score) params.append('percentile', score);
+    if (category) params.append('category', category);
+    if (branch) params.append('branch', branch);
+    if (city) params.append('city', city);
+    if (collegeType) params.append('college_type', collegeType);
+    params.append('pathway', currentMode === 'CET' ? 'fe' : 'dse');
+
+    window.location.href = `/api/predict/report/${format}?${params.toString()}`;
+}
+
+// Primary Prediction Trigger
+async function runPrediction() {
+    const resultsDiv = document.getElementById('results');
+    const scoreVal = document.getElementById('score').value;
+    const categoryEl = document.getElementById('category_select') || document.getElementById('category');
+    const category = categoryEl ? categoryEl.value : 'OPEN';
+    const branch = document.getElementById('branch').value;
+    const city = document.getElementById('city').value;
+    const collegeType = document.getElementById('collegeType').value;
+
+    const numericScore = Number(scoreVal);
+    if (!scoreVal || !Number.isFinite(numericScore) || numericScore < 0 || numericScore > 100) {
+        alert("Enter a score from 0 to 100 (for example, 95.50)." );
+        return;
+    }
+
+    resultsDiv.innerHTML = `
+        <div style="text-align: center; padding: 60px 20px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-green);">
+            <div style="font-family: 'Orbitron'; font-size: 14px; color: var(--neon-green); margin-bottom: 16px; letter-spacing: 2px;">
+                INITIALIZING_NEURAL_MATCHING...
+            </div>
+            <div style="width: 100%; max-width: 320px; height: 3px; background: #002200; position: relative; overflow: hidden; margin: 0 auto;">
+                <div style="position: absolute; height: 100%; background: var(--neon-green); width: 35%; animation: slide 1s infinite;"></div>
+            </div>
+        </div>
+    `;
+
+    try {
+        const endpoint = currentMode === 'CET' ? '/api/predict/cet' : '/api/predict/diploma';
+        const payload = {
+            category: category || "OPEN",
+            branch: branch || "All",
+            city: city || "All",
+            college_type: collegeType || "All",
+        };
+
+        if (currentMode === 'CET') {
+            payload.percentile = numericScore;
+        } else {
+            payload.percentage = numericScore;
+        }
+
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            const msg = errData.detail || `Server returned status ${response.status}`;
+            resultsDiv.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--neon-magenta); border: 1px solid var(--neon-magenta);">ERROR: ${msg}</div>`;
+            return;
+        }
+
+        const data = await response.json();
+        renderResults(data);
+        document.getElementById('reportControls').style.display = 'block';
+
+    } catch (err) {
+        console.error("Prediction error:", err);
+        resultsDiv.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--neon-magenta); border: 1px solid var(--neon-magenta);">NETWORK_ERROR: ${err.message || 'Unable to connect'}</div>`;
+    }
+}
+
+// ── Client-Side Pagination State & Controller ──
+let predictionState = {
+    safe_zone: [],
+    target_zone: [],
+    dream_zone: [],
+    currentPage: { target: 1, safe: 1, dream: 1 },
+    pageSize: 15,
+    candidateScore: null
+};
+
+function createCardHTML(item, rankNum) {
+    const prevVal = (item.prev_cutoff != null ? item.prev_cutoff : item.previous_cutoff) || '0.00';
+    const scoreVal = item.candidate_score != null ? item.candidate_score : predictionState.candidateScore;
+    const scoreText = Number.isFinite(Number(scoreVal)) ? Number(scoreVal).toFixed(2) : 'N/A';
+    const diffVal = item.score_diff != null ? Number(item.score_diff) : (Number(scoreVal) - Number(prevVal));
+    const diffText = Number.isFinite(diffVal) ? `${diffVal >= 0 ? '+' : ''}${diffVal.toFixed(2)}` : 'N/A';
+    const accentColor = item.accent_color || (item.status === 'SAFE' ? '#00FF66' : (item.status === 'MODERATE' ? '#FFB300' : '#FF3366'));
+    const matchLabel = item.status === 'SAFE' ? 'SAFE — HIGHER HISTORICAL ADMISSION CHANCE' : (item.status === 'MODERATE' ? 'MODERATE — COMPETITIVE ADMISSION CHANCE' : 'DREAM — MORE COMPETITIVE / LOWER HISTORICAL CHANCE');
+
+    return `
+        <div class="result-card" style="border-color: #064e3b;" onmouseenter="this.style.borderColor='${accentColor}'" onmouseleave="this.style.borderColor='#064e3b'">
+            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+            
+            <div style="position: absolute; top: 12px; right: 14px; font-size: 12px; color: #00aa2b; font-weight: 700; font-family: 'Orbitron';">
+                #RANK_${rankNum}
+            </div>
+
+            <!-- Left: Institute Info -->
+            <div class="college-info">
+                <div class="college-name">${item.college_name || 'Maharashtra Institute of Technology'}</div>
+                <div class="college-meta">
+                    <span class="meta-tag tag-dte">DTE: ${item.dte_code || item.college_code || '00000'}</span>
+                    <span class="meta-tag tag-branch">BRANCH: ${item.branch || 'General'}</span>
+                    <span class="meta-tag tag-type">TYPE: ${item.college_type || 'Un-Aided'}</span>
+                    <span class="meta-tag tag-loc">LOC: ${item.location || item.city || 'Maharashtra'}</span>
+                    <span class="meta-tag tag-branch">SEAT: ${item.seat_code || item.category_used || 'N/A'}</span>
+                    <span class="meta-tag tag-dte">YEAR: ${item.year || 'N/A'} ${item.round ? `// ${item.round}` : ''}</span>
+                </div>
+                <div style="margin-top:8px;color:var(--text-mid);font-size:10px;line-height:1.4;">${item.seat_context || 'Applicable CAP opportunity'}</div>
+            </div>
+
+            <!-- Right: historical-cutoff match summary -->
+            <div class="metrics-cluster">
+                <div class="cutoff-gauge">
+                    <div class="cutoff-value cutoff-val-prev">${prevVal}</div>
+                    <div class="cutoff-label">PREVIOUS CAP CUTOFF</div>
+                </div>
+                <div class="probability-box">
+                    <div class="probability-chip" style="border-color: ${accentColor}; color: ${accentColor}; box-shadow: 0 0 10px ${accentColor}33; font-size:9px;max-width:126px;line-height:1.25;">${matchLabel}</div>
+                    <div class="cutoff-label" style="margin-top: 5px;">YOUR SCORE: ${scoreText}<br>DIFFERENCE: ${diffText}</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderZonePage(zoneKey) {
+    const listKey = zoneKey + '_zone';
+    const items = predictionState[listKey] || [];
+    const container = document.getElementById(`${zoneKey}_cards`);
+    const pagContainer = document.getElementById(`${zoneKey}_pagination`);
+    if (!container || !pagContainer) return;
+
+    if (items.length === 0) {
+        container.innerHTML = '';
+        pagContainer.innerHTML = '';
+        return;
+    }
+
+    const pageSize = predictionState.pageSize;
+    const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+    let curPage = predictionState.currentPage[zoneKey] || 1;
+    if (curPage > totalPages) curPage = totalPages;
+    if (curPage < 1) curPage = 1;
+    predictionState.currentPage[zoneKey] = curPage;
+
+    const startIdx = (curPage - 1) * pageSize;
+    const pageItems = items.slice(startIdx, startIdx + pageSize);
+
+    container.innerHTML = pageItems.map((item, i) => {
+        const rankNum = item.rank || (startIdx + i + 1);
+        return createCardHTML(item, rankNum);
+    }).join('');
+
+    const prevDisabled = curPage <= 1;
+    const nextDisabled = curPage >= totalPages;
+    const color = zoneKey === 'safe' ? '#00FF66' : (zoneKey === 'target' ? '#FFB300' : '#FF3366');
+
+    const navBtn = (label, disabled, delta) => `
+        <button onclick="changeZonePage('${zoneKey}', ${delta})"
+            style="padding: 7px 16px; border: 1px solid ${disabled ? '#1f2937' : color}; color: ${disabled ? '#374151' : color};
+            background: transparent; font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 1.5px;
+            cursor: ${disabled ? 'not-allowed' : 'pointer'}; transition: all 0.15s;"
+            ${disabled ? 'disabled' : ''}>${label}</button>
+    `;
+
+    pagContainer.innerHTML = `
+        ${navBtn('◄ PREV', prevDisabled, -1)}
+        <span style="color: #9ca3af; letter-spacing: 2px; font-size: 11px;">PAGE ${curPage} OF ${totalPages} &nbsp;|&nbsp; ${items.length} RESULTS</span>
+        ${navBtn('NEXT ►', nextDisabled, 1)}
+    `;
+}
+
+function changeZonePage(zoneKey, delta) {
+    const listKey = zoneKey + '_zone';
+    const items = predictionState[listKey] || [];
+    const totalPages = Math.max(1, Math.ceil(items.length / predictionState.pageSize));
+    let curPage = (predictionState.currentPage[zoneKey] || 1) + delta;
+    if (curPage >= 1 && curPage <= totalPages) {
+        predictionState.currentPage[zoneKey] = curPage;
+        renderZonePage(zoneKey);
+        const cardContainer = document.getElementById(`${zoneKey}_cards`);
+        if (cardContainer) {
+            cardContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+}
+
+function renderResults(data) {
+    const resultsDiv = document.getElementById('results');
+
+    // Store in JS memory
+    const recommendations = data.recommendations || data.results || [];
+    predictionState.candidateScore = data.candidate_score != null ? data.candidate_score : Number(document.getElementById('score').value);
+    predictionState.safe_zone = recommendations.filter(r => r.status === 'SAFE');
+    predictionState.target_zone = recommendations.filter(r => r.status === 'MODERATE' || r.classification === 'Moderate');
+    predictionState.dream_zone = recommendations.filter(r => r.status === 'DREAM');
+    predictionState.currentPage = { target: 1, safe: 1, dream: 1 };
+
+    const totalFound = data.unique_college_count != null ? data.unique_college_count : (predictionState.safe_zone.length + predictionState.target_zone.length + predictionState.dream_zone.length);
+
+    if (totalFound === 0) {
+        resultsDiv.innerHTML = `
+            <div style="text-align: center; padding: 50px 20px; border: 1px solid var(--neon-magenta); color: var(--neon-magenta);">
+                <div style="font-family: 'Orbitron'; font-size: 14px; letter-spacing: 1.5px; margin-bottom: 8px;">[ NO_MATCHES_FOUND ]</div>
+                <div style="font-size: 11px; color: var(--text-dim);">No institutes matched your exact filter combination. Try selecting "All Branches" or "All Cities".</div>
+            </div>
+        `;
+        return;
+    }
+
+    let html = `
+        <div style="font-size: 12px; color: var(--neon-cyan); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-green); padding-bottom: 10px;">
+            <span>FOUND: <strong style="color:var(--neon-green)">${totalFound}</strong> COLLEGES (SAFE: ${predictionState.safe_zone.length} | MODERATE: ${predictionState.target_zone.length} | DREAM: ${predictionState.dream_zone.length})</span>
+            <span style="color: var(--text-dim); font-size: 10px; letter-spacing: 1px;">HISTORICAL_CAP_COMPARISON</span>
+        </div>
+    `;
+
+    // 1. Target Zone
+    if (predictionState.target_zone.length > 0) {
+        html += `
+            <div class="zone-header" style="margin-top: 26px; border-left: 3px solid #FFB300; padding-left: 14px; margin-bottom: 14px;">
+                <div style="color: #FFB300; font-family: 'Orbitron', sans-serif; font-size: 15px; letter-spacing: 1.5px; font-weight: 700;">[ MODERATE — COMPETITIVE ADMISSION CHANCE ] (${predictionState.target_zone.length})</div>
+            </div>
+            <div id="target_cards" class="zone-container" style="border: 1px solid #FFB30044; box-shadow: 0 0 14px #FFB30022 inset; padding: 4px 4px 0 4px; margin-bottom: 6px;"></div>
+            <div id="target_pagination" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 11px; font-family: 'Share Tech Mono', monospace;"></div>
+        `;
+    }
+
+    // 2. Safe Zone
+    if (predictionState.safe_zone.length > 0) {
+        html += `
+            <div class="zone-header" style="margin-top: 26px; border-left: 3px solid #00FF66; padding-left: 14px; margin-bottom: 14px;">
+                <div style="color: #00FF66; font-family: 'Orbitron', sans-serif; font-size: 15px; letter-spacing: 1.5px; font-weight: 700;">[ SAFE — HIGHER HISTORICAL ADMISSION CHANCE ] (${predictionState.safe_zone.length})</div>
+            </div>
+            <div id="safe_cards" class="zone-container" style="border: 1px solid #00FF6644; box-shadow: 0 0 14px #00FF6622 inset; padding: 4px 4px 0 4px; margin-bottom: 6px;"></div>
+            <div id="safe_pagination" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 11px; font-family: 'Share Tech Mono', monospace;"></div>
+        `;
+    }
+
+    // 3. Dream Zone
+    if (predictionState.dream_zone.length > 0) {
+        html += `
+            <div class="zone-header" style="margin-top: 26px; border-left: 3px solid #FF3366; padding-left: 14px; margin-bottom: 14px;">
+                <div style="color: #FF3366; font-family: 'Orbitron', sans-serif; font-size: 15px; letter-spacing: 1.5px; font-weight: 700;">[ DREAM — MORE COMPETITIVE / LOWER HISTORICAL CHANCE ] (${predictionState.dream_zone.length})</div>
+            </div>
+            <div id="dream_cards" class="zone-container" style="border: 1px solid #FF336644; box-shadow: 0 0 14px #FF336622 inset; padding: 4px 4px 0 4px; margin-bottom: 6px;"></div>
+            <div id="dream_pagination" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 11px; font-family: 'Share Tech Mono', monospace;"></div>
+        `;
+    }
+
     resultsDiv.innerHTML = html;
+
+    // Render Page 1 for each active zone
+    if (predictionState.target_zone.length > 0) renderZonePage('target');
+    if (predictionState.safe_zone.length > 0) renderZonePage('safe');
+    if (predictionState.dream_zone.length > 0) renderZonePage('dream');
 }
 </script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/digipath-shell.js"></script>
 </body>
 </html>
