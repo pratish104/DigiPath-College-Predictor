@@ -214,8 +214,9 @@ async def login(
             detail="Missing credentials: Email/Username and password are required.",
         )
 
-    # Ensure admin user is seeded if user attempts admin login
-    if email == "admin@digipath.ai":
+    # Synchronize the explicitly configured bootstrap administrator, if any.
+    bootstrap_admin_email = os.getenv("BOOTSTRAP_ADMIN_EMAIL", "").strip().lower()
+    if bootstrap_admin_email and email == bootstrap_admin_email:
         UserService.seed_admin_user(db)
 
     user = db.query(models.User).filter(models.User.email == email).first()

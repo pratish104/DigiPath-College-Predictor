@@ -320,11 +320,13 @@ class UserService:
 
     @staticmethod
     def seed_admin_user(db: Session) -> Optional[models.User]:
-        """Optionally provision the first administrator from explicit environment settings.
+        """Provision or synchronize the bootstrap administrator from environment settings.
 
         A public deployment must never create an account with a known password.
-        Set ``BOOTSTRAP_ADMIN_EMAIL`` and ``BOOTSTRAP_ADMIN_PASSWORD`` only for
-        the first deployment, then remove the password variable afterwards.
+        When both values are configured, the named administrator's password is
+        synchronized on startup and matching login attempts. Remove the
+        bootstrap password after initial provisioning when no synchronization is
+        needed.
         """
         import auth_service
         import os
@@ -372,8 +374,8 @@ class UserService:
                 log.info("Administrator bootstrap account provisioned: %s", admin_email)
             else:
                 updated = False
-                if admin_user.role not in ("ADMIN", "SUPER_ADMIN"):
-                    admin_user.role = "SUPER_ADMIN"
+                if (admin_user.role or "").upper() != "ADMIN":
+                    admin_user.role = "ADMIN"
                     updated = True
                 if (admin_user.admin_level or 0) < 2:
                     admin_user.admin_level = 2
@@ -381,6 +383,10 @@ class UserService:
                 if (admin_user.credits_balance or 0) < 1000:
                     admin_user.credits_balance = 9999
                     updated = True
+                if not auth_service.verify_password(admin_password, admin_user.hashed_password):
+                    admin_user.hashed_password = auth_service.get_password_hash(admin_password)
+                    updated = True
+                    log.info("Administrator bootstrap password synchronized: %s", admin_email)
                 if updated:
                     db.add(admin_user)
                     db.commit()
