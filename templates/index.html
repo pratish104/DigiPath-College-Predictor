@@ -3,180 +3,1156 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIGIPATH_AI // NEXT-GEN_CAREER_INTELLIGENCE</title>
+<meta name="description" content="DigiPath AI — Predict MHT-CET & DSE cutoffs, match jobs with neural AI, detect placement scams. Built for Maharashtra engineering students.">
+<title>DIGIPATH_AI // PREDICT CUTOFFS. MATCH JOBS. DETECT SCAMS.</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ─── RESET & ROOT ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --neon-green: #00ff41;
-    --neon-cyan: #00e5ff;
-    --neon-magenta: #ff00ff;
-    --neon-amber: #ffb300;
-    --bg-dark: #000000;
-    --bg-panel: #050f05;
-    --bg-card: #020a02;
-    --border-green: #00ff4133;
-    --border-green-solid: #00ff41;
-    --text-dim: #006620;
-    --text-mid: #00aa2b;
-    --scan-line: rgba(0, 255, 65, 0.03);
-  }
+:root {
+  --neon:       #00ff66;
+  --neon-dim:   rgba(0,255,102,0.12);
+  --neon-glow:  rgba(0,255,102,0.35);
+  --cyan:       #00e5ff;
+  --cyan-dim:   rgba(0,229,255,0.12);
+  --magenta:    #ff00ff;
+  --amber:      #ffb300;
+  --red:        #ff0055;
+  --bg:         #0a0e14;
+  --bg2:        #070b10;
+  --bg3:        #050810;
+  --panel:      rgba(0,255,102,0.04);
+  --panel2:     rgba(0,229,255,0.04);
+  --border:     rgba(0,255,102,0.18);
+  --border-c:   rgba(0,229,255,0.18);
+  --text-dim:   #004d22;
+  --text-mid:   #00aa44;
+  --scan:       rgba(0,255,102,0.025);
+  --mono:       "Share Tech Mono", monospace;
+  --orb:        "Orbitron", sans-serif;
+  --vt:         "VT323", monospace;
+  --radius:     0px;
+  --transition: 0.22s ease;
+}
 
-  html, body {
-    height: 100%;
-    background: var(--bg-dark);
-    color: var(--neon-green);
-    font-family: 'Share Tech Mono', monospace;
-    overflow-x: hidden;
-  }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--neon);
+  font-family: var(--mono);
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
 
-  /* CRT scanline overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      var(--scan-line) 0px,
-      var(--scan-line) 1px,
-      transparent 1px,
-      transparent 2px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
+/* CRT scanlines overlay */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    var(--scan) 0px, var(--scan) 1px,
+    transparent 1px, transparent 2px
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
 
-  /* grid bg */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+/* Neural grid background */
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,102,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,102,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
 
-  .hero-section {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 20px;
-  }
+/* ─── SCROLLBAR ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--neon); }
 
-  .logo-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: clamp(40px, 10vw, 80px);
-    font-weight: 900;
-    color: var(--neon-green);
-    letter-spacing: 0.15em;
-    text-shadow: 0 0 30px rgba(0,255,65,0.7);
-    margin-bottom: 20px;
-  }
+/* ─── TOPBAR ────────────────────────────────────────────────────────────── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(7,11,16,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; height: 56px;
+}
+.topbar-brand {
+  font-family: var(--orb); font-size: 14px; font-weight: 900;
+  color: var(--neon); letter-spacing: 2px; text-decoration: none;
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.topbar-brand .brand-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--neon);
+  box-shadow: 0 0 8px var(--neon);
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
 
-  .hero-sub {
-    font-size: clamp(14px, 2vw, 20px);
-    color: var(--neon-cyan);
-    letter-spacing: 0.3em;
-    max-width: 800px;
-    line-height: 1.6;
-    margin-bottom: 40px;
-  }
+.topbar-brand span { color: var(--cyan); }
 
-  .cta-group {
-    display: flex;
-    gap: 24px;
-  }
+.topbar-center {
+  display: flex; align-items: center; gap: 2px;
+  flex: 1; justify-content: center;
+}
+.topbar-center a {
+  font-size: 10px; letter-spacing: 1px;
+  color: var(--text-mid); text-decoration: none;
+  padding: 5px 10px; border: 1px solid transparent;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.topbar-center a:hover {
+  color: var(--neon); border-color: var(--border);
+  background: var(--panel);
+  text-shadow: 0 0 6px var(--neon-glow);
+}
 
-  .btn-primary {
-    background: transparent;
-    border: 1px solid var(--neon-green);
-    color: var(--neon-green);
-    font-family: 'Share Tech Mono', monospace;
-    padding: 16px 40px;
-    font-size: 18px;
-    letter-spacing: 4px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-decoration: none;
-  }
-  .btn-primary:hover {
-    background: var(--neon-green);
-    color: #000;
-    box-shadow: 0 0 30px var(--neon-green);
-  }
+.topbar-right {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
 
-  .btn-secondary {
-    background: transparent;
-    border: 1px solid var(--neon-cyan);
-    color: var(--neon-cyan);
-    font-family: 'Share Tech Mono', monospace;
-    padding: 16px 40px;
-    font-size: 18px;
-    letter-spacing: 4px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-decoration: none;
-  }
-  .btn-secondary:hover {
-    background: var(--neon-cyan);
-    color: #000;
-    box-shadow: 0 0 30px var(--neon-cyan);
-  }
+/* System status ticker */
+.sys-ticker {
+  font-size: 10px; color: var(--neon); letter-spacing: 1px;
+  display: flex; align-items: center; gap: 6px; padding: 3px 10px;
+  border: 1px solid rgba(0,255,102,0.2); background: rgba(0,255,102,0.04);
+}
+.sys-ticker-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--neon); box-shadow: 0 0 6px var(--neon);
+  animation: blink-dot 2s infinite;
+}
+@keyframes blink-dot { 0%,100%{opacity:1} 50%{opacity:0.2} }
 
-  /* ─── STATUS BAR ─── */
-  .status-bar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 32px;
-    background: #000;
-    border-bottom: 1px solid var(--border-green);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    font-size: 11px;
-    color: var(--text-mid);
-    z-index: 100;
-  }
+/* Live clock */
+.live-clock {
+  font-size: 11px; color: var(--cyan); letter-spacing: 1px;
+  font-family: var(--vt); font-size: 14px;
+}
 
-  @media (max-width: 600px) {
-    .cta-group { flex-direction: column; gap: 15px; }
-  }
+/* ─── USER PILL ─────────────────────────────────────────────────────────── */
+#userPillWrap { display: none; position: relative; }
+
+.user-pill {
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; padding: 5px 12px 5px 6px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  transition: border-color var(--transition);
+  user-select: none;
+}
+.user-pill:hover { border-color: var(--neon); }
+
+.pill-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--neon), var(--cyan));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: bold; color: #000; flex-shrink: 0;
+}
+.pill-name { font-size: 11px; color: var(--neon); letter-spacing: 1px; }
+.pill-chevron {
+  font-size: 10px; color: var(--text-mid);
+  transition: transform var(--transition); margin-left: 2px;
+}
+.user-pill.open .pill-chevron { transform: rotate(180deg); }
+
+/* Dropdown menu */
+.pill-dropdown {
+  display: none; position: absolute; top: calc(100% + 6px); right: 0;
+  min-width: 180px;
+  background: rgba(5,8,16,0.98);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  z-index: 200;
+}
+.pill-dropdown.open { display: block; }
+.pill-dropdown a, .pill-dropdown button {
+  display: block; width: 100%;
+  padding: 10px 14px; font-size: 11px; letter-spacing: 1px;
+  color: var(--text-mid); text-decoration: none;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--mono); text-align: left;
+  transition: all var(--transition);
+  border-bottom: 1px solid rgba(0,255,102,0.06);
+}
+.pill-dropdown a:hover, .pill-dropdown button:hover {
+  color: var(--neon); background: var(--panel);
+  padding-left: 18px;
+}
+.pill-dropdown button { color: var(--red); }
+.pill-dropdown button:hover { color: #ff4444; background: rgba(255,0,85,0.06); }
+
+/* Login CTA button */
+#loginNavBtn {
+  font-size: 11px; letter-spacing: 1.5px; padding: 7px 14px;
+  background: rgba(0,255,102,0.08);
+  border: 1px solid var(--neon); color: var(--neon);
+  cursor: pointer; font-family: var(--mono);
+  text-decoration: none; display: inline-block;
+  animation: glow-pulse 3s infinite;
+  transition: all var(--transition);
+}
+#loginNavBtn:hover { background: rgba(0,255,102,0.18); text-shadow: 0 0 8px var(--neon); }
+@keyframes glow-pulse { 0%,100%{box-shadow:0 0 6px rgba(0,255,102,0.2)} 50%{box-shadow:0 0 14px rgba(0,255,102,0.5)} }
+
+/* Mobile hamburger hidden by default */
+.mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--neon); font-size: 18px; }
+
+/* ─── GENERAL LAYOUT ────────────────────────────────────────────────────── */
+main { position: relative; z-index: 1; }
+
+section { padding: 100px 0; overflow: hidden; }
+
+.container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+.section-tag {
+  font-size: 10px; letter-spacing: 3px; color: var(--cyan);
+  text-transform: uppercase; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-tag::before {
+  content: ""; display: inline-block; width: 24px; height: 1px;
+  background: var(--cyan);
+}
+
+.section-title {
+  font-family: var(--orb); font-size: clamp(24px, 4vw, 40px);
+  font-weight: 900; color: var(--neon); line-height: 1.2;
+  letter-spacing: 2px; margin-bottom: 16px;
+}
+
+.section-subtitle {
+  font-size: 13px; color: var(--text-mid); line-height: 1.8; max-width: 560px;
+}
+
+/* HUD corner brackets */
+.hud {
+  position: relative;
+}
+.hud::before, .hud::after,
+.hud .hud-bl::before, .hud .hud-bl::after {
+  content: "";
+  position: absolute;
+  width: 14px; height: 14px;
+  border-color: var(--neon);
+  border-style: solid;
+  pointer-events: none;
+}
+.hud::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.hud::after  { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+.hud .hud-bl::before { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+.hud .hud-bl::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+/* Scroll-reveal animation base */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.22s; }
+.reveal-delay-3 { transition-delay: 0.34s; }
+.reveal-delay-4 { transition-delay: 0.46s; }
+
+/* ─── HERO SECTION ──────────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding-top: 56px;
+  position: relative;
+}
+
+.hero-radial {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 70% 50% at 50% 40%, rgba(0,255,102,0.06) 0%, transparent 70%);
+}
+
+.hero-content {
+  position: relative; z-index: 2;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+  align-items: center;
+}
+
+.hero-left {}
+
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 4px; color: var(--cyan);
+  margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+}
+.hero-eyebrow::before {
+  content: ""; width: 30px; height: 1px; background: var(--cyan);
+}
+
+.hero-headline {
+  font-family: var(--orb); font-size: clamp(28px, 4.5vw, 52px);
+  font-weight: 900; line-height: 1.15; letter-spacing: 2px;
+  margin-bottom: 28px;
+}
+.hero-headline .line-1 { color: var(--neon); display: block; }
+.hero-headline .line-2 { color: var(--cyan); display: block; }
+.hero-headline .line-3 { color: var(--amber); display: block; }
+
+.hero-desc {
+  font-size: 13px; color: var(--text-mid); line-height: 1.9;
+  max-width: 460px; margin-bottom: 36px;
+}
+
+.hero-cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.btn-primary {
+  padding: 13px 28px; font-family: var(--mono);
+  font-size: 12px; letter-spacing: 2px;
+  background: rgba(0,255,102,0.1); color: var(--neon);
+  border: 1px solid var(--neon); cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: all var(--transition);
+  position: relative; overflow: hidden;
+}
+.btn-primary::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(0,255,102,0.1), transparent);
+  transform: translateX(-100%); transition: transform 0.5s;
+}
+.btn-primary:hover::before { transform: translateX(100%); }
+.btn-primary:hover { background: rgba(0,255,102,0.2); box-shadow: 0 0 18px rgba(0,255,102,0.25); }
+
+.btn-secondary {
+  padding: 13px 28px; font-family: var(--mono);
+  font-size: 12px; letter-spacing: 2px;
+  background: transparent; color: var(--cyan);
+  border: 1px solid var(--border-c); cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: all var(--transition);
+}
+.btn-secondary:hover { border-color: var(--cyan); background: var(--cyan-dim); }
+
+/* Hero right — HUD card stack */
+.hero-right { display: flex; flex-direction: column; gap: 16px; }
+
+.hud-card {
+  background: rgba(7,11,16,0.85);
+  border: 1px solid var(--border);
+  padding: 18px 22px;
+  position: relative;
+  backdrop-filter: blur(12px);
+}
+.hud-card:nth-child(1) { animation: float1 5s ease-in-out infinite; }
+.hud-card:nth-child(2) { animation: float2 6s ease-in-out infinite; }
+.hud-card:nth-child(3) { animation: float3 5.5s ease-in-out infinite; }
+
+@keyframes float1 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
+@keyframes float2 { 0%,100%{transform:translateY(-4px)} 50%{transform:translateY(5px)} }
+@keyframes float3 { 0%,100%{transform:translateY(2px)} 50%{transform:translateY(-6px)} }
+
+.hud-card-label {
+  font-size: 9px; letter-spacing: 2px; color: var(--text-mid); margin-bottom: 8px;
+}
+.hud-card-value {
+  font-family: var(--orb); font-size: 22px; font-weight: 700;
+  color: var(--neon); letter-spacing: 2px;
+}
+.hud-card-value.cyan { color: var(--cyan); }
+.hud-card-value.amber { color: var(--amber); }
+.hud-card-sub { font-size: 11px; color: var(--text-mid); margin-top: 4px; }
+
+.hud-card .corner-tl, .hud-card .corner-tr,
+.hud-card .corner-bl, .hud-card .corner-br {
+  position: absolute; width: 12px; height: 12px;
+  border-color: var(--neon); border-style: solid;
+}
+.hud-card .corner-tl { top:-1px; left:-1px; border-width:2px 0 0 2px; }
+.hud-card .corner-tr { top:-1px; right:-1px; border-width:2px 2px 0 0; }
+.hud-card .corner-bl { bottom:-1px; left:-1px; border-width:0 0 2px 2px; }
+.hud-card .corner-br { bottom:-1px; right:-1px; border-width:0 2px 2px 0; }
+
+/* ─── STAT COUNTERS ─────────────────────────────────────────────────────── */
+.stats-matrix {
+  background: rgba(0,255,102,0.03);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+}
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+}
+.stat-cell {
+  padding: 40px 20px; text-align: center;
+  border-right: 1px solid var(--border);
+  position: relative; transition: background var(--transition);
+}
+.stat-cell:last-child { border-right: none; }
+.stat-cell:hover { background: rgba(0,255,102,0.04); }
+.stat-number {
+  font-family: var(--orb); font-size: clamp(28px, 4vw, 42px);
+  font-weight: 900; color: var(--neon); letter-spacing: 2px;
+  text-shadow: 0 0 18px rgba(0,255,102,0.4);
+  line-height: 1;
+}
+.stat-number.cyan-num { color: var(--cyan); text-shadow: 0 0 18px rgba(0,229,255,0.4); }
+.stat-number.amber-num { color: var(--amber); text-shadow: 0 0 18px rgba(255,179,0,0.4); }
+.stat-label { font-size: 10px; color: var(--text-mid); letter-spacing: 2px; margin-top: 8px; }
+
+/* ─── PROBLEM SECTION ───────────────────────────────────────────────────── */
+.problem-section {
+  background: var(--bg2);
+  position: relative;
+}
+.problem-section::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+.problem-header { text-align: center; margin-bottom: 64px; }
+.problem-header .section-tag { justify-content: center; }
+.problem-header .section-tag::before { display: none; }
+
+.problem-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+.problem-card {
+  background: rgba(7,11,16,0.8);
+  border: 1px solid rgba(255,0,85,0.2);
+  border-top: 2px solid var(--red);
+  padding: 32px 28px; position: relative;
+  transition: all var(--transition);
+}
+.problem-card:hover {
+  border-color: rgba(255,0,85,0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(255,0,85,0.08);
+}
+.problem-card .corner-tl, .problem-card .corner-tr,
+.problem-card .corner-bl, .problem-card .corner-br {
+  position: absolute; width: 10px; height: 10px;
+  border-color: rgba(255,0,85,0.4); border-style: solid;
+}
+.problem-card .corner-tl { top:-1px; left:-1px; border-width:2px 0 0 2px; }
+.problem-card .corner-tr { top:-1px; right:-1px; border-width:2px 2px 0 0; }
+.problem-card .corner-bl { bottom:-1px; left:-1px; border-width:0 0 2px 2px; }
+.problem-card .corner-br { bottom:-1px; right:-1px; border-width:0 2px 2px 0; }
+
+.problem-num {
+  font-family: var(--vt); font-size: 56px; color: rgba(255,0,85,0.15);
+  line-height: 1; margin-bottom: 16px; letter-spacing: 2px;
+}
+.problem-icon { font-size: 28px; margin-bottom: 14px; }
+.problem-title {
+  font-family: var(--orb); font-size: 13px; font-weight: 700;
+  color: var(--red); letter-spacing: 1px; margin-bottom: 12px; line-height: 1.4;
+}
+.problem-desc { font-size: 12px; color: var(--text-mid); line-height: 1.8; }
+
+/* ─── SOLUTION / CAPABILITIES GRID ─────────────────────────────────────── */
+.solution-section { position: relative; }
+
+.solution-header { text-align: center; margin-bottom: 64px; }
+.solution-header .section-tag { justify-content: center; }
+.solution-header .section-tag::before { display: none; }
+
+.cap-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  border: 1px solid var(--border);
+}
+.cap-cell {
+  background: rgba(7,11,16,0.7); padding: 36px 28px;
+  border: 1px solid rgba(0,255,102,0.06);
+  transition: all 0.3s ease; cursor: default;
+  position: relative; overflow: hidden;
+}
+.cap-cell::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,255,102,0.04), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.cap-cell:hover { background: rgba(0,255,102,0.06); }
+.cap-cell:hover::before { opacity: 1; }
+.cap-cell:hover .cap-icon-wrap { border-color: var(--neon); box-shadow: 0 0 14px rgba(0,255,102,0.2); }
+.cap-cell:hover .cap-title { color: var(--neon); text-shadow: 0 0 8px rgba(0,255,102,0.4); }
+
+.cap-cell.cyan-accent:hover { background: rgba(0,229,255,0.05); }
+.cap-cell.cyan-accent:hover .cap-icon-wrap { border-color: var(--cyan); box-shadow: 0 0 14px rgba(0,229,255,0.2); }
+.cap-cell.cyan-accent:hover .cap-title { color: var(--cyan); }
+
+.cap-cell.amber-accent:hover { background: rgba(255,179,0,0.05); }
+.cap-cell.amber-accent:hover .cap-icon-wrap { border-color: var(--amber); box-shadow: 0 0 14px rgba(255,179,0,0.2); }
+.cap-cell.amber-accent:hover .cap-title { color: var(--amber); }
+
+.cap-icon-wrap {
+  width: 48px; height: 48px; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 18px;
+  transition: all 0.3s;
+}
+.cap-title {
+  font-family: var(--orb); font-size: 12px; font-weight: 700;
+  color: var(--text-mid); letter-spacing: 1px; margin-bottom: 10px;
+  transition: color 0.3s; line-height: 1.4;
+  text-transform: uppercase;
+}
+.cap-desc { font-size: 11px; color: var(--text-dim); line-height: 1.8; }
+.cap-tag {
+  display: inline-block; margin-top: 14px;
+  font-size: 9px; letter-spacing: 1.5px; color: var(--text-dim);
+  border: 1px solid rgba(0,255,102,0.1); padding: 2px 8px;
+}
+
+/* ─── TESTIMONIALS ──────────────────────────────────────────────────────── */
+.testimonials-section {
+  background: var(--bg2);
+  position: relative;
+}
+.testimonials-section::before, .testimonials-section::after {
+  content: "";
+  position: absolute; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.testimonials-section::before { top: 0; }
+.testimonials-section::after { bottom: 0; }
+
+.testimonials-header { text-align: center; margin-bottom: 60px; }
+.testimonials-header .section-tag { justify-content: center; }
+.testimonials-header .section-tag::before { display: none; }
+
+.testimonials-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+}
+.testimonial-card {
+  background: rgba(7,11,16,0.9);
+  border: 1px solid var(--border); padding: 24px 20px;
+  position: relative; transition: all var(--transition);
+}
+.testimonial-card:hover {
+  border-color: rgba(0,255,102,0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+}
+.testimonial-card .corner-tl, .testimonial-card .corner-tr,
+.testimonial-card .corner-bl, .testimonial-card .corner-br {
+  position: absolute; width: 8px; height: 8px;
+  border-color: var(--neon); border-style: solid;
+}
+.testimonial-card .corner-tl { top:-1px; left:-1px; border-width:2px 0 0 2px; }
+.testimonial-card .corner-tr { top:-1px; right:-1px; border-width:2px 2px 0 0; }
+.testimonial-card .corner-bl { bottom:-1px; left:-1px; border-width:0 0 2px 2px; }
+.testimonial-card .corner-br { bottom:-1px; right:-1px; border-width:0 2px 2px 0; }
+
+.testimonial-quote-mark {
+  font-family: var(--vt); font-size: 48px; color: rgba(0,255,102,0.12);
+  line-height: 1; margin-bottom: 8px; letter-spacing: 0;
+}
+.testimonial-text {
+  font-size: 12px; color: var(--text-mid); line-height: 1.8;
+  margin-bottom: 20px; font-style: italic;
+}
+.testimonial-author { display: flex; align-items: center; gap: 12px; }
+.testimonial-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: bold; color: #000; flex-shrink: 0;
+}
+.testimonial-name { font-size: 11px; color: var(--neon); letter-spacing: 1px; }
+.testimonial-branch { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+/* ─── FOOTER ────────────────────────────────────────────────────────────── */
+.site-footer {
+  background: var(--bg3);
+  border-top: 1px solid var(--border);
+  padding: 60px 0 0;
+  position: relative; z-index: 1;
+}
+
+.footer-top {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+  margin-bottom: 48px;
+}
+
+.footer-brand-col .footer-logo {
+  font-family: var(--orb); font-size: 18px; font-weight: 900;
+  color: var(--neon); letter-spacing: 3px; margin-bottom: 14px;
+  display: block;
+}
+.footer-brand-col .footer-logo span { color: var(--cyan); }
+.footer-tagline {
+  font-size: 11px; color: var(--text-mid); line-height: 1.9;
+  max-width: 260px; margin-bottom: 20px;
+}
+
+.footer-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 9px; letter-spacing: 1.5px; color: var(--text-dim);
+  border: 1px solid rgba(0,255,102,0.1); padding: 4px 10px;
+  margin-bottom: 6px;
+}
+.footer-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--neon); }
+
+.footer-col-title {
+  font-size: 10px; letter-spacing: 2px; color: var(--neon);
+  margin-bottom: 18px; padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0,255,102,0.1);
+}
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 10px; }
+.footer-links a {
+  font-size: 11px; color: var(--text-mid); text-decoration: none;
+  letter-spacing: 0.5px; transition: all var(--transition);
+  display: flex; align-items: center; gap: 6px;
+}
+.footer-links a::before { content: "›"; color: var(--text-dim); }
+.footer-links a:hover { color: var(--neon); padding-left: 4px; }
+
+.footer-bottom {
+  border-top: 1px solid rgba(0,255,102,0.08);
+  padding: 20px 0;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-legal { font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px; }
+
+.sys-status-badge {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 9px; letter-spacing: 2px; color: var(--neon);
+  border: 1px solid rgba(0,255,102,0.2); padding: 4px 12px;
+  background: rgba(0,255,102,0.04);
+  animation: badge-pulse 3s infinite;
+}
+@keyframes badge-pulse {
+  0%,100%{ border-color: rgba(0,255,102,0.2); box-shadow: none; }
+  50%{ border-color: rgba(0,255,102,0.5); box-shadow: 0 0 10px rgba(0,255,102,0.1); }
+}
+.sys-status-badge .badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--neon); box-shadow: 0 0 6px var(--neon);
+  animation: blink-dot 2s infinite;
+}
+
+/* ─── RESPONSIVE ────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+  .cap-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .topbar { padding: 0 16px; }
+  .topbar-center { display: none; }
+  .live-clock { display: none; }
+  .sys-ticker { display: none; }
+  .hero-content { grid-template-columns: 1fr; gap: 40px; }
+  .hero-right { display: none; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-cell { border-right: none; border-bottom: 1px solid var(--border); }
+  .stat-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+  .stat-cell:last-child { border-bottom: none; }
+  .problem-grid { grid-template-columns: 1fr; }
+  .cap-grid { grid-template-columns: 1fr; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .mobile-menu-btn { display: block; }
+  section { padding: 64px 0; }
+}
+@media (max-width: 480px) {
+  .hero-headline { font-size: 24px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
 <body>
 
-<div class="status-bar">
-  <div>SYSTEM_STATUS: ONLINE</div>
-  <div id="clock"></div>
-</div>
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- TOPBAR                                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<nav class="topbar" role="navigation" aria-label="Main navigation">
+  <a href="/" class="topbar-brand">
+    <span class="brand-dot"></span>
+    DIGIPATH<span>_AI</span>
+  </a>
 
-<main class="hero-section">
-  <h1 class="logo-title">DIGIPATH_AI</h1>
-  <p class="hero-sub">Empowering Students with AI-Driven Admission Predictions, Career Roadmaps, and Recruitment Security.</p>
-  
-  <div class="cta-group">
-    <a href="/login" class="btn-primary">[ INITIALIZE_AUTH ]</a>
-    <a href="/institutes" class="btn-secondary">[ BROWSE_COLLEGES ]</a>
+  <div class="topbar-center" id="topbarNav">
+    <a href="/predictor">[ PREDICT ]</a>
+    <a href="/institutes">[ COLLEGES ]</a>
+    <a href="/resume-analyzer">[ RESUME_AI ]</a>
+    <a href="/job-recommender">[ JOBS ]</a>
+    <a href="/chatbot">[ AI_CHAT ]</a>
+    <a href="/scam-detector">[ SCAM_DETECT ]</a>
   </div>
+
+  <div class="topbar-right">
+    <div class="sys-ticker">
+      <span class="sys-ticker-dot"></span>
+      <span>SYSTEM_STATUS: ONLINE</span>
+    </div>
+    <span class="live-clock" id="liveClock">00:00:00</span>
+
+    <!-- Authenticated: User Pill -->
+    <div id="userPillWrap">
+      <div class="user-pill hud" id="userPillBtn" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">
+        <div class="hud-bl"></div>
+        <div class="pill-avatar" id="navInitials">U</div>
+        <span class="pill-name" id="navName">OPERATOR</span>
+        <span class="pill-chevron">▾</span>
+      </div>
+      <div class="pill-dropdown" id="pillDropdown" role="menu">
+        <a href="/profile" role="menuitem">⬡ PROFILE</a>
+        <a href="/dashboard" role="menuitem">⬡ DASHBOARD</a>
+        <a href="/roadmap" role="menuitem">⬡ ROADMAP</a>
+        <button onclick="DigiPathApp.auth.logout()" role="menuitem">⬡ LOGOUT</button>
+      </div>
+    </div>
+
+    <!-- Unauthenticated: Login CTA -->
+    <a href="/login" id="loginNavBtn">[ INITIALIZE_AUTH ]</a>
+    <button class="mobile-menu-btn" aria-label="Toggle menu">☰</button>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- MAIN CONTENT                                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<main>
+
+  <!-- ── HERO ──────────────────────────────────────────────────────────── -->
+  <section class="hero" id="hero">
+    <div class="hero-radial"></div>
+    <div class="container">
+      <div class="hero-content">
+
+        <!-- Left column -->
+        <div class="hero-left">
+          <div class="hero-eyebrow reveal">
+            DIGIPATH_AI // v4.2.0 // NEURAL_CORE_ONLINE
+          </div>
+
+          <h1 class="hero-headline reveal reveal-delay-1">
+            <span class="line-1">Predict Cutoffs.</span>
+            <span class="line-2">Match Jobs.</span>
+            <span class="line-3">Detect Scams.</span>
+          </h1>
+
+          <p class="hero-desc reveal reveal-delay-2">
+            Maharashtra's first AI-powered career intelligence platform. Precision cutoff forecasts for MHT-CET &amp; DSE CAP rounds, neural job matching across 3,000+ live listings, ATS resume analysis, and real-time placement fraud detection — all in one terminal.
+          </p>
+
+          <div class="hero-cta-row reveal reveal-delay-3">
+            <a href="/login" class="btn-primary">⚡ ACCESS_SYSTEM</a>
+            <a href="/institutes" class="btn-secondary">EXPLORE_COLLEGES ›</a>
+          </div>
+        </div>
+
+        <!-- Right column — floating HUD cards -->
+        <div class="hero-right reveal reveal-delay-2" aria-hidden="true">
+
+          <div class="hud-card hud">
+            <div class="hud-bl"></div>
+            <div class="corner-tl"></div><div class="corner-tr"></div>
+            <div class="corner-bl"></div><div class="corner-br"></div>
+            <div class="hud-card-label">> CET_CUTOFF_FORECAST // 2026</div>
+            <div class="hud-card-value">94.2 %ile</div>
+            <div class="hud-card-sub">Computer Eng · VJTI Mumbai · Round 1</div>
+          </div>
+
+          <div class="hud-card hud">
+            <div class="hud-bl"></div>
+            <div class="corner-tl"></div><div class="corner-tr"></div>
+            <div class="corner-bl"></div><div class="corner-br"></div>
+            <div class="hud-card-label">> ATS_VECTOR_SCORE // RESUME</div>
+            <div class="hud-card-value cyan">78 / 100</div>
+            <div class="hud-card-sub">12 keyword gaps detected · Java, Spring, Docker</div>
+          </div>
+
+          <div class="hud-card hud">
+            <div class="hud-bl"></div>
+            <div class="corner-tl"></div><div class="corner-tr"></div>
+            <div class="corner-bl"></div><div class="corner-br"></div>
+            <div class="hud-card-label">> SCAM_THREAT_LEVEL // ALERT</div>
+            <div class="hud-card-value amber">HIGH_RISK</div>
+            <div class="hud-card-sub">Deposit demand · Unverified company · Flagged</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STATS MATRIX ───────────────────────────────────────────────────── -->
+  <div class="stats-matrix" id="stats" aria-label="Live statistical matrix">
+    <div class="container" style="padding: 0; max-width: 100%;">
+      <div class="stats-grid">
+        <div class="stat-cell reveal">
+          <div class="stat-number" data-target="400" data-suffix="+">0+</div>
+          <div class="stat-label">DTE_COLLEGES // MAHARASHTRA</div>
+        </div>
+        <div class="stat-cell reveal reveal-delay-1">
+          <div class="stat-number cyan-num" data-target="11800" data-suffix="+">0+</div>
+          <div class="stat-label">DSE_RECORDS // CAP_ROUNDS</div>
+        </div>
+        <div class="stat-cell reveal reveal-delay-2">
+          <div class="stat-number amber-num" data-target="3000" data-suffix="+">0+</div>
+          <div class="stat-label">LIVE_JOBS // NEURAL_MATCHED</div>
+        </div>
+        <div class="stat-cell reveal reveal-delay-3">
+          <div class="stat-number" data-target="94" data-suffix="%" data-prefix="">0%</div>
+          <div class="stat-label">AI_ACCURACY // FORECASTS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PROBLEM SECTION ───────────────────────────────────────────────── -->
+  <section class="problem-section" id="problems">
+    <div class="container">
+      <div class="problem-header">
+        <div class="section-tag reveal">WHY WE BUILT DIGIPATH</div>
+        <h2 class="section-title reveal reveal-delay-1">The Problem Facing<br>Maharashtra Students</h2>
+        <p class="section-subtitle reveal reveal-delay-2" style="margin: 0 auto;">
+          Over 2 lakh engineering aspirants face the same broken system every year — opaque cutoffs, invisible ATS barriers, and predatory fraud. We mapped every pain point.
+        </p>
+      </div>
+
+      <div class="problem-grid">
+
+        <div class="problem-card reveal">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="problem-num">01</div>
+          <div class="problem-icon">📉</div>
+          <div class="problem-title">UNPREDICTABLE CAP ROUND CUTOFFS</div>
+          <p class="problem-desc">
+            MHT-CET &amp; Diploma (DSE) CAP round cutoffs shift dramatically each year due to seat availability, category dynamics, and state-level policy changes — leaving thousands of students unable to target colleges effectively, missing seats by tiny margins.
+          </p>
+        </div>
+
+        <div class="problem-card reveal reveal-delay-1">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="problem-num">02</div>
+          <div class="problem-icon">🤖</div>
+          <div class="problem-title">INVISIBLE ATS KEYWORD BARRIERS</div>
+          <p class="problem-desc">
+            Over 75% of resumes submitted by engineering freshers are auto-rejected before any human reads them. Applicant Tracking Systems silently filter out profiles missing domain-specific tech keywords — a critical gap most graduates don't know exists.
+          </p>
+        </div>
+
+        <div class="problem-card reveal reveal-delay-2">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="problem-num">03</div>
+          <div class="problem-icon">⚠️</div>
+          <div class="problem-title">PLACEMENT FRAUD &amp; FAKE JOB SCAMS</div>
+          <p class="problem-desc">
+            Unverified companies request security deposits, demand personal documents upfront, and circulate fabricated offer letters targeting desperate final-year students. Reported placement fraud in Maharashtra has risen over 40% in three years.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SOLUTION / CAPABILITIES ───────────────────────────────────────── -->
+  <section class="solution-section" id="capabilities">
+    <div class="container">
+      <div class="solution-header">
+        <div class="section-tag reveal">HOW DIGIPATH SOLVES IT</div>
+        <h2 class="section-title reveal reveal-delay-1">Six Neural Capabilities.<br>One Platform.</h2>
+        <p class="section-subtitle reveal reveal-delay-2" style="margin: 0 auto;">
+          Each module is purpose-built for the Maharashtra engineering ecosystem — powered by real DTE data, live job feeds, and reinforcement-learned AI.
+        </p>
+      </div>
+
+      <div class="cap-grid reveal reveal-delay-1">
+
+        <div class="cap-cell">
+          <div class="cap-icon-wrap">🎯</div>
+          <div class="cap-title">Dual-Pathway Cutoff Predictor</div>
+          <p class="cap-desc">AI-driven forecast for both FE (MHT-CET) and Diploma (DSE) CAP rounds. Input your percentile, category, and branch — get ranked institute matches with 2026 predicted cutoffs.</p>
+          <span class="cap-tag">FE + DSE // 400+ COLLEGES</span>
+        </div>
+
+        <div class="cap-cell cyan-accent">
+          <div class="cap-icon-wrap">📄</div>
+          <div class="cap-title">Resume ATS Vector Analyzer</div>
+          <p class="cap-desc">Upload your PDF/DOCX resume and receive a granular ATS compatibility score, missing keyword matrix, formatting grade, and targeted improvement suggestions for each job domain.</p>
+          <span class="cap-tag">ATS_SCORE // KEYWORD_MATRIX</span>
+        </div>
+
+        <div class="cap-cell">
+          <div class="cap-icon-wrap">💼</div>
+          <div class="cap-title">Neural Job Match Engine</div>
+          <p class="cap-desc">3,000+ live listings aggregated from LinkedIn, Indeed, and WorkIndia. Semantically matched to your skills, branch, and salary expectations. One-click apply link generation.</p>
+          <span class="cap-tag">LINKEDIN · INDEED · WORKINDIA</span>
+        </div>
+
+        <div class="cap-cell amber-accent">
+          <div class="cap-icon-wrap">🤖</div>
+          <div class="cap-title">AI Career Advisor</div>
+          <p class="cap-desc">RLHF-trained conversational AI trained on Maharashtra-specific career data. Advises on college choices, skill roadmaps, interview prep, and domain selection for your profile.</p>
+          <span class="cap-tag">RLHF_CHATBOT // REAL_TIME</span>
+        </div>
+
+        <div class="cap-cell cyan-accent">
+          <div class="cap-icon-wrap">🏛️</div>
+          <div class="cap-title">Institute Knowledge Base</div>
+          <p class="cap-desc">Deep profiles of 400+ DTE-affiliated Maharashtra colleges: NAAC grades, average packages, placement recruiters, hostel info, branch offerings, and historical cutoff archives.</p>
+          <span class="cap-tag">400+ DTE INSTITUTES</span>
+        </div>
+
+        <div class="cap-cell">
+          <div class="cap-icon-wrap">🛡️</div>
+          <div class="cap-title">Scam Threat Detector</div>
+          <p class="cap-desc">AI-powered company verification engine. Cross-references GST registry, MCA21 records, and reported fraud databases to flag suspicious offers, unregistered companies, and deposit demands.</p>
+          <span class="cap-tag">FRAUD_DETECTION // REAL_TIME</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ───────────────────────────────────────────────────── -->
+  <section class="testimonials-section" id="testimonials">
+    <div class="container">
+      <div class="testimonials-header">
+        <div class="section-tag reveal">HEAR FROM OUR CANDIDATES</div>
+        <h2 class="section-title reveal reveal-delay-1">Trusted by Maharashtra<br>Engineering Students</h2>
+        <p class="section-subtitle reveal reveal-delay-2" style="margin: 0 auto;">
+          Real results from students across Computer, IT, Civil, and Mechanical disciplines.
+        </p>
+      </div>
+
+      <div class="testimonials-grid">
+
+        <div class="testimonial-card reveal">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="testimonial-quote-mark">"</div>
+          <p class="testimonial-text">
+            DigiPath's cutoff predictor was spot-on. It said VJTI Computer would need 93.4+ percentile in Round 2 OPEN — I scored 93.8 and got the seat. No coaching class gave me this precision.
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg,#00ff66,#00e5ff);">AK</div>
+            <div>
+              <div class="testimonial-name">AARAV KULKARNI</div>
+              <div class="testimonial-branch">Computer Eng · VJTI Mumbai · 2025 Batch</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-1">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="testimonial-quote-mark">"</div>
+          <p class="testimonial-text">
+            My resume was getting zero callbacks for 3 months. The ATS analyzer showed I was missing 9 critical Java keywords. Updated it in a day — had 4 interview calls within a week. Unreal difference.
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg,#ff00ff,#00e5ff);">PS</div>
+            <div>
+              <div class="testimonial-name">PRIYA SHINDE</div>
+              <div class="testimonial-branch">IT Engineering · COEP Pune · 2024 Grad</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-2">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="testimonial-quote-mark">"</div>
+          <p class="testimonial-text">
+            Almost got scammed by a Pune-based "construction firm" asking ₹8,000 security deposit. DigiPath's scam detector flagged the company as unregistered with MCA in seconds. Saved me real money.
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg,#ffb300,#ff0055);">RD</div>
+            <div>
+              <div class="testimonial-name">ROHIT DESAI</div>
+              <div class="testimonial-branch">Civil Eng · SPCE Mumbai · 2025 Batch</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-3">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="testimonial-quote-mark">"</div>
+          <p class="testimonial-text">
+            DSE admission process was a nightmare until I found DigiPath. The DSE predictor showed my exact cutoff range across 60+ colleges for Mechanical — I got my 2nd preference college in Round 1 itself.
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg,#00ff66,#ffb300);">NP</div>
+            <div>
+              <div class="testimonial-name">NEHA PATIL</div>
+              <div class="testimonial-branch">Mechanical Eng · SPIT Mumbai · DSE 2025</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
 </main>
 
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- FOOTER                                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-top">
+
+      <!-- Brand column -->
+      <div class="footer-brand-col">
+        <a href="/" class="footer-logo">DIGIPATH<span>_AI</span></a>
+        <p class="footer-tagline">
+          Maharashtra's premier AI-powered engineering career intelligence platform. Cutoff predictions, resume intelligence, job matching, and fraud detection for 2 lakh+ aspirants.
+        </p>
+        <div class="footer-badge" style="display:flex;">
+          <span class="footer-badge-dot"></span>
+          <span>POWERED BY NEURAL AI ENGINE</span>
+        </div><br>
+        <div class="footer-badge" style="display:flex;">
+          <span class="footer-badge-dot" style="background:var(--cyan);"></span>
+          <span>DTE MAHARASHTRA DATA CERTIFIED</span>
+        </div>
+      </div>
+
+      <!-- Platform links -->
+      <div>
+        <div class="footer-col-title">PLATFORM</div>
+        <ul class="footer-links">
+          <li><a href="/predictor">Cutoff Predictor</a></li>
+          <li><a href="/resume-analyzer">Resume ATS Analyzer</a></li>
+          <li><a href="/job-recommender">Job Recommender</a></li>
+          <li><a href="/chatbot">AI Career Advisor</a></li>
+          <li><a href="/institutes">Institute Database</a></li>
+          <li><a href="/scam-detector">Scam Detector</a></li>
+        </ul>
+      </div>
+
+      <!-- Account links -->
+      <div>
+        <div class="footer-col-title">ACCOUNT</div>
+        <ul class="footer-links">
+          <li><a href="/register">Register</a></li>
+          <li><a href="/login">Login</a></li>
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/profile">Profile Settings</a></li>
+          <li><a href="/roadmap">Career Roadmap</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal links -->
+      <div>
+        <div class="footer-col-title">SYSTEM</div>
+        <ul class="footer-links">
+          <li><a href="/institutes">DTE Colleges</a></li>
+          <li><a href="/report-scam">Report a Scam</a></li>
+          <li><a href="/company-verification">Company Verify</a></li>
+          <li><a href="#hero">About DigiPath</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom">
+      <span class="footer-legal">
+        © 2025–2026 DigiPath AI · Maharashtra, India · All DTE data is for reference purposes only.
+      </span>
+      <div class="sys-status-badge">
+        <span class="badge-dot"></span>
+        <span>[ ALL SYSTEMS OPERATIONAL ]</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS                                                                  -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<script src="/static/js/app.js" defer></script>
 <script>
-function updateClock(){
-  const now = new Date();
-  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
-}
-setInterval(updateClock, 1000);
-updateClock();
+/* ── Live Clock ──────────────────────────────────────────────────────────── */
+(function startClock() {
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function tick() {
+    const now = new Date();
+    const el = document.getElementById('liveClock');
+    if (el) el.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+/* ── Animated Stat Counters (Intersection Observer) ──────────────────────── */
+(function initCounters() {
+  const counters = document.querySelectorAll('.stat-number[data-target]');
+  if (!counters.length) return;
+
+  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.target, 10);
+    const suffix = el.dataset.suffix || '';
+    const prefix = el.dataset.prefix || '';
+    const duration = 2000;
+    const start = performance.now();
+
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const value = Math.round(easeOut(progress) * target);
+      el.textContent = prefix + value.toLocaleString('en-IN') + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.animated) {
+        entry.target.dataset.animated = 'true';
+        animateCounter(entry.target);
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  counters.forEach(c => obs.observe(c));
+})();
+
+/* ── Scroll Reveal (Intersection Observer) ──────────────────────────────── */
+(function initScrollReveal() {
+  const reveals = document.querySelectorAll('.reveal');
+  if (!reveals.length) return;
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(el => obs.observe(el));
+})();
 </script>
 </body>
 </html>

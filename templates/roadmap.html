@@ -1,381 +1,869 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIGIPATH_AI // CAREER_ROADMAP</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --neon-green: #00ff41;
-    --neon-cyan: #00e5ff;
-    --neon-magenta: #ff00ff;
-    --neon-amber: #ffb300;
-    --bg-dark: #000000;
-    --bg-panel: #050f05;
-    --bg-card: #020a02;
-    --border-green: #00ff4133;
-    --border-green-solid: #00ff41;
-    --text-dim: #006620;
-    --text-mid: #00aa2b;
-    --scan-line: rgba(0, 255, 65, 0.03);
-    --sidebar-width: 260px;
-  }
-
-  html, body {
-    height: 100%;
-    background: var(--bg-dark);
-    color: var(--neon-green);
-    font-family: 'Share Tech Mono', monospace;
-    overflow: hidden;
-  }
-
-  /* CRT scanline overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      var(--scan-line) 0px,
-      var(--scan-line) 1px,
-      transparent 1px,
-      transparent 2px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* grid bg */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ─── LAYOUT ─── */
-  .app-container {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ─── SIDEBAR ─── */
-  .sidebar {
-    width: var(--sidebar-width);
-    background: var(--bg-panel);
-    border-right: 1px solid var(--border-green);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-  }
-
-  .sidebar-header {
-    padding: 24px;
-    border-bottom: 1px solid var(--border-green);
-    text-align: center;
-  }
-
-  .logo-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 20px;
-    font-weight: 900;
-    color: var(--neon-green);
-    letter-spacing: 0.1em;
-    text-shadow: 0 0 10px rgba(0,255,65,0.5);
-  }
-
-  .nav-list {
-    flex: 1;
-    padding: 20px 0;
-    list-style: none;
-    overflow-y: auto;
-  }
-
-  .nav-item {
-    padding: 12px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--text-mid);
-    text-decoration: none;
-    transition: all 0.2s;
-    font-size: 13px;
-    border-left: 3px solid transparent;
-  }
-
-  .nav-item:hover {
-    background: rgba(0,255,65,0.05);
-    color: var(--neon-green);
-  }
-
-  .nav-item.active {
-    background: rgba(0,255,65,0.1);
-    color: var(--neon-green);
-    border-left-color: var(--neon-green);
-    box-shadow: inset 5px 0 15px rgba(0,255,65,0.05);
-  }
-
-  /* ─── MAIN CONTENT ─── */
-  .main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: rgba(0,0,0,0.6);
-  }
-
-  .header {
-    height: 64px;
-    border-bottom: 1px solid var(--border-green);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    background: rgba(5, 15, 5, 0.8);
-    backdrop-filter: blur(10px);
-  }
-
-  /* ─── PAGE CONTENT ─── */
-  .content-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 32px;
-  }
-
-  .page-header {
-    margin-bottom: 48px;
-    text-align: center;
-  }
-
-  .page-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 28px;
-    color: var(--neon-green);
-    letter-spacing: 4px;
-    text-shadow: 0 0 20px rgba(0,255,65,0.5);
-  }
-
-  /* ─── TIMELINE ─── */
-  .timeline {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
-    padding-left: 40px;
-  }
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 1px;
-    background: linear-gradient(180deg, var(--neon-green), var(--neon-cyan), var(--neon-magenta));
-    box-shadow: 0 0 10px rgba(0,255,65,0.3);
-  }
-
-  .timeline-item {
-    margin-bottom: 48px;
-    position: relative;
-  }
-  .timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -45px; top: 0;
-    width: 10px; height: 10px;
-    background: #000;
-    border: 2px solid var(--neon-green);
-    box-shadow: 0 0 10px var(--neon-green);
-    z-index: 2;
-  }
-
-  .roadmap-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-green);
-    padding: 24px;
-    position: relative;
-    transition: all 0.3s;
-  }
-  .roadmap-card:hover {
-    border-color: var(--neon-cyan);
-    background: rgba(0,229,255,0.02);
-  }
-
-  .phase-num { font-size: 10px; color: var(--neon-cyan); margin-bottom: 8px; letter-spacing: 2px; }
-  .phase-title { font-family: 'Orbitron', sans-serif; font-size: 18px; color: var(--neon-green); margin-bottom: 12px; }
-  
-  .topic-list {
-    list-style: none;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .topic-item {
-    font-size: 12px;
-    color: var(--text-mid);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .topic-item::before { content: '◈'; color: var(--neon-cyan); font-size: 8px; }
-
-  .status-tag {
-    position: absolute;
-    top: 20px; right: 24px;
-    font-size: 9px;
-    padding: 2px 8px;
-    border: 1px solid;
-  }
-  .status-done { color: var(--neon-green); border-color: var(--neon-green); }
-  .status-next { color: var(--neon-cyan); border-color: var(--neon-cyan); }
-  .status-locked { color: var(--text-dim); border-color: var(--text-dim); }
-
-  /* corner decorations */
-  .corner {
-    position: absolute;
-    width: 8px; height: 8px;
-    border-color: var(--neon-green);
-    border-style: solid;
-    opacity: 0.5;
-  }
-  .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-  .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
-
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DigiPath // Neural Career Roadmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: '#030712',
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+            'slide-in-right': 'slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+            'fade-in': 'fadeIn 0.3s ease-out',
+            'scale-in': 'scaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+          },
+          keyframes: {
+            float: { '0%, 100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-10px)' } },
+            glowPulse: { '0%, 100%': { boxShadow: '0 0 15px rgba(16,185,129,0.2)' }, '50%': { boxShadow: '0 0 35px rgba(16,185,129,0.5)' } },
+            slideInRight: { from: { transform: 'translateX(100%)', opacity: '0' }, to: { transform: 'translateX(0)', opacity: '1' } },
+            fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
+            scaleIn: { from: { transform: 'scale(0.92)', opacity: '0' }, to: { transform: 'scale(1)', opacity: '1' } },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #030712; font-family: 'Plus Jakarta Sans', sans-serif; color: #f1f5f9; overflow-x: hidden; }
+    .mesh-bg {
+      background: radial-gradient(ellipse at top, rgba(6,78,59,0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse at bottom right, rgba(8,145,178,0.10) 0%, transparent 50%),
+                  radial-gradient(ellipse at bottom left, rgba(79,70,229,0.08) 0%, transparent 50%),
+                  #030712;
+    }
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
+    .glass-hover { transition: all 0.3s ease-out; }
+    .glass-hover:hover { border-color: rgba(16,185,129,0.40); box-shadow: 0 0 30px rgba(16,185,129,0.12), 0 20px 60px rgba(0,0,0,0.4); transform: translateY(-2px); }
+    .grad-text { background: linear-gradient(135deg, #34d399, #22d3ee, #818cf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .grad-border { border-image: linear-gradient(135deg, rgba(52,211,153,0.5), rgba(34,211,238,0.3)) 1; }
+    .domain-pill { cursor: pointer; transition: all 0.25s ease; border: 1px solid rgba(255,255,255,0.07); }
+    .domain-pill:hover { border-color: rgba(52,211,153,0.5); background: rgba(52,211,153,0.08); transform: translateY(-1px); }
+    .domain-pill.selected { background: linear-gradient(135deg, rgba(52,211,153,0.18), rgba(34,211,238,0.12)); border-color: rgba(52,211,153,0.6); box-shadow: 0 0 20px rgba(52,211,153,0.15); }
+    .skill-pill { cursor: pointer; transition: all 0.2s ease; }
+    .skill-pill.active { box-shadow: 0 0 0 2px rgba(52,211,153,0.8), 0 0 20px rgba(52,211,153,0.3); }
+    .phase-card { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .phase-card:hover { transform: translateX(4px); }
+    .phase-card.completed { border-left: 3px solid #10b981; }
+    .phase-card.current { border-left: 3px solid #f59e0b; }
+    .phase-card.locked { border-left: 3px solid rgba(100,116,139,0.4); opacity: 0.65; }
+    .status-badge.completed { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); box-shadow: 0 0 12px rgba(16,185,129,0.2); }
+    .status-badge.current { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); animation: glowPulse 2s ease-in-out infinite; }
+    .status-badge.locked { background: rgba(100,116,139,0.15); color: #64748b; border: 1px solid rgba(100,116,139,0.2); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.25s ease; }
+    .modal-content { background: rgba(255,255,255,0.04); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.10); border-radius: 20px; max-width: 820px; width: 100%; max-height: 88vh; overflow-y: auto; animation: scaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+    .modal-content::-webkit-scrollbar { width: 4px; }
+    .modal-content::-webkit-scrollbar-track { background: transparent; }
+    .modal-content::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.3); border-radius: 2px; }
+    .platform-card { transition: all 0.25s ease; cursor: pointer; text-decoration: none; display: block; }
+    .platform-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .hackathon-card { transition: all 0.25s ease; cursor: pointer; text-decoration: none; display: block; }
+    .hackathon-card:hover { transform: translateY(-2px); border-color: rgba(167,139,250,0.5) !important; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .timeline-line { position: absolute; left: 18px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, rgba(52,211,153,0.6), rgba(34,211,238,0.3), rgba(100,116,139,0.1)); }
+    .generate-btn { background: linear-gradient(135deg, #059669, #0891b2); transition: all 0.3s ease; }
+    .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(16,185,129,0.35), 0 12px 30px rgba(0,0,0,0.4); }
+    .generate-btn:active { transform: translateY(0); }
+    .bento-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+    @media (max-width: 640px) { .bento-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; } }
+    .nav-back { transition: all 0.2s ease; }
+    .nav-back:hover { color: #34d399; transform: translateX(-3px); }
+  </style>
+<link rel="stylesheet" href="/static/css/digipath-shell.css">
 </head>
-<body>
+<body class="mesh-bg min-h-screen">
 
-<div class="app-container">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo-title">DIGIPATH_AI</div>
-    </div>
-    <nav class="nav-list">
-      <a href="/dashboard" class="nav-item">
-        <span class="nav-icon">▣</span>
-        <span>DASHBOARD</span>
+  <!-- ── Navigation Bar ──────────────────────────────────────────── -->
+  <nav class="sticky top-0 z-50 glass border-b border-white/[0.06]">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/dashboard" class="nav-back flex items-center gap-2 text-slate-400 text-sm font-mono">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        DASHBOARD
       </a>
-      <a href="/predictor" class="nav-item">
-        <span class="nav-icon">◈</span>
-        <span>PREDICTOR</span>
-      </a>
-      <a href="/institutes" class="nav-item">
-        <span class="nav-icon">◉</span>
-        <span>INSTITUTES</span>
-      </a>
-      <a href="/resume-analyzer" class="nav-item">
-        <span class="nav-icon">▦</span>
-        <span>RESUME_AI</span>
-      </a>
-      <a href="/roadmap" class="nav-item active">
-        <span class="nav-icon">➹</span>
-        <span>ROADMAP</span>
-      </a>
-      <a href="/chatbot" class="nav-item">
-        <span class="nav-icon">◈</span>
-        <span>AI_ASSISTANT</span>
-      </a>
-    </nav>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main-content">
-    <header class="header">
-      <div id="clock" style="font-size: 14px; color: var(--neon-cyan)"></div>
-      <div style="font-size: 11px; color: var(--text-mid)">PATH: FULL_STACK_ENGINEER // 2026_TRACK</div>
-    </header>
-
-    <div class="content-scroll">
-      <div class="page-header">
-        <h1 class="page-title">NEURAL_CAREER_ROADMAP</h1>
+      <div class="flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+        <span class="font-mono text-xs text-emerald-400/80 tracking-widest">NEURAL ROADMAP // v2.0</span>
       </div>
+      <div class="text-slate-500 font-mono text-xs hidden sm:block" id="currentTime"></div>
+    </div>
+  </nav>
 
-      <div class="timeline">
-        <!-- Phase 1 -->
-        <div class="timeline-item">
-          <div class="roadmap-card">
-            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-            <span class="status-tag status-done">COMPLETED</span>
-            <div class="phase-num">PHASE_01</div>
-            <h3 class="phase-title">CORE_FOUNDATIONS</h3>
-            <ul class="topic-list">
-              <li class="topic-item">Data Structures & Algos</li>
-              <li class="topic-item">Object Oriented Programming</li>
-              <li class="topic-item">Version Control (Git)</li>
-              <li class="topic-item">Database Management (SQL)</li>
-            </ul>
-          </div>
-        </div>
+  <!-- ── Hero Section ────────────────────────────────────────────── -->
+  <div class="max-w-7xl mx-auto px-6 pt-12 pb-8">
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-6 text-xs font-mono text-emerald-400/80 tracking-wider">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        AI-POWERED CAREER INTELLIGENCE ENGINE
+      </div>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-4">
+        <span class="grad-text">Neural</span> Career
+        <br class="hidden sm:block" />
+        Roadmap
+      </h1>
+      <p class="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
+        Select your target career vector, set your skill level, and generate a personalized phase-by-phase learning architecture with curated courses and live hackathon opportunities.
+      </p>
+    </div>
 
-        <!-- Phase 2 -->
-        <div class="timeline-item">
-          <div class="roadmap-card">
-            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-            <span class="status-tag status-next">CURRENT_OBJECTIVE</span>
-            <div class="phase-num">PHASE_02</div>
-            <h3 class="phase-title">FRONTEND_VECTORS</h3>
-            <ul class="topic-list">
-              <li class="topic-item">Advanced React Hooks</li>
-              <li class="topic-item">State Management (Redux/Zustand)</li>
-              <li class="topic-item">TypeScript Integration</li>
-              <li class="topic-item">CSS Frameworks (Tailwind)</li>
-            </ul>
-          </div>
+    <!-- ── Step 1: Domain Selector ─────────────────────────────────── -->
+    <div class="glass glass-hover rounded-2xl p-6 mb-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-lg font-bold text-white">
+            <span class="font-mono text-emerald-400/80 text-sm mr-2">01 //</span>
+            Select Career Vector
+          </h2>
+          <p class="text-slate-500 text-sm mt-1">Choose your target engineering domain</p>
         </div>
+        <div id="selectedDomainBadge" class="hidden glass px-3 py-1.5 rounded-full text-xs font-mono text-emerald-300 border border-emerald-500/30"></div>
+      </div>
+      <div class="bento-grid" id="domainGrid"></div>
+    </div>
 
-        <!-- Phase 3 -->
-        <div class="timeline-item">
-          <div class="roadmap-card">
-            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-            <span class="status-tag status-locked">LOCKED</span>
-            <div class="phase-num">PHASE_03</div>
-            <h3 class="phase-title">BACKEND_PROTOCOLS</h3>
-            <ul class="topic-list">
-              <li class="topic-item">Node.js / Express</li>
-              <li class="topic-item">API Design (REST / GraphQL)</li>
-              <li class="topic-item">Authentication (JWT / OAuth)</li>
-              <li class="topic-item">Caching Strategies (Redis)</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Phase 4 -->
-        <div class="timeline-item">
-          <div class="roadmap-card">
-            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-            <span class="status-tag status-locked">LOCKED</span>
-            <div class="phase-num">PHASE_04</div>
-            <h3 class="phase-title">CLOUD_&_DEPLOYMENT</h3>
-            <ul class="topic-list">
-              <li class="topic-item">Docker & Containerization</li>
-              <li class="topic-item">CI/CD Pipelines (GitHub Actions)</li>
-              <li class="topic-item">Cloud Providers (AWS / GCP)</li>
-              <li class="topic-item">Monitoring & Logging</li>
-            </ul>
-          </div>
-        </div>
+    <!-- ── Step 2: Skill Level ──────────────────────────────────────── -->
+    <div class="glass glass-hover rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-4">
+        <span class="font-mono text-emerald-400/80 text-sm mr-2">02 //</span>
+        Skill Level
+      </h2>
+      <div class="flex flex-wrap gap-3" id="skillLevelGroup">
+        <button data-level="Beginner" onclick="selectLevel(this)"
+          class="skill-pill px-5 py-3 rounded-xl glass text-sm font-semibold text-slate-300 border border-white/[0.08] hover:border-emerald-400/40 transition-all">
+          🌱 Beginner
+        </button>
+        <button data-level="Intermediate" onclick="selectLevel(this)"
+          class="skill-pill px-5 py-3 rounded-xl glass text-sm font-semibold text-slate-300 border border-white/[0.08] hover:border-yellow-400/40 transition-all">
+          ⚡ Intermediate
+        </button>
+        <button data-level="Advanced" onclick="selectLevel(this)"
+          class="skill-pill px-5 py-3 rounded-xl glass text-sm font-semibold text-slate-300 border border-white/[0.08] hover:border-purple-400/40 transition-all">
+          🔥 Advanced
+        </button>
       </div>
     </div>
-  </main>
-</div>
 
-<script>
-// Clock
-function updateClock(){
-  const now = new Date();
-  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
-}
-setInterval(updateClock, 1000);
-updateClock();
-</script>
+    <!-- ── Generate Button ──────────────────────────────────────────── -->
+    <div class="flex justify-center mb-10">
+      <button onclick="generateRoadmap()"
+        class="generate-btn px-10 py-4 rounded-2xl text-white font-bold text-lg tracking-wide shadow-2xl flex items-center gap-3">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        GENERATE NEURAL ROADMAP
+      </button>
+    </div>
+
+    <!-- ── Roadmap Output ───────────────────────────────────────────── -->
+    <div id="roadmapOutput" class="hidden animate-fade-in">
+      <div class="glass rounded-2xl p-6 mb-6">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-white">
+              <span class="grad-text" id="roadmapTitle">Full Stack Developer</span> Roadmap
+            </h2>
+            <p class="text-slate-500 text-sm mt-1 font-mono" id="roadmapMeta"></p>
+          </div>
+          <div class="text-right">
+            <div class="text-xs font-mono text-slate-500 mb-1">ESTIMATED DURATION</div>
+            <div class="text-emerald-400 font-mono font-bold text-lg" id="roadmapDuration"></div>
+          </div>
+        </div>
+        <!-- Timeline -->
+        <div class="relative pl-12" id="phaseTimeline"></div>
+      </div>
+    </div>
+
+    <!-- ── Empty State ──────────────────────────────────────────────── -->
+    <div id="emptyState" class="glass rounded-2xl p-16 text-center">
+      <div class="text-6xl mb-4 animate-float">🧠</div>
+      <h3 class="text-xl font-bold text-slate-400 mb-2">Awaiting Configuration</h3>
+      <p class="text-slate-600 text-sm">Select your career domain and skill level above, then generate your personalized roadmap.</p>
+    </div>
+  </div>
+
+  <!-- ── Phase Detail Modal ──────────────────────────────────────────── -->
+  <div id="phaseModal" class="modal-overlay hidden" onclick="handleModalClick(event)">
+    <div class="modal-content p-0" id="modalContent" onclick="event.stopPropagation()">
+      <!-- Dynamic content injected by JS -->
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- JavaScript Logic                                                -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <script>
+  // ── State ─────────────────────────────────────────────────────────
+  let selectedDomain = null;
+  let selectedLevel  = 'Beginner';
+
+  // ── Domain Definitions ────────────────────────────────────────────
+  const DOMAINS = [
+    { id: 'fullstack',      label: 'Full Stack Dev',      icon: '🌐', color: 'emerald' },
+    { id: 'ai_ml',          label: 'AI / ML',             icon: '🤖', color: 'violet' },
+    { id: 'data_analyst',   label: 'Data Analyst',        icon: '📊', color: 'cyan' },
+    { id: 'devops',         label: 'DevOps / SRE',        icon: '⚙️', color: 'orange' },
+    { id: 'cybersecurity',  label: 'Cybersecurity',       icon: '🛡️', color: 'red' },
+    { id: 'cloud',          label: 'Cloud Architect',     icon: '☁️', color: 'sky' },
+    { id: 'blockchain',     label: 'Blockchain / Web3',   icon: '⛓️', color: 'yellow' },
+    { id: 'systems',        label: 'Systems Engineering', icon: '🔧', color: 'slate' },
+    { id: 'uiux',           label: 'UI / UX Design',      icon: '🎨', color: 'pink' },
+    { id: 'mlops',          label: 'MLOps',               icon: '🔄', color: 'teal' },
+    { id: 'ar_vr',          label: 'AR / VR',             icon: '🥽', color: 'purple' },
+    { id: 'game_dev',       label: 'Game Dev',            icon: '🎮', color: 'green' },
+    { id: 'mobile',         label: 'Mobile Dev',          icon: '📱', color: 'blue' },
+    { id: 'embedded',       label: 'Embedded / IoT',      icon: '🔌', color: 'lime' },
+    { id: 'data_eng',       label: 'Data Engineering',    icon: '🗄️', color: 'indigo' },
+    { id: 'backend',        label: 'Backend Engineering', icon: '🏗️', color: 'amber' },
+    { id: 'defi',           label: 'DeFi / Fintech',      icon: '💹', color: 'emerald' },
+    { id: 'robotics',       label: 'Robotics / ROS',      icon: '🤖', color: 'rose' },
+    { id: 'network',        label: 'Network Engineer',    icon: '🌐', color: 'cyan' },
+    { id: 'quantum',        label: 'Quantum Computing',   icon: '⚛️', color: 'violet' },
+    { id: 'platform_eng',   label: 'Platform Engineer',   icon: '🏛️', color: 'slate' },
+    { id: 'technical_pm',   label: 'Technical PM',        icon: '📋', color: 'amber' },
+    { id: 'bioinformatics', label: 'Bioinformatics',      icon: '🧬', color: 'teal' },
+    { id: 'compiler_dev',   label: 'Compiler / PL Dev',   icon: '⚡', color: 'orange' },
+    { id: 'cv_engineer',    label: 'CV / Perception Eng', icon: '👁️', color: 'purple' },
+  ];
+
+  // ── Roadmap Data Engine ───────────────────────────────────────────
+  const ROADMAP_DATA = {
+    fullstack: {
+      title: 'Full Stack Developer',
+      duration: { Beginner: '8 months', Intermediate: '5 months', Advanced: '3 months' },
+      phases: {
+        Beginner: [
+          {
+            title: 'Phase 1: Foundations', status: 'completed',
+            skills: ['HTML5 Semantic', 'CSS3 Flexbox/Grid', 'JavaScript ES6+', 'Git & GitHub'],
+            description: 'Master the fundamental building blocks of the modern web. Focus on semantic HTML, responsive CSS, and core JavaScript concepts.',
+            courses: [
+              { platform: 'Coursera', name: 'HTML, CSS, and Javascript for Web Developers', instructor: 'Johns Hopkins University', url: 'https://www.coursera.org/learn/html-css-javascript-for-web-developers', duration: '5 weeks', level: 'Beginner', accent: '#0056d2' },
+              { platform: 'Udemy', name: 'The Complete JavaScript Course 2024', instructor: 'Jonas Schmedtmann', url: 'https://www.udemy.com/course/the-complete-javascript-course/', duration: '69 hrs', level: 'Beginner–Advanced', accent: '#ec5252' },
+            ],
+            hackathons: [
+              { name: 'Hack The Mountains 5.0', platform: 'Devfolio', url: 'https://devfolio.co', tags: ['Web Dev', 'Open Source'], accent: '#3770ff' },
+            ]
+          },
+          {
+            title: 'Phase 2: Frontend Framework', status: 'current',
+            skills: ['React 18', 'Hooks & Context', 'Tailwind CSS', 'Vite'],
+            description: 'Build modern reactive UIs with React. Learn component-driven architecture, state management patterns, and utility-first CSS.',
+            courses: [
+              { platform: 'Coursera', name: 'Meta Front-End Developer Professional Certificate', instructor: 'Meta', url: 'https://www.coursera.org/professional-certificates/meta-front-end-developer', duration: '7 months', level: 'Beginner', accent: '#0056d2' },
+              { platform: 'Udemy', name: 'React - The Complete Guide (incl Hooks, React Router, Redux)', instructor: 'Maximilian Schwarzmüller', url: 'https://www.udemy.com/course/react-the-complete-guide-incl-redux/', duration: '68 hrs', level: 'Intermediate', accent: '#ec5252' },
+              { platform: 'Simplilearn', name: 'Full Stack Web Developer – MEAN Stack Master', instructor: 'Simplilearn Expert Faculty', url: 'https://www.simplilearn.com/full-stack-developer-course-mean-stack-training', duration: '12 months', level: 'Intermediate', accent: '#02aab0' },
+            ],
+            hackathons: [
+              { name: 'Smart India Hackathon 2026', platform: 'Unstop', url: 'https://unstop.com/hackathons', tags: ['React', 'National', '₹1L Prize'], accent: '#7c4dff' },
+            ]
+          },
+          {
+            title: 'Phase 3: Backend & APIs', status: 'locked',
+            skills: ['Node.js', 'Express.js', 'REST API Design', 'PostgreSQL', 'JWT Auth'],
+            description: 'Architect robust server-side applications. Design RESTful APIs, handle authentication flows, and model relational data.',
+            courses: [
+              { platform: 'Udemy', name: 'Node.js, Express, MongoDB & More: The Complete Bootcamp', instructor: 'Jonas Schmedtmann', url: 'https://www.udemy.com/course/nodejs-express-mongodb-bootcamp/', duration: '42 hrs', level: 'Intermediate', accent: '#ec5252' },
+              { platform: 'Coursera', name: 'Server-side Development with NodeJS, Express and MongoDB', instructor: 'HKUST', url: 'https://www.coursera.org/learn/server-side-nodejs', duration: '4 weeks', level: 'Intermediate', accent: '#0056d2' },
+            ],
+            hackathons: []
+          },
+          {
+            title: 'Phase 4: Deployment & DevOps', status: 'locked',
+            skills: ['Docker', 'CI/CD with GitHub Actions', 'Vercel / Railway', 'Nginx', 'PM2'],
+            description: 'Deploy production-grade applications. Containerize with Docker, automate CI/CD pipelines, and configure reverse proxies.',
+            courses: [
+              { platform: 'Udemy', name: 'Docker & Kubernetes: The Practical Guide', instructor: 'Maximilian Schwarzmüller', url: 'https://www.udemy.com/course/docker-kubernetes-the-practical-guide/', duration: '24 hrs', level: 'Intermediate', accent: '#ec5252' },
+            ],
+            hackathons: [
+              { name: 'MLH Local Hack Day: Build', platform: 'Devfolio', url: 'https://devfolio.co', tags: ['DevOps', 'Cloud', 'Global'], accent: '#3770ff' },
+            ]
+          },
+        ],
+        Intermediate: [
+          {
+            title: 'Phase 1: Advanced React Patterns', status: 'completed',
+            skills: ['React Query', 'Zustand', 'Code Splitting', 'Testing (Vitest)'],
+            description: 'Optimize React applications with advanced data-fetching patterns, global state management, and performance tuning.',
+            courses: [
+              { platform: 'Udemy', name: 'React Testing Library & Jest: The Complete Guide', instructor: 'Stephen Grider', url: 'https://www.udemy.com/course/react-testing-library-and-jest/', duration: '11 hrs', level: 'Intermediate', accent: '#ec5252' },
+              { platform: 'Simplilearn', name: 'React JS Certification Training', instructor: 'Simplilearn Expert Faculty', url: 'https://www.simplilearn.com/reactjs-and-redux-certification-training', duration: '30 hrs', level: 'Intermediate', accent: '#02aab0' },
+            ],
+            hackathons: []
+          },
+          {
+            title: 'Phase 2: Full-Stack Architecture', status: 'current',
+            skills: ['Next.js 14 App Router', 'tRPC / GraphQL', 'Prisma ORM', 'Redis Caching'],
+            description: 'Build enterprise-grade full-stack applications with server components, type-safe APIs, and caching strategies.',
+            courses: [
+              { platform: 'Udemy', name: 'Next.js 14 & React - The Complete Guide', instructor: 'Maximilian Schwarzmüller', url: 'https://www.udemy.com/course/nextjs-react-the-complete-guide/', duration: '37 hrs', level: 'Advanced', accent: '#ec5252' },
+              { platform: 'Coursera', name: 'Full-Stack Web Development with React Specialization', instructor: 'HKUST', url: 'https://www.coursera.org/specializations/full-stack-react', duration: '4 months', level: 'Intermediate', accent: '#0056d2' },
+            ],
+            hackathons: [
+              { name: 'Hack This Fall 4.0', platform: 'Devfolio', url: 'https://devfolio.co/hackathons', tags: ['Full Stack', 'Open Source', '₹50K Prize'], accent: '#3770ff' },
+              { name: 'National Hackathon 2026', platform: 'Unstop', url: 'https://unstop.com/hackathons', tags: ['Web Dev', 'National'], accent: '#7c4dff' },
+            ]
+          },
+          {
+            title: 'Phase 3: Cloud & System Design', status: 'locked',
+            skills: ['AWS EC2 / S3 / Lambda', 'System Design Fundamentals', 'Load Balancing', 'Microservices'],
+            description: 'Architect scalable cloud-native systems. Master AWS services, system design principles, and microservices patterns.',
+            courses: [
+              { platform: 'Coursera', name: 'AWS Cloud Technical Essentials', instructor: 'Amazon Web Services', url: 'https://www.coursera.org/learn/aws-cloud-technical-essentials', duration: '4 weeks', level: 'Beginner', accent: '#0056d2' },
+              { platform: 'Udemy', name: 'Ultimate AWS Certified Developer Associate 2024', instructor: 'Stephane Maarek', url: 'https://www.udemy.com/course/aws-certified-developer-associate-dva-c01/', duration: '32 hrs', level: 'Intermediate', accent: '#ec5252' },
+            ],
+            hackathons: []
+          },
+        ],
+        Advanced: [
+          {
+            title: 'Phase 1: Distributed Systems', status: 'completed',
+            skills: ['Kafka Event Streaming', 'gRPC', 'Service Mesh (Istio)', 'Distributed Tracing'],
+            description: 'Design fault-tolerant distributed systems with event-driven architecture, service meshes, and observability pipelines.',
+            courses: [
+              { platform: 'Udemy', name: 'Apache Kafka Series – Learn Apache Kafka for Beginners v3', instructor: 'Stephane Maarek', url: 'https://www.udemy.com/course/apache-kafka/', duration: '8 hrs', level: 'Intermediate', accent: '#ec5252' },
+            ],
+            hackathons: [
+              { name: 'WorldQuant BRAIN Hackathon', platform: 'Unstop', url: 'https://unstop.com', tags: ['Systems', 'Finance', 'Global'], accent: '#7c4dff' },
+            ]
+          },
+          {
+            title: 'Phase 2: Performance Engineering', status: 'current',
+            skills: ['Web Performance (Core Web Vitals)', 'Rust WASM Modules', 'Edge Computing', 'Database Sharding'],
+            description: 'Push performance limits. Optimize Core Web Vitals, compile Rust to WebAssembly, and architect edge-first applications.',
+            courses: [
+              { platform: 'Coursera', name: 'Software Design and Architecture Specialization', instructor: 'University of Alberta', url: 'https://www.coursera.org/specializations/software-design-architecture', duration: '4 months', level: 'Advanced', accent: '#0056d2' },
+              { platform: 'Simplilearn', name: 'Postgraduate Program in Full Stack Web Development', instructor: 'Caltech CTME', url: 'https://www.simplilearn.com/pgp-full-stack-web-development-certification-training-course', duration: '9 months', level: 'Advanced', accent: '#02aab0' },
+            ],
+            hackathons: [
+              { name: 'IEEE SB Hackathon 2026', platform: 'Devfolio', url: 'https://devfolio.co', tags: ['Innovation', 'Systems', '₹2L Prize'], accent: '#3770ff' },
+              { name: 'JP Morgan Code for Good', platform: 'Unstop', url: 'https://unstop.com', tags: ['Fintech', 'Corporate', 'PPO'], accent: '#7c4dff' },
+            ]
+          },
+          {
+            title: 'Phase 3: Open Source & Leadership', status: 'locked',
+            skills: ['OSS Contribution', 'Mentorship', 'RFC Writing', 'Architecture Review'],
+            description: 'Transition from engineer to technical leader. Contribute to open source, write architecture RFCs, and mentor junior engineers.',
+            courses: [
+              { platform: 'Simplilearn', name: 'Engineering Leadership Master Certificate', instructor: 'Purdue University', url: 'https://www.simplilearn.com/engineering-leadership-master-certificate-course', duration: '12 months', level: 'Advanced', accent: '#02aab0' },
+            ],
+            hackathons: []
+          },
+        ]
+      }
+    },
+    ai_ml: {
+      title: 'AI / ML Engineer',
+      duration: { Beginner: '10 months', Intermediate: '6 months', Advanced: '3 months' },
+      phases: {
+        Beginner: [
+          {
+            title: 'Phase 1: Python & Math Foundations', status: 'completed',
+            skills: ['Python 3.x', 'NumPy', 'Pandas', 'Linear Algebra', 'Statistics'],
+            description: 'Build the mathematical and programming foundations required for ML. Master Python data manipulation and the core math behind algorithms.',
+            courses: [
+              { platform: 'Coursera', name: 'Mathematics for Machine Learning Specialization', instructor: 'Imperial College London', url: 'https://www.coursera.org/specializations/mathematics-machine-learning', duration: '4 months', level: 'Beginner', accent: '#0056d2' },
+              { platform: 'Udemy', name: 'Python Bootcamp: From Zero to Hero in Python', instructor: 'Jose Portilla', url: 'https://www.udemy.com/course/complete-python-bootcamp/', duration: '22 hrs', level: 'Beginner', accent: '#ec5252' },
+            ],
+            hackathons: []
+          },
+          {
+            title: 'Phase 2: Classical Machine Learning', status: 'current',
+            skills: ['Scikit-Learn', 'Supervised Learning', 'Unsupervised Learning', 'Cross-Validation', 'Feature Engineering'],
+            description: 'Master the core ML algorithms: regression, classification, clustering, dimensionality reduction, and model evaluation techniques.',
+            courses: [
+              { platform: 'Coursera', name: 'Machine Learning Specialization', instructor: 'Andrew Ng – Stanford', url: 'https://www.coursera.org/specializations/machine-learning-introduction', duration: '3 months', level: 'Beginner', accent: '#0056d2' },
+              { platform: 'Udemy', name: 'Machine Learning A-Z™: AI, Python & R + ChatGPT Bonus', instructor: 'Hadelin de Ponteves', url: 'https://www.udemy.com/course/machinelearning/', duration: '44 hrs', level: 'Beginner', accent: '#ec5252' },
+            ],
+            hackathons: [
+              { name: 'Kaggle Machine Learning Competition', platform: 'Devfolio', url: 'https://devfolio.co/hackathons', tags: ['ML', 'Data Science'], accent: '#3770ff' },
+              { name: 'Analytics Vidhya Datahack', platform: 'Unstop', url: 'https://unstop.com/hackathons', tags: ['Data Science', 'ML'], accent: '#7c4dff' },
+            ]
+          },
+          {
+            title: 'Phase 3: Deep Learning & Neural Nets', status: 'locked',
+            skills: ['TensorFlow 2', 'Keras', 'CNN', 'RNN / LSTM', 'Transfer Learning'],
+            description: 'Deep dive into neural networks. Build CNNs for image recognition, RNNs for sequences, and leverage pre-trained models.',
+            courses: [
+              { platform: 'Coursera', name: 'Deep Learning Specialization', instructor: 'Andrew Ng – deeplearning.ai', url: 'https://www.coursera.org/specializations/deep-learning', duration: '5 months', level: 'Intermediate', accent: '#0056d2' },
+              { platform: 'Udemy', name: 'Deep Learning A-Z™ 2024: Neural Networks, AI & ChatGPT Prize', instructor: 'Hadelin de Ponteves', url: 'https://www.udemy.com/course/deeplearning/', duration: '23 hrs', level: 'Intermediate', accent: '#ec5252' },
+            ],
+            hackathons: []
+          },
+          {
+            title: 'Phase 4: LLMs & Generative AI', status: 'locked',
+            skills: ['Hugging Face Transformers', 'LangChain', 'RAG Architecture', 'Fine-tuning LLMs', 'Vector Databases'],
+            description: 'Engineer production-ready GenAI systems. Fine-tune LLMs, build RAG pipelines, and deploy inference-optimized models.',
+            courses: [
+              { platform: 'Coursera', name: 'Generative AI with Large Language Models', instructor: 'AWS & deeplearning.ai', url: 'https://www.coursera.org/learn/generative-ai-with-llms', duration: '3 weeks', level: 'Intermediate', accent: '#0056d2' },
+              { platform: 'Simplilearn', name: 'AI Engineer Master Program', instructor: 'IBM & Purdue', url: 'https://www.simplilearn.com/ai-engineer-master-program-training-course', duration: '12 months', level: 'Advanced', accent: '#02aab0' },
+            ],
+            hackathons: [
+              { name: 'Google AI Hackathon 2026', platform: 'Devfolio', url: 'https://devfolio.co', tags: ['GenAI', 'LLM', '$10K Prize'], accent: '#3770ff' },
+              { name: 'Flipkart GRID 6.0', platform: 'Unstop', url: 'https://unstop.com', tags: ['AI/ML', 'E-commerce', 'National'], accent: '#7c4dff' },
+            ]
+          },
+        ],
+        Intermediate: [
+          {
+            title: 'Phase 1: Advanced ML Systems', status: 'completed',
+            skills: ['PyTorch Advanced', 'Custom CUDA Kernels', 'Distributed Training', 'AutoML'],
+            description: 'Implement production ML systems with custom training loops, distributed GPU training, and automated hyperparameter optimization.',
+            courses: [
+              { platform: 'Udemy', name: 'PyTorch for Deep Learning Bootcamp', instructor: 'Jose Portilla', url: 'https://www.udemy.com/course/pytorch-for-deep-learning-bootcamp/', duration: '17 hrs', level: 'Intermediate', accent: '#ec5252' },
+              { platform: 'Coursera', name: 'MLOps Specialization', instructor: 'deeplearning.ai', url: 'https://www.coursera.org/specializations/machine-learning-engineering-for-production-mlops', duration: '4 months', level: 'Advanced', accent: '#0056d2' },
+            ],
+            hackathons: []
+          },
+          {
+            title: 'Phase 2: LLM Engineering & RAG', status: 'current',
+            skills: ['LangChain', 'LlamaIndex', 'Astra DB / Pinecone', 'vLLM Inference', 'Prompt Engineering'],
+            description: 'Architect advanced RAG systems with vector databases, streaming inference, and multi-agent orchestration pipelines.',
+            courses: [
+              { platform: 'Coursera', name: 'LangChain for LLM Application Development', instructor: 'deeplearning.ai', url: 'https://www.coursera.org/learn/langchain-chat-with-your-data-deeplearning', duration: '1 week', level: 'Intermediate', accent: '#0056d2' },
+              { platform: 'Simplilearn', name: 'Generative AI for Everyone', instructor: 'Simplilearn x IBM', url: 'https://www.simplilearn.com/generative-ai-course-online', duration: '3 months', level: 'Intermediate', accent: '#02aab0' },
+            ],
+            hackathons: [
+              { name: 'Microsoft AI Classroom Series', platform: 'Unstop', url: 'https://unstop.com', tags: ['Azure OpenAI', 'GenAI'], accent: '#7c4dff' },
+            ]
+          },
+          {
+            title: 'Phase 3: ML System Design', status: 'locked',
+            skills: ['Feature Stores', 'Model Registries', 'A/B Testing ML', 'Model Monitoring', 'Shadow Deployment'],
+            description: 'Design end-to-end ML systems with feature stores, model versioning, online/offline evaluation, and production monitoring.',
+            courses: [
+              { platform: 'Coursera', name: 'Designing Machine Learning Systems (Chip Huyen)', instructor: 'Stanford Online', url: 'https://www.coursera.org/learn/machine-learning-system-design', duration: '6 weeks', level: 'Advanced', accent: '#0056d2' },
+            ],
+            hackathons: []
+          },
+        ],
+        Advanced: [
+          {
+            title: 'Phase 1: Research-Grade Implementations', status: 'completed',
+            skills: ['Attention Mechanisms from Scratch', 'RLHF Implementation', 'Custom Tokenizers', 'JAX / Flax'],
+            description: 'Implement cutting-edge research papers from scratch. Build transformers, implement RLHF training loops, and contribute to OSS ML frameworks.',
+            courses: [
+              { platform: 'Coursera', name: 'AI Research & Development Professional Certificate', instructor: 'deeplearning.ai', url: 'https://www.coursera.org/professional-certificates/tensorflow-in-practice', duration: '4 months', level: 'Advanced', accent: '#0056d2' },
+            ],
+            hackathons: []
+          },
+          {
+            title: 'Phase 2: Production LLM Infrastructure', status: 'current',
+            skills: ['GGUF Quantization', 'TensorRT-LLM', 'Multi-GPU Inference', 'KV-Cache Optimization'],
+            description: 'Optimize LLMs for production: quantize models, optimize inference with TensorRT, manage KV caches, and serve at scale.',
+            courses: [
+              { platform: 'Simplilearn', name: 'AI & Machine Learning Bootcamp', instructor: 'Caltech CTME', url: 'https://www.simplilearn.com/ai-machine-learning-bootcamp', duration: '6 months', level: 'Advanced', accent: '#02aab0' },
+            ],
+            hackathons: [
+              { name: 'NeurIPS Competitions 2026', platform: 'Devfolio', url: 'https://devfolio.co', tags: ['Research', 'International', 'Publication'], accent: '#3770ff' },
+              { name: 'HackAI – AI & LLM Track', platform: 'Unstop', url: 'https://unstop.com', tags: ['LLM', 'GenAI', '₹5L Prize'], accent: '#7c4dff' },
+            ]
+          },
+          {
+            title: 'Phase 3: AI Leadership & Publications', status: 'locked',
+            skills: ['Research Paper Writing', 'Peer Review', 'Open Source Contributions', 'ML System Auditing'],
+            description: 'Establish yourself as a domain expert. Write and publish research papers, contribute to flagship OSS projects, and mentor the next generation.',
+            courses: [
+              { platform: 'Coursera', name: 'Research Methods in Machine Learning', instructor: 'University of Toronto', url: 'https://www.coursera.org/learn/research-methods', duration: '8 weeks', level: 'Advanced', accent: '#0056d2' },
+            ],
+            hackathons: []
+          },
+        ]
+      }
+    },
+    cybersecurity: {
+      title: 'Cybersecurity Engineer',
+      duration: { Beginner: '9 months', Intermediate: '5 months', Advanced: '3 months' },
+      phases: {
+        Beginner: [
+          {
+            title: 'Phase 1: Security Foundations', status: 'completed',
+            skills: ['Networking (TCP/IP, DNS)', 'Linux Command Line', 'Cryptography Basics', 'OWASP Top 10'],
+            description: 'Build a solid security mindset. Master networking protocols, Linux administration, and the fundamental principles of cryptographic security.',
+            courses: [
+              { platform: 'Coursera', name: 'Google Cybersecurity Professional Certificate', instructor: 'Google', url: 'https://www.coursera.org/professional-certificates/google-cybersecurity', duration: '6 months', level: 'Beginner', accent: '#0056d2' },
+              { platform: 'Simplilearn', name: 'CompTIA Security+ Certification Training', instructor: 'Simplilearn Expert Faculty', url: 'https://www.simplilearn.com/comptia-security-plus-certification-training', duration: '40 hrs', level: 'Beginner', accent: '#02aab0' },
+            ],
+            hackathons: []
+          },
+          {
+            title: 'Phase 2: Ethical Hacking & Penetration Testing', status: 'current',
+            skills: ['Kali Linux', 'Metasploit', 'Nmap / Nessus', 'Burp Suite', 'SQL Injection / XSS'],
+            description: 'Adopt the attacker mindset. Conduct authorized penetration tests, exploit common vulnerabilities, and document security findings.',
+            courses: [
+              { platform: 'Udemy', name: 'The Complete Ethical Hacking Course: Beginner to Advanced!', instructor: 'Atil Samancioglu', url: 'https://www.udemy.com/course/penetration-testing/', duration: '20 hrs', level: 'Beginner', accent: '#ec5252' },
+              { platform: 'Coursera', name: 'Cybersecurity Specialization', instructor: 'University of Maryland', url: 'https://www.coursera.org/specializations/cyber-security', duration: '4 months', level: 'Intermediate', accent: '#0056d2' },
+            ],
+            hackathons: [
+              { name: 'PicoCTF 2026', platform: 'CTFtime', url: 'https://ctftime.org', tags: ['Beginner CTF', 'Carnegie Mellon'], accent: '#ff6b35' },
+              { name: 'OWASP AppSec CTF', platform: 'CTFtime', url: 'https://ctftime.org/event/list/', tags: ['Web Security', 'OWASP'], accent: '#ff6b35' },
+            ]
+          },
+          {
+            title: 'Phase 3: SOC & Defensive Security', status: 'locked',
+            skills: ['SIEM (Splunk)', 'Incident Response', 'Threat Hunting', 'Log Analysis', 'MITRE ATT&CK'],
+            description: 'Build and operate a Security Operations Center. Implement threat detection rules, respond to incidents, and hunt advanced persistent threats.',
+            courses: [
+              { platform: 'Coursera', name: 'IBM Cybersecurity Analyst Professional Certificate', instructor: 'IBM', url: 'https://www.coursera.org/professional-certificates/ibm-cybersecurity-analyst', duration: '8 months', level: 'Intermediate', accent: '#0056d2' },
+              { platform: 'Udemy', name: 'SOC Analyst — A-Z Path to Landing Your First SOC Job', instructor: 'Nathan House', url: 'https://www.udemy.com/course/soc-analyst/', duration: '14 hrs', level: 'Intermediate', accent: '#ec5252' },
+            ],
+            hackathons: []
+          },
+          {
+            title: 'Phase 4: Cloud Security & Certifications', status: 'locked',
+            skills: ['AWS Security Specialty', 'Zero Trust Architecture', 'IAM Policies', 'Secrets Management'],
+            description: 'Secure cloud-native environments. Design zero-trust architectures, implement least-privilege IAM, and achieve AWS Security Specialty certification.',
+            courses: [
+              { platform: 'Simplilearn', name: 'CISSP Certification Training', instructor: 'Simplilearn x EC-Council', url: 'https://www.simplilearn.com/cissp-certification-training-course', duration: '90 hrs', level: 'Advanced', accent: '#02aab0' },
+            ],
+            hackathons: [
+              { name: 'Hack The Box CTF', platform: 'CTFtime', url: 'https://ctftime.org', tags: ['Advanced', 'Cloud Security'], accent: '#ff6b35' },
+            ]
+          },
+        ],
+        Intermediate: [
+          {
+            title: 'Phase 1: Advanced Exploitation', status: 'completed',
+            skills: ['Binary Exploitation', 'Reverse Engineering (Ghidra)', 'Heap Exploitation', 'ROP Chains'],
+            description: 'Master advanced offensive techniques: binary exploitation, reverse engineering compiled code, and chaining exploits against hardened targets.',
+            courses: [
+              { platform: 'Udemy', name: 'Advanced Binary Exploitation & Reverse Engineering', instructor: 'Nathan House', url: 'https://www.udemy.com/course/binary-exploitation-reverse-engineering/', duration: '18 hrs', level: 'Advanced', accent: '#ec5252' },
+            ],
+            hackathons: [
+              { name: 'DEF CON CTF Qualifier', platform: 'CTFtime', url: 'https://ctftime.org', tags: ['Elite', 'Binary Exploit', 'International'], accent: '#ff6b35' },
+            ]
+          },
+          {
+            title: 'Phase 2: Red Team Operations', status: 'current',
+            skills: ['Cobalt Strike', 'C2 Frameworks', 'Active Directory Attacks', 'Lateral Movement', 'OSINT'],
+            description: 'Execute full red team engagements. Compromise AD environments, establish persistent C2 channels, and produce executive-grade findings reports.',
+            courses: [
+              { platform: 'Simplilearn', name: 'Advanced Penetration Testing Certification', instructor: 'EC-Council CEH Master', url: 'https://www.simplilearn.com/advanced-ethical-hacking-certification-training', duration: '6 months', level: 'Advanced', accent: '#02aab0' },
+              { platform: 'Coursera', name: 'Offensive Security & Red Teaming', instructor: 'IBM Security', url: 'https://www.coursera.org/learn/offensive-security', duration: '6 weeks', level: 'Advanced', accent: '#0056d2' },
+            ],
+            hackathons: [
+              { name: 'Hack The Box Business CTF', platform: 'CTFtime', url: 'https://ctftime.org', tags: ['Red Team', 'Enterprise', '$25K Prize'], accent: '#ff6b35' },
+            ]
+          },
+          {
+            title: 'Phase 3: CISSP & Leadership', status: 'locked',
+            skills: ['Risk Management', 'Security Architecture', 'BCP / DRP', 'Vendor Assessment'],
+            description: 'Prepare for CISSP certification and transition into a security leadership role. Design enterprise security programs and manage organizational risk.',
+            courses: [
+              { platform: 'Simplilearn', name: 'CISSP Certification Training Course', instructor: 'Simplilearn', url: 'https://www.simplilearn.com/cissp-certification-training-course', duration: '90 hrs', level: 'Advanced', accent: '#02aab0' },
+            ],
+            hackathons: []
+          },
+        ],
+        Advanced: [
+          {
+            title: 'Phase 1: Vulnerability Research', status: 'completed',
+            skills: ['Fuzzing (AFL++, LibFuzzer)', '0-Day Research', 'CVE Writing', 'Kernel Exploitation'],
+            description: 'Discover and disclose novel vulnerabilities. Apply coverage-guided fuzzing, analyze kernel memory corruption bugs, and produce CVE-quality write-ups.',
+            courses: [
+              { platform: 'Udemy', name: 'Advanced Linux Kernel Exploitation & Fuzzing', instructor: 'Security Researcher Faculty', url: 'https://www.udemy.com/course/linux-kernel-exploitation/', duration: '12 hrs', level: 'Expert', accent: '#ec5252' },
+            ],
+            hackathons: []
+          },
+          {
+            title: 'Phase 2: AI-Powered Security Systems', status: 'current',
+            skills: ['ML-based IDS', 'LLM-assisted Malware Analysis', 'Adversarial ML', 'Automated Threat Intel'],
+            description: 'Engineer the next generation of security systems with AI. Build ML-powered intrusion detection, analyze malware with LLMs, and defend against adversarial attacks.',
+            courses: [
+              { platform: 'Coursera', name: 'AI for Cybersecurity', instructor: 'IBM', url: 'https://www.coursera.org/learn/ai-for-cybersecurity', duration: '4 weeks', level: 'Advanced', accent: '#0056d2' },
+            ],
+            hackathons: [
+              { name: 'CSAW CTF', platform: 'CTFtime', url: 'https://ctftime.org', tags: ['Top 10 Global CTF', 'AI Security'], accent: '#ff6b35' },
+            ]
+          },
+          {
+            title: 'Phase 3: Bug Bounty & OSS Security', status: 'locked',
+            skills: ['HackerOne Programs', 'Coordinated Disclosure', 'Security Auditing OSS', 'Threat Modeling'],
+            description: 'Generate income from security research via bug bounties, audit flagship open source projects, and establish public credibility through disclosures.',
+            courses: [
+              { platform: 'Simplilearn', name: 'Bug Bounty Hunting & Web Security Testing Bootcamp', instructor: 'Simplilearn', url: 'https://www.simplilearn.com/bug-bounty-hunting-course', duration: '6 months', level: 'Expert', accent: '#02aab0' },
+            ],
+            hackathons: []
+          },
+        ]
+      }
+    },
+  };
+
+  // ── Generic roadmap generator for unspecified domains ─────────────
+  function buildGenericRoadmap(domain) {
+    const titles = {
+      data_analyst: 'Data Analyst', devops: 'DevOps / SRE Engineer', cloud: 'Cloud Architect',
+      blockchain: 'Blockchain Developer', systems: 'Systems Engineer', uiux: 'UI/UX Designer',
+      mlops: 'MLOps Engineer', ar_vr: 'AR/VR Developer', game_dev: 'Game Developer',
+      mobile: 'Mobile Developer', embedded: 'Embedded / IoT Engineer', data_eng: 'Data Engineer',
+      backend: 'Backend Engineer', defi: 'DeFi / Fintech Engineer', robotics: 'Robotics Engineer',
+      network: 'Network Engineer', quantum: 'Quantum Computing Researcher', platform_eng: 'Platform Engineer',
+      technical_pm: 'Technical Product Manager', bioinformatics: 'Bioinformatics Engineer',
+      compiler_dev: 'Compiler / PL Developer', cv_engineer: 'CV / Perception Engineer',
+    };
+    const domainTitle = titles[domain] || domain;
+    const genericCourses = {
+      Beginner: [
+        { platform: 'Coursera', name: `${domainTitle} – Getting Started`, instructor: 'Google', url: 'https://www.coursera.org/browse/computer-science', duration: '3 months', level: 'Beginner', accent: '#0056d2' },
+        { platform: 'Udemy', name: `${domainTitle} Complete Bootcamp`, instructor: 'Expert Instructor', url: 'https://www.udemy.com/courses/it-and-software/', duration: '30 hrs', level: 'Beginner', accent: '#ec5252' },
+      ],
+      Intermediate: [
+        { platform: 'Simplilearn', name: `${domainTitle} Master Program`, instructor: 'Simplilearn Faculty', url: 'https://www.simplilearn.com/it-and-software-online-courses', duration: '6 months', level: 'Intermediate', accent: '#02aab0' },
+        { platform: 'Coursera', name: `Advanced ${domainTitle} Specialization`, instructor: 'Top University', url: 'https://www.coursera.org/browse/computer-science', duration: '4 months', level: 'Intermediate', accent: '#0056d2' },
+      ],
+      Advanced: [
+        { platform: 'Simplilearn', name: `${domainTitle} Professional Certificate`, instructor: 'Industry Expert', url: 'https://www.simplilearn.com', duration: '9 months', level: 'Advanced', accent: '#02aab0' },
+      ],
+    };
+    const genericPhases = {
+      Beginner: [
+        { title: 'Phase 1: Core Fundamentals', status: 'completed', skills: ['Programming Basics', 'Domain Concepts', 'Version Control', 'Documentation'], description: `Master the foundational concepts and tools essential for becoming a ${domainTitle}. Build a solid theoretical and practical base.`, courses: genericCourses.Beginner, hackathons: [{ name: 'Smart India Hackathon 2026', platform: 'Unstop', url: 'https://unstop.com/hackathons', tags: [domainTitle, 'National'], accent: '#7c4dff' }] },
+        { title: 'Phase 2: Core Tools & Frameworks', status: 'current', skills: ['Industry Tools', 'Framework Proficiency', 'Best Practices', 'Testing'], description: `Learn the primary tools and frameworks used by professional ${domainTitle}s in industry. Build several portfolio-worthy projects.`, courses: genericCourses.Intermediate, hackathons: [] },
+        { title: 'Phase 3: Project Portfolio', status: 'locked', skills: ['End-to-End Projects', 'System Design', 'Deployment', 'Documentation'], description: `Build 3–5 production-quality projects that demonstrate your capabilities to employers. Focus on real-world problem solving.`, courses: genericCourses.Advanced, hackathons: [{ name: 'MLH Local Hack Day', platform: 'Devfolio', url: 'https://devfolio.co', tags: [domainTitle, 'Global'], accent: '#3770ff' }] },
+      ],
+      Intermediate: [
+        { title: 'Phase 1: Advanced Concepts', status: 'completed', skills: ['Advanced Patterns', 'Performance Optimization', 'System Architecture', 'Security Best Practices'], description: `Deepen your ${domainTitle} expertise with advanced architectural patterns, performance optimization, and security-conscious design.`, courses: genericCourses.Intermediate, hackathons: [] },
+        { title: 'Phase 2: Production Systems', status: 'current', skills: ['Production Deployment', 'Monitoring & Observability', 'Team Collaboration', 'Code Reviews'], description: `Build and maintain production-grade systems. Learn CI/CD pipelines, monitoring strategies, and collaborative engineering practices.`, courses: genericCourses.Advanced, hackathons: [{ name: 'Hack This Fall 4.0', platform: 'Devfolio', url: 'https://devfolio.co', tags: [domainTitle, '₹50K Prize'], accent: '#3770ff' }] },
+        { title: 'Phase 3: Specialization', status: 'locked', skills: ['Domain Specialization', 'Open Source Contribution', 'Technical Writing', 'Mentorship'], description: `Specialize in a high-value niche within ${domainTitle}. Contribute to open source, write technical content, and establish your personal brand.`, courses: genericCourses.Advanced, hackathons: [] },
+      ],
+      Advanced: [
+        { title: 'Phase 1: Expert-Level Architecture', status: 'completed', skills: ['Large-Scale System Design', 'Performance Engineering', 'Security Architecture', 'Research Skills'], description: `Design and review large-scale systems. Apply expert-level knowledge to solve complex problems that junior and mid-level engineers cannot.`, courses: genericCourses.Advanced, hackathons: [] },
+        { title: 'Phase 2: Industry Impact', status: 'current', skills: ['Open Source Leadership', 'Conference Speaking', 'Technical Blogging', 'Cross-Team Influence'], description: `Establish industry thought leadership. Speak at conferences, maintain influential open source projects, and drive technical direction across teams.`, courses: genericCourses.Advanced, hackathons: [{ name: 'WorldQuant BRAIN Challenge', platform: 'Unstop', url: 'https://unstop.com', tags: ['Research', 'Global', '$50K Prize'], accent: '#7c4dff' }] },
+      ],
+    };
+    return {
+      title: domainTitle,
+      duration: { Beginner: '9 months', Intermediate: '5 months', Advanced: '3 months' },
+      phases: genericPhases,
+    };
+  }
+
+  // ── Init: Render Domain Grid ───────────────────────────────────────
+  function renderDomainGrid() {
+    const grid = document.getElementById('domainGrid');
+    grid.innerHTML = DOMAINS.map(d => `
+      <button
+        class="domain-pill glass rounded-xl p-3 text-left"
+        data-id="${d.id}"
+        onclick="selectDomain('${d.id}', this)"
+      >
+        <div class="text-2xl mb-1.5">${d.icon}</div>
+        <div class="text-xs font-semibold text-slate-300 leading-tight">${d.label}</div>
+      </button>
+    `).join('');
+  }
+
+  function selectDomain(id, el) {
+    document.querySelectorAll('.domain-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedDomain = id;
+    const domain = DOMAINS.find(d => d.id === id);
+    const badge = document.getElementById('selectedDomainBadge');
+    badge.textContent = `${domain.icon} ${domain.label}`;
+    badge.classList.remove('hidden');
+  }
+
+  function selectLevel(btn) {
+    document.querySelectorAll('.skill-pill').forEach(p => {
+      p.classList.remove('active', 'border-emerald-400/60', 'border-yellow-400/60', 'border-purple-400/60', 'text-white');
+      p.classList.add('border-white/[0.08]');
+    });
+    btn.classList.add('active', 'text-white');
+    btn.classList.remove('border-white/[0.08]');
+    const level = btn.dataset.level;
+    selectedLevel = level;
+    if (level === 'Beginner') btn.classList.add('border-emerald-400/60');
+    if (level === 'Intermediate') btn.classList.add('border-yellow-400/60');
+    if (level === 'Advanced') btn.classList.add('border-purple-400/60');
+  }
+
+  function generateRoadmap() {
+    if (!selectedDomain) {
+      alert('⚡ Please select a career vector first.');
+      return;
+    }
+    const data = ROADMAP_DATA[selectedDomain] || buildGenericRoadmap(selectedDomain);
+    const phases = data.phases[selectedLevel] || data.phases['Beginner'];
+    const duration = data.duration[selectedLevel] || '6 months';
+
+    document.getElementById('roadmapTitle').textContent = data.title;
+    document.getElementById('roadmapDuration').textContent = duration;
+    document.getElementById('roadmapMeta').textContent = `${selectedLevel.toUpperCase()} TRACK  //  ${phases.length} PHASES`;
+
+    renderTimeline(phases);
+
+    document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('roadmapOutput').classList.remove('hidden');
+    document.getElementById('roadmapOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderTimeline(phases) {
+    const container = document.getElementById('phaseTimeline');
+    container.innerHTML = `
+      <div class="timeline-line"></div>
+      ${phases.map((phase, i) => renderPhaseCard(phase, i)).join('')}
+    `;
+  }
+
+  function renderPhaseCard(phase, idx) {
+    const statusConfig = {
+      completed: { dot: 'bg-emerald-400', ring: 'ring-emerald-400/40', badge: 'COMPLETED', badgeClass: 'completed' },
+      current:   { dot: 'bg-yellow-400 animate-pulse', ring: 'ring-yellow-400/40', badge: 'CURRENT OBJECTIVE', badgeClass: 'current' },
+      locked:    { dot: 'bg-slate-600', ring: 'ring-slate-600/40', badge: 'LOCKED', badgeClass: 'locked' },
+    };
+    const cfg = statusConfig[phase.status] || statusConfig.locked;
+    return `
+      <div class="relative mb-5">
+        <div class="absolute -left-12 top-4 w-9 h-9 rounded-full glass ring-2 ${cfg.ring} flex items-center justify-center z-10">
+          <div class="w-2.5 h-2.5 rounded-full ${cfg.dot}"></div>
+        </div>
+        <div class="phase-card glass glass-hover rounded-2xl p-5 ${phase.status}" onclick="openPhaseModal(${idx})">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <h3 class="text-base font-bold text-white">${phase.title}</h3>
+            <span class="status-badge ${cfg.badgeClass} text-xs font-mono px-2.5 py-1 rounded-full whitespace-nowrap">${cfg.badge}</span>
+          </div>
+          <p class="text-slate-400 text-sm mb-4 leading-relaxed">${phase.description}</p>
+          <div class="flex flex-wrap gap-1.5">
+            ${phase.skills.map(s => `<span class="px-2 py-0.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-400 text-xs font-mono">${s}</span>`).join('')}
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-xs font-mono text-emerald-400/70">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            CLICK TO VIEW COURSES & OPPORTUNITIES
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  let currentPhases = [];
+  function openPhaseModal(idx) {
+    const data = ROADMAP_DATA[selectedDomain] || buildGenericRoadmap(selectedDomain);
+    currentPhases = data.phases[selectedLevel] || [];
+    const phase = currentPhases[idx];
+    if (!phase) return;
+
+    const cfg = {
+      completed: { badge: 'COMPLETED', badgeClass: 'completed', color: '#10b981' },
+      current:   { badge: 'CURRENT OBJECTIVE', badgeClass: 'current', color: '#f59e0b' },
+      locked:    { badge: 'LOCKED', badgeClass: 'locked', color: '#64748b' },
+    }[phase.status] || { badge: 'LOCKED', badgeClass: 'locked', color: '#64748b' };
+
+    const modal = document.getElementById('modalContent');
+    modal.innerHTML = `
+      <!-- Modal Header -->
+      <div class="relative p-7 border-b border-white/[0.08]">
+        <div class="absolute top-0 left-0 right-0 h-1 rounded-t-[20px]" style="background: linear-gradient(90deg, ${cfg.color}, transparent)"></div>
+        <button onclick="closeModal()" class="absolute top-5 right-5 w-9 h-9 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:border-red-500/40 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <div class="flex items-center gap-3 mb-3">
+          <span class="status-badge ${cfg.badgeClass} text-xs font-mono px-3 py-1 rounded-full">${cfg.badge}</span>
+        </div>
+        <h2 class="text-2xl font-black text-white mb-2">${phase.title}</h2>
+        <p class="text-slate-400 leading-relaxed">${phase.description}</p>
+        <div class="flex flex-wrap gap-2 mt-4">
+          ${phase.skills.map(s => `<span class="px-2.5 py-1 rounded-lg glass border border-white/[0.08] text-slate-300 text-xs font-mono">${s}</span>`).join('')}
+        </div>
+      </div>
+
+      <!-- Courses Section -->
+      ${phase.courses && phase.courses.length > 0 ? `
+      <div class="p-7 border-b border-white/[0.08]">
+        <h3 class="text-sm font-mono text-emerald-400/80 tracking-widest mb-4 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          CURATED COURSES
+        </h3>
+        <div class="grid gap-3">
+          ${phase.courses.map(course => `
+            <a href="${course.url}" target="_blank" rel="noopener noreferrer" class="platform-card glass rounded-xl p-4 border border-white/[0.08] hover:border-opacity-60" style="--accent: ${course.accent}; hover:border-color: ${course.accent}40">
+              <div class="flex items-start gap-3">
+                <div class="px-2 py-1 rounded-lg text-xs font-bold text-white shrink-0 mt-0.5" style="background: ${course.accent}">
+                  ${course.platform}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-semibold text-white leading-tight mb-1">${course.name}</div>
+                  <div class="text-xs text-slate-500 mb-2">${course.instructor}</div>
+                  <div class="flex items-center gap-3 text-xs">
+                    <span class="text-slate-400 font-mono">⏱ ${course.duration}</span>
+                    <span class="px-2 py-0.5 rounded glass text-slate-400 font-mono">${course.level}</span>
+                  </div>
+                </div>
+                <svg class="w-4 h-4 text-slate-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </div>
+            </a>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
+
+      <!-- Hackathons Section -->
+      ${phase.hackathons && phase.hackathons.length > 0 ? `
+      <div class="p-7">
+        <h3 class="text-sm font-mono text-violet-400/80 tracking-widest mb-4 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/></svg>
+          LIVE HACKATHONS & CTFs
+        </h3>
+        <div class="grid sm:grid-cols-${phase.hackathons.length > 1 ? '2' : '1'} gap-3">
+          ${phase.hackathons.map(h => `
+            <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="hackathon-card glass rounded-xl p-4 border border-white/[0.08]">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full text-white" style="background: ${h.accent}">${h.platform}</span>
+                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </div>
+              <div class="text-sm font-semibold text-white mb-2">${h.name}</div>
+              <div class="flex flex-wrap gap-1.5">
+                ${h.tags.map(t => `<span class="px-2 py-0.5 rounded glass text-slate-400 text-xs font-mono">${t}</span>`).join('')}
+              </div>
+            </a>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
+    `;
+
+    document.getElementById('phaseModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('phaseModal').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function handleModalClick(event) {
+    if (event.target === document.getElementById('phaseModal')) closeModal();
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ── Clock ──────────────────────────────────────────────────────────
+  function updateTime() {
+    const now = new Date();
+    document.getElementById('currentTime').textContent =
+      now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+  setInterval(updateTime, 1000);
+  updateTime();
+
+  // ── Bootstrap ─────────────────────────────────────────────────────
+  renderDomainGrid();
+  // Pre-select Beginner
+  const beginnerBtn = document.querySelector('[data-level="Beginner"]');
+  if (beginnerBtn) selectLevel(beginnerBtn);
+  </script>
+<script src="/static/js/digipath-shell.js"></script>
 </body>
 </html>

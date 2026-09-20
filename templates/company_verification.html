@@ -9,18 +9,18 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --neon-green: #00ff41;
+    --neon-green: #00ff66;
     --neon-cyan: #00e5ff;
-    --neon-magenta: #ff00ff;
+    --neon-magenta: #ff0055;
     --neon-amber: #ffb300;
-    --bg-dark: #000000;
-    --bg-panel: #050f05;
-    --bg-card: #020a02;
-    --border-green: #00ff4133;
-    --border-green-solid: #00ff41;
-    --text-dim: #006620;
-    --text-mid: #00aa2b;
-    --scan-line: rgba(0, 255, 65, 0.03);
+    --bg-dark: #0a0e14;
+    --bg-panel: #0d121b;
+    --bg-card: #080c12;
+    --border-green: rgba(0, 255, 102, 0.2);
+    --border-green-solid: #00ff66;
+    --text-dim: #008833;
+    --text-mid: #00cc55;
+    --scan-line: rgba(0, 255, 102, 0.03);
     --sidebar-width: 260px;
   }
 
@@ -32,7 +32,6 @@
     overflow: hidden;
   }
 
-  /* CRT scanline overlay */
   body::before {
     content: '';
     position: fixed;
@@ -48,20 +47,18 @@
     z-index: 9999;
   }
 
-  /* grid bg */
   body::after {
     content: '';
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
+      linear-gradient(rgba(0,255,102,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,102,0.04) 1px, transparent 1px);
+    background-size: 36px 36px;
     pointer-events: none;
     z-index: 0;
   }
 
-  /* ─── LAYOUT ─── */
   .app-container {
     display: flex;
     height: 100vh;
@@ -70,7 +67,6 @@
     z-index: 1;
   }
 
-  /* ─── SIDEBAR ─── */
   .sidebar {
     width: var(--sidebar-width);
     background: var(--bg-panel);
@@ -92,7 +88,7 @@
     font-weight: 900;
     color: var(--neon-green);
     letter-spacing: 0.1em;
-    text-shadow: 0 0 10px rgba(0,255,65,0.5);
+    text-shadow: 0 0 12px rgba(0,255,102,0.6);
   }
 
   .nav-list {
@@ -115,24 +111,25 @@
   }
 
   .nav-item:hover {
-    background: rgba(0,255,65,0.05);
+    background: rgba(0,255,102,0.05);
     color: var(--neon-green);
   }
 
   .nav-item.active {
-    background: rgba(0,255,65,0.1);
+    background: rgba(0,255,102,0.1);
     color: var(--neon-green);
     border-left-color: var(--neon-green);
-    box-shadow: inset 5px 0 15px rgba(0,255,65,0.05);
+    box-shadow: inset 5px 0 15px rgba(0,255,102,0.05);
   }
 
-  /* ─── MAIN CONTENT ─── */
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
   .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: rgba(0,0,0,0.6);
+    background: rgba(10,14,20,0.85);
   }
 
   .header {
@@ -142,11 +139,10 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 32px;
-    background: rgba(5, 15, 5, 0.8);
+    background: rgba(13, 18, 27, 0.9);
     backdrop-filter: blur(10px);
   }
 
-  /* ─── CONTENT AREA ─── */
   .content-scroll {
     flex: 1;
     overflow-y: auto;
@@ -155,9 +151,9 @@
 
   .page-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     color: var(--neon-green);
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     letter-spacing: 2px;
   }
 
@@ -165,9 +161,9 @@
     background: var(--bg-card);
     border: 1px solid var(--border-green);
     border-top: 2px solid var(--neon-cyan);
-    padding: 32px;
+    padding: 28px;
     position: relative;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
   .search-wrap {
@@ -177,35 +173,35 @@
 
   .search-input {
     flex: 1;
-    background: #000;
-    border: 1px solid #00ff4140;
+    background: #05080c;
+    border: 1px solid var(--border-green);
     color: var(--neon-green);
     font-family: 'Share Tech Mono', monospace;
-    font-size: 16px;
-    padding: 15px;
+    font-size: 15px;
+    padding: 14px;
     outline: none;
   }
-  .search-input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,229,255,0.1); }
+  .search-input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,229,255,0.15); }
 
   .verify-btn {
     background: transparent;
     border: 1px solid var(--neon-cyan);
     color: var(--neon-cyan);
     font-family: 'Share Tech Mono', monospace;
-    padding: 0 32px;
-    font-size: 14px;
+    padding: 0 28px;
+    font-size: 13px;
     letter-spacing: 2px;
     cursor: pointer;
+    font-weight: bold;
     transition: all 0.2s;
   }
   .verify-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px var(--neon-cyan); }
 
-  /* ─── RESULT DISPLAY ─── */
   .result-display {
     display: none;
-    animation: slideUp 0.4s;
+    animation: slideUp 0.3s ease-out;
   }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
   .company-card {
     background: var(--bg-card);
@@ -213,29 +209,65 @@
     padding: 32px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 32px;
+    gap: 24px;
     position: relative;
   }
 
-  .status-header { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(0,255,65,0.1); padding-bottom: 20px; margin-bottom: 10px; }
+  .status-header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0,255,102,0.15);
+    padding-bottom: 18px;
+  }
+
   .status-badge {
-    padding: 8px 20px;
-    font-family: 'Orbitron';
-    font-size: 18px;
+    padding: 6px 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
     border: 1px solid;
     letter-spacing: 2px;
+    font-weight: bold;
   }
-  .status-verified { color: var(--neon-green); border-color: var(--neon-green); background: rgba(0,255,65,0.05); }
-  .status-unverified { color: var(--neon-magenta); border-color: var(--neon-magenta); background: rgba(255,0,255,0.05); }
+  .status-verified { color: var(--neon-green); border-color: var(--neon-green); background: rgba(0,255,102,0.06); box-shadow: 0 0 10px rgba(0,255,102,0.2); }
+  .status-unverified { color: var(--neon-amber); border-color: var(--neon-amber); background: rgba(255,179,0,0.06); }
+  .status-high-risk { color: var(--neon-magenta); border-color: var(--neon-magenta); background: rgba(255,0,85,0.06); box-shadow: 0 0 10px rgba(255,0,85,0.2); }
 
-  .info-group { margin-bottom: 15px; }
-  .info-label { font-size: 10px; color: var(--text-dim); margin-bottom: 5px; text-transform: uppercase; }
+  .info-group { margin-bottom: 12px; }
+  .info-label { font-size: 10px; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; }
   .info-val { font-size: 14px; color: var(--text-mid); }
 
-  /* corner decorations */
+  .flags-list {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .flag-item {
+    padding: 10px 14px;
+    background: rgba(255,0,85,0.05);
+    border-left: 3px solid var(--neon-magenta);
+    font-size: 12px;
+    color: #ff88a3;
+  }
+  .flag-item.safe {
+    background: rgba(0,255,102,0.05);
+    border-left-color: var(--neon-green);
+    color: var(--text-mid);
+  }
+
+  .report-box {
+    margin-top: 24px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-green);
+    padding: 24px;
+  }
+
   .corner {
     position: absolute;
-    width: 10px; height: 10px;
+    width: 8px; height: 8px;
     border-color: var(--neon-green);
     border-style: solid;
     opacity: 0.5;
@@ -244,13 +276,11 @@
   .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
   .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
   .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
-
 </style>
 </head>
 <body>
 
 <div class="app-container">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="logo-title">DIGIPATH_AI</div>
@@ -268,36 +298,47 @@
         <span class="nav-icon">◉</span>
         <span>INSTITUTES</span>
       </a>
-      <a href="/scam-detector" class="nav-item">
-        <span class="nav-icon">⚠</span>
-        <span>SCAM_DETECTOR</span>
+      <a href="/job-recommender" class="nav-item">
+        <span class="nav-icon">▤</span>
+        <span>JOB_MATCH</span>
+      </a>
+      <a href="/resume-analyzer" class="nav-item">
+        <span class="nav-icon">▦</span>
+        <span>RESUME_AI</span>
+      </a>
+      <a href="/roadmap" class="nav-item">
+        <span class="nav-icon">➹</span>
+        <span>ROADMAP</span>
       </a>
       <a href="/company-verification" class="nav-item active">
         <span class="nav-icon">✓</span>
         <span>VERIFY_CORP</span>
       </a>
+      <a href="/scam-detector" class="nav-item">
+        <span class="nav-icon">⚠</span>
+        <span>SCAM_DETECTOR</span>
+      </a>
     </nav>
   </aside>
 
-  <!-- MAIN -->
   <main class="main-content">
     <header class="header">
-      <div id="clock" style="font-size: 14px; color: var(--neon-cyan)"></div>
-      <div class="status-tag">ROC_CONNECT: STABLE</div>
+      <div id="clock" style="font-size: 14px; color: var(--neon-cyan)">&gt; TIME: --:--:--</div>
+      <div style="font-size: 11px; color: var(--text-mid)">ROC_REGISTRY: LIVE // FRAUD_VECTOR_ANALYZER</div>
     </header>
 
     <div class="content-scroll">
-      <h2 class="page-title">COMPANY_VERIFICATION_MODULE</h2>
+      <h2 class="page-title">CORPORATE_INTELLIGENCE_&_FRAUD_SHIELD</h2>
 
       <div class="search-card">
         <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
         <div class="corner corner-bl"></div><div class="corner corner-br"></div>
         
         <div class="search-wrap">
-          <input type="text" class="search-input" id="corpInput" placeholder="ENTER_GSTIN_OR_COMPANY_NAME...">
-          <button class="verify-btn" onclick="verifyCorp()">[ VERIFY ]</button>
+          <input type="text" class="search-input" id="corpInput" placeholder="ENTER COMPANY NAME, OFFER TEXT, OR GSTIN (e.g. Tata Consultancy Services, 27AAACT2727N1ZM)...">
+          <button class="verify-btn" onclick="executeCorpVerification()">[ VERIFY ]</button>
         </div>
-        <div style="font-size: 10px; color: var(--text-dim); margin-top: 15px;">Supported Identifiers: GSTIN, CIN, PAN, SEZ_ID</div>
+        <div style="font-size: 11px; color: var(--text-dim); margin-top: 12px;">Validates against Ministry of Corporate Affairs, threat intelligence feeds, and scam indicators</div>
       </div>
 
       <div class="result-display" id="resultDisplay">
@@ -306,30 +347,43 @@
           <div class="corner corner-bl"></div><div class="corner corner-br"></div>
 
           <div class="status-header">
-            <h3 class="page-title" id="compName" style="margin-bottom:0">TATA_CONSULTANCY_SERVICES</h3>
-            <div class="status-badge status-verified" id="statusBadge">VERIFIED</div>
+            <div>
+              <h3 class="page-title" id="compName" style="margin-bottom: 4px;">--</h3>
+              <div style="font-size: 11px; color: var(--text-dim)" id="queryMeta">TARGET IDENTIFIER: PARSED</div>
+            </div>
+            <div class="status-badge status-verified" id="statusBadge">[ VERIFIED ]</div>
           </div>
 
           <div class="info-group">
-            <div class="info-label">GSTIN_ID</div>
+            <div class="info-label">IDENTIFIER / GSTIN</div>
             <div class="info-val" id="gstId">27AAACT2727N1ZM</div>
           </div>
           <div class="info-group">
-            <div class="info-label">REGISTRATION_DATE</div>
-            <div class="info-val">01-APR-1968</div>
+            <div class="info-label">RISK LEVEL</div>
+            <div class="info-val" id="riskLevel" style="color: var(--neon-green)">LOW_RISK</div>
           </div>
           <div class="info-group">
-            <div class="info-label">HEADQUARTERS</div>
-            <div class="info-val">MUMBAI, MAHARASHTRA</div>
+            <div class="info-label">NEURAL TRUST SCORE</div>
+            <div class="info-val" id="trustScore" style="color: var(--neon-green); font-size: 18px; font-weight: bold;">98.5%</div>
           </div>
           <div class="info-group">
-            <div class="info-label">TRUST_SCORE</div>
-            <div class="info-val" style="color:var(--neon-green)">99.8%</div>
+            <div class="info-label">VERIFICATION STATUS</div>
+            <div class="info-val" id="verifiedStatus">MATCHED IN AUTHORIZED EMPLOYER REPOSITORIES</div>
           </div>
-          <div class="info-group" style="grid-column: 1 / -1;">
-            <div class="info-label">AI_RISK_ASSESSMENT</div>
-            <div class="info-val">No fraudulent patterns detected in the last 120 months. High credibility across all vectors.</div>
+
+          <div class="flags-list" id="flagsContainer">
+            <!-- Flags injected here -->
           </div>
+        </div>
+
+        <div class="report-box">
+          <h4 style="font-size: 13px; color: var(--neon-magenta); margin-bottom: 10px;">>> SUSPECT AN ANOMALY? REPORT THIS ENTITY</h4>
+          <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 12px;">Reports are fed into the system-wide security matrix to protect prospective students and candidates.</p>
+          <div style="display: flex; gap: 10px;">
+            <input type="text" id="reportDesc" placeholder="Brief reason for reporting (e.g. Demanded deposit money via WhatsApp)" class="search-input" style="padding: 8px;">
+            <button class="verify-btn" style="border-color: var(--neon-magenta); color: var(--neon-magenta);" onclick="submitReport()">FILE_REPORT</button>
+          </div>
+          <div id="reportFeedback" style="font-size: 11px; margin-top: 8px;"></div>
         </div>
       </div>
     </div>
@@ -337,33 +391,96 @@
 </div>
 
 <script>
-// Clock
 function updateClock(){
   const now = new Date();
-  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
+  const el = document.getElementById('clock');
+  if(el) el.textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-function verifyCorp() {
+async function executeCorpVerification() {
   const input = document.getElementById('corpInput').value.trim();
   if(!input) return;
 
   const resultDisplay = document.getElementById('resultDisplay');
-  resultDisplay.style.display = 'block';
-  
-  const isMockScam = input.toLowerCase().includes('scam') || input.toLowerCase().includes('fake');
-  const badge = document.getElementById('statusBadge');
   const compName = document.getElementById('compName');
+  const statusBadge = document.getElementById('statusBadge');
+  const riskLevel = document.getElementById('riskLevel');
+  const trustScore = document.getElementById('trustScore');
+  const gstId = document.getElementById('gstId');
+  const flagsContainer = document.getElementById('flagsContainer');
 
-  if(isMockScam) {
-    compName.textContent = input.toUpperCase();
-    badge.textContent = 'UNVERIFIED';
-    badge.className = 'status-badge status-unverified';
-  } else {
-    compName.textContent = input.toUpperCase() || 'TATA_CONSULTANCY_SERVICES';
-    badge.textContent = 'VERIFIED';
-    badge.className = 'status-badge status-verified';
+  resultDisplay.style.display = 'block';
+  compName.textContent = input.toUpperCase();
+  gstId.textContent = input.length === 15 && /^[0-9]{2}[A-Z]{5}/.test(input) ? input : 'GSTIN-' + Math.abs(input.split('').reduce((a,b)=>((a<<5)-a)+b.charCodeAt(0),0)).toString(16).toUpperCase().padStart(15, '0');
+
+  try {
+    const res = await fetch('/api/scam/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: input, company_name: input })
+    });
+    const data = await res.json();
+
+    statusBadge.textContent = data.status;
+    riskLevel.textContent = data.risk_level;
+    trustScore.textContent = `${data.trust_score}%`;
+
+    if (data.status === '[ VERIFIED ]') {
+      statusBadge.className = 'status-badge status-verified';
+      trustScore.style.color = 'var(--neon-green)';
+      riskLevel.style.color = 'var(--neon-green)';
+    } else if (data.status === '[ HIGH RISK ]') {
+      statusBadge.className = 'status-badge status-high-risk';
+      trustScore.style.color = 'var(--neon-magenta)';
+      riskLevel.style.color = 'var(--neon-magenta)';
+    } else {
+      statusBadge.className = 'status-badge status-unverified';
+      trustScore.style.color = 'var(--neon-amber)';
+      riskLevel.style.color = 'var(--neon-amber)';
+    }
+
+    const flags = data.flags || [];
+    flagsContainer.innerHTML = flags.map(f => `
+      <div class="flag-item ${data.verified ? 'safe' : ''}">>> ${f}</div>
+    `).join('');
+
+  } catch (err) {
+    console.error('Verification error:', err);
+    statusBadge.textContent = '[ UNVERIFIED ]';
+    statusBadge.className = 'status-badge status-unverified';
+  }
+}
+
+async function submitReport() {
+  const entity = document.getElementById('compName').textContent;
+  const desc = document.getElementById('reportDesc').value.trim();
+  const feedback = document.getElementById('reportFeedback');
+
+  if (!desc) {
+    feedback.textContent = 'Please provide details for the report.';
+    feedback.style.color = 'var(--neon-magenta)';
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/scam/report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        scammer_entity: entity,
+        description: desc,
+        scam_type: 'Employer Fraud'
+      })
+    });
+    const data = await res.json();
+    feedback.textContent = `✅ ${data.message || 'Report logged successfully.'}`;
+    feedback.style.color = 'var(--neon-green)';
+    document.getElementById('reportDesc').value = '';
+  } catch (err) {
+    feedback.textContent = `Error filing report: ${err.message}`;
+    feedback.style.color = 'var(--neon-magenta)';
   }
 }
 </script>

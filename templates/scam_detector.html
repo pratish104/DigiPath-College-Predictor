@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIGIPATH_AI // SCAM_DETECTOR</title>
+<title>DIGIPATH_AI // SCAM_&_FRAUD_THREAT_DETECTOR</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -11,12 +11,12 @@
   :root {
     --neon-green: #00ff41;
     --neon-cyan: #00e5ff;
-    --neon-magenta: #ff00ff;
+    --neon-magenta: #ff0055;
     --neon-amber: #ffb300;
     --bg-dark: #000000;
     --bg-panel: #050f05;
     --bg-card: #020a02;
-    --border-green: #00ff4133;
+    --border-green: rgba(0, 255, 65, 0.25);
     --border-green-solid: #00ff41;
     --text-dim: #006620;
     --text-mid: #00aa2b;
@@ -35,8 +35,7 @@
   /* CRT scanline overlay */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: repeating-linear-gradient(
       0deg,
       var(--scan-line) 0px,
@@ -51,8 +50,7 @@
   /* grid bg */
   body::after {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image:
       linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
@@ -61,7 +59,6 @@
     z-index: 0;
   }
 
-  /* ─── LAYOUT ─── */
   .app-container {
     display: flex;
     height: 100vh;
@@ -70,7 +67,7 @@
     z-index: 1;
   }
 
-  /* ─── SIDEBAR ─── */
+  /* Sidebar */
   .sidebar {
     width: var(--sidebar-width);
     background: var(--bg-panel);
@@ -93,7 +90,10 @@
     color: var(--neon-green);
     letter-spacing: 0.1em;
     text-shadow: 0 0 10px rgba(0,255,65,0.5);
+    text-decoration: none;
+    display: block;
   }
+  .logo-title span { color: var(--neon-cyan); }
 
   .nav-list {
     flex: 1;
@@ -126,7 +126,9 @@
     box-shadow: inset 5px 0 15px rgba(0,255,65,0.05);
   }
 
-  /* ─── MAIN CONTENT ─── */
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* Main Content */
   .main-content {
     flex: 1;
     display: flex;
@@ -142,132 +144,247 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 32px;
-    background: rgba(5, 15, 5, 0.8);
+    background: rgba(5, 15, 5, 0.85);
     backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
-  /* ─── CONTENT AREA ─── */
+  .status-tag {
+    font-size: 11px;
+    color: var(--neon-green);
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--neon-green);
+    box-shadow: 0 0 6px var(--neon-green);
+  }
+
   .content-area {
     padding: 32px;
-    max-width: 1000px;
+    max-width: 1200px;
     width: 100%;
     margin: 0 auto;
   }
 
   .page-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     color: var(--neon-green);
-    margin-bottom: 32px;
+    margin-bottom: 8px;
     letter-spacing: 2px;
   }
 
-  .detector-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-green);
-    border-top: 2px solid var(--neon-green);
-    padding: 32px;
-    position: relative;
-    margin-bottom: 32px;
+  .page-subtitle {
+    font-size: 12px;
+    color: var(--text-mid);
+    margin-bottom: 24px;
   }
 
-  .form-group { margin-bottom: 24px; }
-  .form-label {
-    display: block;
-    font-size: 11px;
-    color: var(--neon-cyan);
-    margin-bottom: 10px;
-    letter-spacing: 1px;
+  /* INPUT TABS */
+  .tab-row {
+    display: flex; gap: 4px; margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-green);
   }
-
-  .offer-textarea {
-    width: 100%;
-    height: 200px;
-    background: #000;
-    border: 1px solid #00ff4140;
-    color: var(--neon-green);
+  .tab-btn {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    padding: 15px;
-    outline: none;
-    resize: none;
+    font-size: 11px; letter-spacing: 1.5px;
+    padding: 10px 20px; cursor: pointer;
+    background: rgba(0,255,65,0.02);
+    border: 1px solid transparent;
+    border-bottom: none;
+    color: var(--text-mid);
     transition: all 0.2s;
   }
-  .offer-textarea:focus { border-color: var(--neon-green); box-shadow: 0 0 15px rgba(0,255,65,0.1); }
+  .tab-btn.active {
+    background: var(--bg-panel);
+    border-color: var(--border-green);
+    color: var(--neon-green);
+    border-top: 2px solid var(--neon-green);
+  }
 
-  .analyze-btn {
+  .tab-content {
+    display: none;
+    background: var(--bg-card);
+    border: 1px solid var(--border-green);
+    padding: 24px;
+    position: relative;
+    margin-bottom: 28px;
+  }
+  .tab-content.active { display: block; }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block; font-size: 11px; color: var(--neon-cyan); letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .form-input, .form-textarea {
     width: 100%;
+    background: #000;
+    border: 1px solid rgba(0, 255, 65, 0.25);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; padding: 10px 12px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .form-input:focus, .form-textarea:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 8px rgba(0, 255, 65, 0.3);
+  }
+  .form-textarea { resize: vertical; min-height: 120px; line-height: 1.5; }
+
+  /* DROPZONE */
+  .dropzone {
+    background: #000;
+    border: 2px dashed rgba(0, 255, 65, 0.3);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .dropzone:hover {
+    border-color: var(--neon-green);
+    background: rgba(0, 255, 65, 0.04);
+  }
+
+  .action-btn {
     background: transparent;
     border: 1px solid var(--neon-green);
     color: var(--neon-green);
     font-family: 'Share Tech Mono', monospace;
-    padding: 15px;
-    font-size: 14px;
-    letter-spacing: 4px;
+    padding: 12px 24px;
     cursor: pointer;
+    font-size: 12px;
+    letter-spacing: 2px;
     transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
   }
-  .analyze-btn:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 20px var(--neon-green); }
+  .action-btn:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 14px var(--neon-green);
+  }
+  .action-btn-red {
+    border-color: var(--neon-magenta);
+    color: var(--neon-magenta);
+  }
+  .action-btn-red:hover {
+    background: var(--neon-magenta);
+    color: #fff;
+    box-shadow: 0 0 14px var(--neon-magenta);
+  }
 
-  /* ─── RESULTS ─── */
-  .result-panel {
+  /* RESULTS PANEL */
+  .results-panel {
     display: none;
-    background: var(--bg-card);
+    background: var(--bg-panel);
     border: 1px solid var(--border-green);
-    padding: 32px;
+    padding: 28px;
     position: relative;
-    animation: fadeIn 0.5s;
+    margin-bottom: 30px;
   }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .results-panel.show { display: block; }
 
-  .result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(0,255,65,0.1);
+  /* GAUGE & METRICS ROW */
+  .gauge-grid {
+    display: grid; grid-template-columns: 280px 1fr; gap: 28px;
+    align-items: center; margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-green); padding-bottom: 24px;
   }
 
-  .risk-gauge {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+  /* SEMI-CIRCLE RISK GAUGE */
+  .gauge-wrapper {
+    text-align: center; position: relative;
   }
-  .risk-value { font-family: 'Orbitron'; font-size: 24px; font-weight: 900; }
-  .risk-high { color: var(--neon-magenta); }
+  .gauge-meter {
+    width: 220px; height: 110px;
+    border-top-left-radius: 110px;
+    border-top-right-radius: 110px;
+    background: #111;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto 12px;
+    border: 1px solid rgba(0,255,65,0.2);
+  }
+  .gauge-fill {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 100%;
+    transform-origin: bottom center;
+    transform: rotate(0deg);
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    background: conic-gradient(from 180deg at 50% 100%, #00ff41 0deg, #ffb300 90deg, #ff0055 180deg);
+  }
+  .gauge-center-mask {
+    position: absolute; bottom: 0; left: 25px; right: 25px; height: 85px;
+    border-top-left-radius: 85px;
+    border-top-right-radius: 85px;
+    background: var(--bg-panel);
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    padding-bottom: 8px;
+  }
+  .gauge-score {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px; font-weight: 900;
+    color: var(--neon-green);
+  }
+  .gauge-label {
+    font-size: 9px; color: var(--text-mid); letter-spacing: 1px;
+  }
+
+  .risk-headline {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px; letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .risk-critical { color: var(--neon-magenta); }
+  .risk-moderate { color: var(--neon-amber); }
   .risk-low { color: var(--neon-green); }
 
-  .red-flags {
-    list-style: none;
+  /* CARDS */
+  .threat-list {
+    list-style: none; margin-top: 10px;
   }
-  .flag-item {
-    padding: 12px;
-    background: rgba(255, 0, 255, 0.05);
-    border-left: 3px solid var(--neon-magenta);
-    margin-bottom: 10px;
-    font-size: 13px;
-    color: var(--text-mid);
+  .threat-item {
+    padding: 8px 12px; margin-bottom: 6px; font-size: 11px;
+    background: rgba(255,0,85,0.06); border-left: 3px solid var(--neon-magenta);
+    color: #ff88a3;
   }
-  .flag-item.safe {
-    background: rgba(0, 255, 65, 0.05);
-    border-left-color: var(--neon-green);
+  .legit-item {
+    padding: 8px 12px; margin-bottom: 6px; font-size: 11px;
+    background: rgba(0,255,65,0.05); border-left: 3px solid var(--neon-green);
+    color: #88ffaa;
   }
 
-  /* corner decorations */
-  .corner {
-    position: absolute;
-    width: 10px; height: 10px;
-    border-color: var(--neon-green);
-    border-style: solid;
-    opacity: 0.5;
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    z-index: 10000; align-items: center; justify-content: center;
+    padding: 20px;
   }
+  .modal-overlay.show { display: flex; }
+  .modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--neon-magenta);
+    max-width: 600px; width: 100%;
+    padding: 28px; position: relative;
+  }
+
+  .corner { position: absolute; width: 8px; height: 8px; border-color: var(--neon-green); border-style: solid; }
   .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
   .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
   .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
   .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
 
+  @media (max-width: 800px) {
+    .gauge-grid { grid-template-columns: 1fr; }
+  }
 </style>
+<link rel="stylesheet" href="/static/css/digipath-shell.css">
 </head>
 <body>
 
@@ -275,7 +392,7 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-header">
-      <div class="logo-title">DIGIPATH_AI</div>
+      <a href="/" class="logo-title">DIGIPATH<span>_AI</span></a>
     </div>
     <nav class="nav-list">
       <a href="/dashboard" class="nav-item">
@@ -290,9 +407,21 @@
         <span class="nav-icon">◉</span>
         <span>INSTITUTES</span>
       </a>
+      <a href="/job-recommender" class="nav-item">
+        <span class="nav-icon">▤</span>
+        <span>JOB_MATCH</span>
+      </a>
       <a href="/resume-analyzer" class="nav-item">
         <span class="nav-icon">▦</span>
-        <span>RESUME_AI</span>
+        <span>RESUME_5D_AI</span>
+      </a>
+      <a href="/resume-builder" class="nav-item">
+        <span class="nav-icon">⚡</span>
+        <span>RESUME_BUILDER</span>
+      </a>
+      <a href="/roadmap" class="nav-item">
+        <span class="nav-icon">➹</span>
+        <span>ROADMAP</span>
       </a>
       <a href="/scam-detector" class="nav-item active">
         <span class="nav-icon">⚠</span>
@@ -304,83 +433,352 @@
   <!-- MAIN -->
   <main class="main-content">
     <header class="header">
-      <div id="clock" style="font-size: 14px; color: var(--neon-cyan)"></div>
-      <div class="status-tag">SCAM_SHIELD: v2.1_ENABLED</div>
+      <div id="clock" style="font-size: 13px; color: var(--neon-cyan)">&gt; TIME: --:--:--</div>
+      <div class="status-tag">
+        <span class="status-dot"></span>
+        <span>FRAUD_THREAT_INTELLIGENCE // ACTIVE</span>
+      </div>
     </header>
 
     <div class="content-area">
-      <h2 class="page-title">SCAM_DETECTOR_ENGINE</h2>
+      <h1 class="page-title">FRAUD_&amp;_SCAM_THREAT_DETECTOR</h1>
+      <p class="page-subtitle">Multi-Input Threat Verification: Offer Letter Text, Document Extraction &amp; Domain URL Inspection</p>
 
-      <div class="detector-card">
+      <!-- TAB ROW -->
+      <div class="tab-row">
+        <button class="tab-btn active" onclick="switchTab('textTab', this)">01. TEXT / EMAIL SCAN</button>
+        <button class="tab-btn" onclick="switchTab('docTab', this)">02. DOCUMENT UPLOAD (.PDF / .DOCX)</button>
+        <button class="tab-btn" onclick="switchTab('urlTab', this)">03. WEBSITE URL SCANNER</button>
+      </div>
+
+      <!-- TAB 1: TEXT SCAN -->
+      <div class="tab-content active" id="textTab">
         <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
         <div class="corner corner-bl"></div><div class="corner corner-br"></div>
 
         <div class="form-group">
-          <label class="form-label">PASTE_OFFER_OR_EMAIL_CONTENT</label>
-          <textarea class="offer-textarea" id="offerContent" placeholder="Include sender details, salary mentions, and specific requirements..."></textarea>
+          <label class="form-label">COMPANY OR RECRUITER ENTITY NAME (OPTIONAL)</label>
+          <input type="text" class="form-input" id="textEntity" placeholder="e.g. Apex Tech Solutions, Global Hiring HR">
         </div>
 
-        <button class="analyze-btn" onclick="analyzeScam()">⚡ INITIATE_SCAN</button>
+        <div class="form-group">
+          <label class="form-label">OFFER LETTER TEXT / EMAIL / WHATSAPP MESSAGE CONTENT</label>
+          <textarea class="form-textarea" id="textContent" placeholder="Paste the complete text, selection message, or fee request here..."></textarea>
+        </div>
+
+        <button class="action-btn" onclick="analyzeText()">
+          <span>⚡ INITIATE_THREAT_SCAN</span>
+        </button>
       </div>
 
-      <div class="result-panel" id="resultPanel">
+      <!-- TAB 2: DOC UPLOAD -->
+      <div class="tab-content" id="docTab">
         <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
         <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-        
-        <div class="result-header">
-          <div class="risk-gauge">
-            <span style="font-size: 11px; color: var(--text-dim);">RISK_LEVEL:</span>
-            <span class="risk-value risk-high" id="riskValue">CRITICAL</span>
-          </div>
-          <div style="font-size: 11px; color: var(--neon-cyan);">VECTORS_ANALYZED: 42</div>
+
+        <div class="form-group">
+          <label class="form-label">COMPANY OR SENDER NAME (OPTIONAL)</label>
+          <input type="text" class="form-input" id="docEntity" placeholder="e.g. Skyline Tech Pvt Ltd">
         </div>
 
-        <div class="red-flags" id="flags">
-          <!-- Flags will be injected here -->
+        <div class="dropzone" onclick="document.getElementById('fileInput').click()">
+          <input type="file" id="fileInput" hidden accept=".pdf,.docx,.doc,.txt">
+          <div style="font-size:32px; color:var(--neon-cyan); margin-bottom:8px;">📄</div>
+          <div style="font-size:12px; color:var(--text-mid);">
+            CLICK TO SELECT OR DRAG OFFER LETTER FILE (.PDF, .DOCX)<br>
+            <span id="selectedFileName" style="color:var(--neon-green); font-weight:bold; margin-top:6px; display:inline-block;"></span>
+          </div>
+        </div>
+
+        <button class="action-btn" style="margin-top:16px;" onclick="analyzeDocument()">
+          <span>⚡ PARSE_&amp;_ANALYZE_DOCUMENT</span>
+        </button>
+      </div>
+
+      <!-- TAB 3: URL SCAN -->
+      <div class="tab-content" id="urlTab">
+        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+
+        <div class="form-group">
+          <label class="form-label">COMPANY CAREERS OR WEBSITE URL</label>
+          <input type="url" class="form-input" id="urlInput" placeholder="e.g. https://apextech-hiring.xyz or http://192.168.1.1/careers">
+        </div>
+
+        <button class="action-btn" onclick="analyzeUrl()">
+          <span>⚡ SCAN_DOMAIN_REPUTATION</span>
+        </button>
+      </div>
+
+      <!-- RESULTS PANEL -->
+      <div class="results-panel" id="resultsPanel">
+        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+
+        <div class="gauge-grid">
+          <!-- Left: Gauge -->
+          <div class="gauge-wrapper">
+            <div class="gauge-meter">
+              <div class="gauge-fill" id="gaugeFill"></div>
+              <div class="gauge-center-mask">
+                <div class="gauge-score" id="gaugeScore">0%</div>
+                <div class="gauge-label">RISK_SCORE</div>
+              </div>
+            </div>
+            <div id="statusBadge" style="font-size:11px; font-weight:bold; letter-spacing:1.5px;">[ EVALUATING ]</div>
+          </div>
+
+          <!-- Right: Risk Verdict & Summary -->
+          <div>
+            <div class="risk-headline" id="riskTitle">ANALYSIS_COMPLETE</div>
+            <div style="font-size:12px; color:var(--text-mid); line-height:1.7; margin-bottom:14px;" id="riskSummary">
+              The neural threat analyzer scanned the input against verified company registrations and predator fee patterns.
+            </div>
+            <button class="action-btn action-btn-red" onclick="openReportModal()">
+              <span>🚨 REPORT_THIS_COMPANY (+5 CREDITS)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Detailed Breakdown -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+          <div>
+            <div style="font-size:11px; color:var(--neon-magenta); letter-spacing:1px; margin-bottom:6px;">
+              ⚠ IDENTIFIED_THREAT_FACTORS
+            </div>
+            <ul class="threat-list" id="threatList"></ul>
+          </div>
+          <div>
+            <div style="font-size:11px; color:var(--neon-green); letter-spacing:1px; margin-bottom:6px;">
+              ✔ LEGITIMACY_INDICATORS
+            </div>
+            <ul class="threat-list" id="legitList"></ul>
+          </div>
+        </div>
+
+        <!-- Action Recommendations -->
+        <div style="margin-top:20px; background:rgba(0,229,255,0.03); border:1px solid rgba(0,229,255,0.2); padding:14px;">
+          <div style="font-size:11px; color:var(--neon-cyan); letter-spacing:1px; margin-bottom:6px;">
+            > RECOMMENDED_OPERATOR_PROTOCOLS:
+          </div>
+          <ul style="padding-left:16px; font-size:11px; color:var(--text-mid); line-height:1.6;" id="recList"></ul>
         </div>
       </div>
     </div>
   </main>
 </div>
 
+<!-- REPORT MODAL -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal-card">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h2 style="font-family:'Orbitron',sans-serif; font-size:14px; color:var(--neon-magenta);">🚨 FILE_OFFICIAL_FRAUD_REPORT</h2>
+      <button onclick="closeReportModal()" style="background:none; border:none; color:var(--neon-magenta); font-size:18px; cursor:pointer;">✕</button>
+    </div>
+
+    <div style="font-size:11px; color:var(--text-mid); margin-bottom:14px;">
+      Submit verified intelligence to the DigiPath Moderation Queue. When verified by an administrator, you will automatically be awarded <b>+5 PDF Download Credits</b>.
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">SUSPECT COMPANY / ENTITY NAME</label>
+      <input type="text" class="form-input" id="repEntity" placeholder="Company name">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">COMMUNICATION PLATFORM</label>
+      <input type="text" class="form-input" id="repPlatform" placeholder="e.g. WhatsApp, Telegram, LinkedIn, Webmail">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">DESCRIPTION OF FRAUD / FEE DEMANDS</label>
+      <textarea class="form-textarea" id="repDesc" placeholder="Explain what fees were demanded, false promises made, or suspicious actions..."></textarea>
+    </div>
+
+    <button class="action-btn action-btn-red" style="width:100%;" onclick="submitFraudReport()">
+      <span>SUBMIT_TO_ADMIN_QUEUE &gt;</span>
+    </button>
+  </div>
+</div>
+
+<script src="/static/js/app.js"></script>
+<script src="/static/js/digipath-shell.js"></script>
 <script>
 // Clock
-function updateClock(){
+function updateClock() {
   const now = new Date();
-  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
+  const el = document.getElementById('clock');
+  if (el) el.textContent = '> TIME: ' + now.toLocaleTimeString('en-IN', { hour12: false });
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-function analyzeScam() {
-  const content = document.getElementById('offerContent').value.trim();
-  if(!content) { alert("Please provide offer content."); return; }
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
 
-  const panel = document.getElementById('resultPanel');
-  const riskValue = document.getElementById('riskValue');
-  const flagsDiv = document.getElementById('flags');
-  
-  panel.style.display = 'block';
-  
-  // Simulated logic
-  const isScam = content.toLowerCase().includes('payment') || content.toLowerCase().includes('whatsapp') || content.toLowerCase().includes('immediate joining');
+document.getElementById('fileInput').addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if (f) document.getElementById('selectedFileName').textContent = f.name;
+});
 
-  if(isScam) {
-    riskValue.textContent = 'CRITICAL';
-    riskValue.className = 'risk-value risk-high';
-    flagsDiv.innerHTML = `
-      <div class="flag-item">DETECTED: REQUEST_FOR_PAYMENT (SECURITY_DEPOSIT)</div>
-      <div class="flag-item">DETECTED: UNVERIFIED_COMMUNICATION_CHANNEL (WHATSAPP)</div>
-      <div class="flag-item">DETECTED: UNREALISTIC_SALARY_FOR_EXPERIENCE_RATIO</div>
-      <div class="flag-item">DETECTED: URGENCY_PSYCHOLOGY_TACTIC</div>
-    `;
+let lastScannedEntity = "";
+
+async function analyzeText() {
+  const text = document.getElementById('textContent').value.trim();
+  const entity = document.getElementById('textEntity').value.trim();
+  if (!text) return alert('Please enter communication text to scan.');
+
+  lastScannedEntity = entity || "Unknown Recruiter";
+  try {
+    const res = await fetch('/api/scam/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: text, company_name: entity })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    renderScamResults(data);
+  } catch (err) {
+    alert('Error analyzing text: ' + err.message);
+  }
+}
+
+async function analyzeDocument() {
+  const fileInput = document.getElementById('fileInput');
+  const file = fileInput.files[0];
+  const entity = document.getElementById('docEntity').value.trim();
+  if (!file) return alert('Please select a PDF or DOCX file to analyze.');
+
+  lastScannedEntity = entity || file.name;
+  const formData = new FormData();
+  formData.append('file', file);
+  if (entity) formData.append('entity_name', entity);
+
+  try {
+    const res = await fetch('/api/scam/analyze-doc', {
+      method: 'POST',
+      body: formData
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    renderScamResults(data);
+  } catch (err) {
+    alert('Error analyzing document: ' + err.message);
+  }
+}
+
+async function analyzeUrl() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) return alert('Please enter a website URL.');
+
+  lastScannedEntity = url;
+  try {
+    const res = await fetch('/api/scam/analyze-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: url })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    renderScamResults(data);
+  } catch (err) {
+    alert('Error analyzing URL: ' + err.message);
+  }
+}
+
+function renderScamResults(data) {
+  const panel = document.getElementById('resultsPanel');
+  panel.classList.add('show');
+
+  const riskScore = Math.round(data.risk_score || (100 - (data.trust_score || 50)));
+  const rotDeg = Math.round((riskScore / 100) * 180);
+  document.getElementById('gaugeFill').style.transform = `rotate(${rotDeg}deg)`;
+  document.getElementById('gaugeScore').textContent = `${riskScore}%`;
+
+  const badge = document.getElementById('statusBadge');
+  const title = document.getElementById('riskTitle');
+  badge.textContent = data.status_tag || "[ SCANNED ]";
+
+  if (data.risk_level === 'CRITICAL_SCAM') {
+    title.textContent = "CRITICAL_SCAM_THREAT";
+    title.className = "risk-headline risk-critical";
+    badge.style.color = "var(--neon-magenta)";
+  } else if (data.risk_level === 'MODERATE_RISK') {
+    title.textContent = "MODERATE_SUSPICIOUS_ACTIVITY";
+    title.className = "risk-headline risk-moderate";
+    badge.style.color = "var(--neon-amber)";
   } else {
-    riskValue.textContent = 'LOW_RISK';
-    riskValue.className = 'risk-value risk-low';
-    flagsDiv.innerHTML = `
-      <div class="flag-item safe">VALIDATED: CORPORATE_EMAIL_DOMAIN_DETECTED</div>
-      <div class="flag-item safe">VALIDATED: STANDARD_RECRUITMENT_WORKFLOW</div>
-    `;
+    title.textContent = "VERIFIED_LOW_RISK";
+    title.className = "risk-headline risk-low";
+    badge.style.color = "var(--neon-green)";
+  }
+
+  // Populate lists
+  const threatList = document.getElementById('threatList');
+  const flags = data.threat_flags || data.flags || [];
+  threatList.innerHTML = flags.length > 0
+    ? flags.map(f => `<li class="threat-item">${f}</li>`).join('')
+    : '<li class="threat-item" style="color:var(--text-mid); border-color:transparent; background:none;">No threat signatures detected.</li>';
+
+  const legitList = document.getElementById('legitList');
+  const legits = data.legitimacy_signals || [];
+  legitList.innerHTML = legits.length > 0
+    ? legits.map(l => `<li class="legit-item">${l}</li>`).join('')
+    : '<li class="legit-item" style="color:var(--text-mid); border-color:transparent; background:none;">No formal corporate verification records detected.</li>';
+
+  const recList = document.getElementById('recList');
+  const recs = data.recommendations || [];
+  recList.innerHTML = recs.map(r => `<li>${r}</li>`).join('');
+
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function openReportModal() {
+  document.getElementById('reportModal').classList.add('show');
+  document.getElementById('repEntity').value = lastScannedEntity;
+}
+function closeReportModal() {
+  document.getElementById('reportModal').classList.remove('show');
+}
+
+async function submitFraudReport() {
+  const entity = document.getElementById('repEntity').value.trim();
+  const platform = document.getElementById('repPlatform').value.trim() || 'Web';
+  const desc = document.getElementById('repDesc').value.trim();
+
+  if (!entity || !desc) {
+    return alert('Please enter the suspect entity name and details.');
+  }
+
+  try {
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token.replace(/^Bearer\s+/i, '').trim()}`;
+
+    const res = await fetch('/api/scam/report', {
+      method: 'POST',
+      headers: headers,
+      credentials: 'include',
+      body: JSON.stringify({
+        scammer_entity: entity,
+        platform: platform,
+        scam_type: 'Job / Placement Fee Scam',
+        description: desc
+      })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    alert('>> SUCCESS: Scam report submitted to admin moderation queue. Upon verification, +5 Credits will be added to your account!');
+    closeReportModal();
+  } catch (err) {
+    alert('Error submitting scam report: ' + err.message);
   }
 }
 </script>

@@ -1,0 +1,39 @@
+/* Shared DigiPath application shell.  Loaded after page-specific styles. */
+:root { --dp-bg:#000; --dp-panel:#050f05; --dp-card:#020a02; --dp-green:#00ff41; --dp-cyan:#00e5ff; --dp-text:#e8fff0; --dp-muted:#69a77c; --dp-line:rgba(0,255,65,.25); }
+html { background:var(--dp-bg); }
+body { background-color:var(--dp-bg)!important; color:var(--dp-text); font-family:'Share Tech Mono','JetBrains Mono',ui-monospace,monospace!important; }
+body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:9998; opacity:.42; background:repeating-linear-gradient(0deg,rgba(0,255,65,.035) 0 1px,transparent 1px 3px),linear-gradient(rgba(0,255,65,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.025) 1px,transparent 1px); background-size:auto,40px 40px,40px 40px; }
+.mesh-bg { background:radial-gradient(ellipse at top right,rgba(0,255,65,.08),transparent 50%),radial-gradient(ellipse at bottom left,rgba(0,229,255,.06),transparent 45%),var(--dp-bg)!important; }
+.glass,.glass-card { background:rgba(2,10,2,.88)!important; border:1px solid var(--dp-line)!important; border-radius:2px!important; backdrop-filter:blur(10px); }
+.glass-card:hover,.glass-hover:hover { border-color:var(--dp-green)!important; box-shadow:0 0 18px rgba(0,255,65,.14)!important; }
+.grad-text { background:linear-gradient(90deg,var(--dp-green),var(--dp-cyan))!important; -webkit-background-clip:text!important; background-clip:text!important; }
+.tech-pill,.perk-tag,.wfh-badge,.status-badge { border-radius:2px!important; border-color:var(--dp-line)!important; color:var(--dp-cyan)!important; background:rgba(0,229,255,.05)!important; }
+.search-input,.filter-select,input,select,textarea { background:rgba(0,0,0,.55)!important; border-color:var(--dp-line)!important; color:var(--dp-text)!important; border-radius:2px!important; }
+.search-input:focus,.filter-select:focus,input:focus,select:focus,textarea:focus { border-color:var(--dp-cyan)!important; box-shadow:0 0 0 2px rgba(0,229,255,.13)!important; }
+.generate-btn,.send,.btn-primary { background:linear-gradient(90deg,#009f36,#008da3)!important; color:#001609!important; border:1px solid var(--dp-green)!important; border-radius:2px!important; font-family:inherit!important; letter-spacing:.08em; }
+.generate-btn:hover,.send:hover,.btn-primary:hover { box-shadow:0 0 18px rgba(0,255,65,.3)!important; }
+.dp-profile-pod { display:flex; align-items:center; gap:8px; padding:6px 9px; color:var(--dp-green); border:1px solid var(--dp-line); background:rgba(0,0,0,.45); text-decoration:none; font:11px 'Share Tech Mono','JetBrains Mono',monospace; letter-spacing:.06em; }
+.dp-profile-pod:hover { color:var(--dp-cyan); border-color:var(--dp-cyan); }
+.dp-avatar { width:27px; height:27px; display:grid; place-items:center; overflow:hidden; border:1px solid var(--dp-green); border-radius:50%; background:#031205; color:var(--dp-green); font-weight:800; }
+.dp-avatar img { width:100%; height:100%; object-fit:cover; }
+.dp-shell-profile-link { margin:12px 12px 0; }
+@media (max-width:760px) { .dp-profile-pod span:last-child { display:none; } .dp-shell-profile-link { margin:8px; } }
+
+/* Assistant uses the same shell but preserves its accessible conversation markup. */
+body:has(.conversation) { background:var(--dp-bg)!important; }
+body .shell { max-width:none!important; background:rgba(0,0,0,.72)!important; border-color:var(--dp-line)!important; }
+body .shell aside { background:var(--dp-panel)!important; border-color:var(--dp-line)!important; }
+body .shell .brand { color:var(--dp-green)!important; font-family:'Orbitron','Share Tech Mono',monospace!important; letter-spacing:.08em; }
+body .shell .brand-mark { border-radius:2px!important; background:var(--dp-green)!important; color:#001a08!important; }
+body .shell .nav a { border-radius:0!important; color:var(--dp-muted)!important; font-family:'Share Tech Mono',monospace!important; text-transform:uppercase; }
+body .shell .nav a:hover,body .shell .nav a.active { color:var(--dp-green)!important; background:rgba(0,255,65,.08)!important; box-shadow:inset 3px 0 var(--dp-green)!important; }
+body .shell .privacy { background:#041508!important; border-color:var(--dp-line)!important; border-radius:2px!important; color:var(--dp-muted)!important; }
+body .shell header,body .shell .composer-wrap { background:rgba(2,10,2,.94)!important; border-color:var(--dp-line)!important; }
+body .shell .intro,body .shell .bubble { border-radius:2px!important; background:rgba(2,18,7,.9)!important; border-color:var(--dp-line)!important; box-shadow:none!important; }
+body .shell .intro h2 { color:var(--dp-text)!important; font-family:'Orbitron','Share Tech Mono',monospace!important; }
+body .shell .quick button,body .shell .chip,body .shell .plain { border-radius:2px!important; background:#041508!important; border-color:var(--dp-line)!important; color:var(--dp-cyan)!important; font-family:'Share Tech Mono',monospace!important; }
+body .shell .quick button:hover,body .shell .chip:hover,body .shell .plain:hover { color:var(--dp-green)!important; border-color:var(--dp-green)!important; }
+body .shell .avatar { border-radius:2px!important; background:#064b27!important; color:var(--dp-green)!important; }
+body .shell .user .avatar { background:#063d49!important; color:var(--dp-cyan)!important; }
+body .shell .user .bubble { border-color:rgba(0,229,255,.45)!important; background:#03161a!important; }
+body .shell .label { color:var(--dp-cyan)!important; }

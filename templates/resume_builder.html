@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGIPATH_AI // PROFESSIONAL_ATS_RESUME_BUILDER</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- html2pdf for High-Resolution PDF Download -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --neon-green: #00ff41;
+  --neon-cyan: #00e5ff;
+  --neon-magenta: #ff0055;
+  --neon-amber: #ffb300;
+  --bg-dark: #0a0e14;
+  --bg-panel: #070b10;
+  --bg-card: #050810;
+  --border-green: rgba(0, 255, 65, 0.2);
+  --border-cyan: rgba(0, 229, 255, 0.2);
+  --text-dim: #006620;
+  --text-mid: #00aa2b;
+  --scan-line: rgba(0, 255, 65, 0.02);
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg-dark);
+  color: var(--neon-green);
+  font-family: 'Share Tech Mono', monospace;
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, var(--scan-line) 0px, var(--scan-line) 1px, transparent 1px, transparent 2px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* TOPBAR */
+.topbar {
+  height: 54px;
+  background: rgba(7, 11, 16, 0.95);
+  border-bottom: 1px solid var(--border-green);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  position: relative; z-index: 100;
+}
+.brand-group { display: flex; align-items: center; gap: 12px; }
+.logo-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px; font-weight: 900;
+  color: var(--neon-green); letter-spacing: 2px;
+  text-decoration: none;
+}
+.logo-title span { color: var(--neon-cyan); }
+
+.credit-pill {
+  font-size: 11px; color: var(--neon-green);
+  border: 1px solid var(--border-green);
+  background: rgba(0, 255, 65, 0.05);
+  padding: 4px 10px; display: flex; align-items: center; gap: 6px;
+}
+.credit-pill b { color: var(--neon-cyan); }
+
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+.btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: 1.5px;
+  padding: 7px 16px; cursor: pointer;
+  border: 1px solid var(--neon-green);
+  background: rgba(0, 255, 65, 0.08);
+  color: var(--neon-green);
+  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+  transition: all 0.2s;
+}
+.btn:hover {
+  background: var(--neon-green);
+  color: #000;
+  box-shadow: 0 0 12px var(--neon-green);
+}
+.btn-cyan {
+  border-color: var(--neon-cyan);
+  background: rgba(0, 229, 255, 0.08);
+  color: var(--neon-cyan);
+}
+.btn-cyan:hover {
+  background: var(--neon-cyan);
+  color: #000;
+  box-shadow: 0 0 12px var(--neon-cyan);
+}
+.btn-amber {
+  border-color: var(--neon-amber);
+  background: rgba(255, 179, 0, 0.08);
+  color: var(--neon-amber);
+}
+.btn-amber:hover {
+  background: var(--neon-amber);
+  color: #000;
+  box-shadow: 0 0 12px var(--neon-amber);
+}
+
+/* APP SHELL: SPLIT SCREEN */
+.app-shell {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  height: calc(100vh - 54px);
+}
+
+/* LEFT PANE: FORM EDITOR (CYBERPUNK STYLING) */
+.editor-pane {
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border-green);
+  overflow-y: auto;
+  padding: 20px 24px;
+}
+.pane-header {
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-green);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.pane-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px; color: var(--neon-green); letter-spacing: 1.5px;
+}
+
+/* TEMPLATE SELECTOR ROW */
+.template-selector {
+  margin-bottom: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-green);
+  padding: 12px;
+}
+.selector-title {
+  font-size: 10px; color: var(--neon-cyan); letter-spacing: 1px; margin-bottom: 8px;
+}
+.template-buttons {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+}
+.tpl-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; padding: 7px 6px;
+  background: rgba(0, 255, 65, 0.03);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  color: var(--text-mid); cursor: pointer;
+  text-align: center; transition: all 0.2s;
+}
+.tpl-btn.active, .tpl-btn:hover {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  background: rgba(0, 255, 65, 0.12);
+}
+
+/* FORM SECTIONS */
+.form-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-green);
+  padding: 16px; margin-bottom: 16px;
+  position: relative;
+}
+.section-heading {
+  font-size: 11px; color: var(--neon-cyan); letter-spacing: 1.5px;
+  margin-bottom: 12px; text-transform: uppercase;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.form-group { margin-bottom: 10px; }
+.form-label {
+  display: block; font-size: 10px; color: var(--text-mid); margin-bottom: 4px;
+}
+.form-input, .form-textarea {
+  width: 100%;
+  background: #000;
+  border: 1px solid rgba(0, 255, 65, 0.25);
+  color: var(--neon-green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; padding: 8px 10px;
+  outline: none; transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus {
+  border-color: var(--neon-green);
+  box-shadow: 0 0 6px rgba(0, 255, 65, 0.3);
+}
+.form-textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.item-card {
+  background: rgba(0, 255, 65, 0.02);
+  border: 1px dashed rgba(0, 255, 65, 0.2);
+  padding: 10px; margin-bottom: 10px;
+}
+.remove-btn {
+  font-size: 9px; color: var(--neon-magenta); background: none;
+  border: none; cursor: pointer; margin-left: auto; display: block;
+}
+
+/* RIGHT PANE: LIVE PREVIEW */
+.preview-pane {
+  background: #1e242d;
+  overflow-y: auto;
+  padding: 30px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* CORPORATE-APPROVED ATS RESUME SHEET (STRICTLY NO CYBERPUNK STYLING)        */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+.resume-sheet {
+  width: 210mm;
+  min-height: 297mm;
+  background: #ffffff !important;
+  color: #111827 !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  padding: 18mm 20mm;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/* TEMPLATE 01: MODERN EXECUTIVE (Slate/Navy Left Accent Sidebar)             */
+/* ────────────────────────────────────────────────────────────────────────── */
+.resume-sheet.tpl-01 {
+  padding: 0;
+  display: grid;
+  grid-template-columns: 66mm 1fr;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+}
+.tpl-01 .sidebar-col {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 16mm 9mm;
+}
+.tpl-01 .sidebar-col h1 {
+  font-size: 20px; font-weight: 800; color: #38bdf8; line-height: 1.2;
+}
+.tpl-01 .sidebar-col .role-title {
+  font-size: 11.5px; color: #94a3b8; margin-top: 4px; margin-bottom: 16px; font-weight: 500;
+}
+.tpl-01 .sidebar-col h2 {
+  font-size: 10.5px; font-weight: 700; color: #38bdf8;
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-top: 18px; margin-bottom: 8px;
+  border-bottom: 1px solid #334155; padding-bottom: 4px;
+}
+.tpl-01 .sidebar-col .contact-item {
+  font-size: 9.5px; color: #cbd5e1; line-height: 1.6; margin-bottom: 6px; word-break: break-all;
+}
+.tpl-01 .main-col {
+  padding: 16mm 14mm;
+}
+.tpl-01 .main-col h2 {
+  font-size: 12px; font-weight: 700; color: #0f172a;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  border-bottom: 2px solid #0284c7; padding-bottom: 3px;
+  margin-top: 14px; margin-bottom: 8px;
+}
+.tpl-01 .main-col h2:first-child { margin-top: 0; }
+.tpl-01 .item-header { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; color: #0f172a; }
+.tpl-01 .item-sub { font-size: 10.5px; color: #0284c7; font-weight: 600; margin-bottom: 3px; }
+.tpl-01 p, .tpl-01 li { font-size: 10.5px; line-height: 1.55; color: #334155; }
+.tpl-01 ul { padding-left: 16px; margin-bottom: 8px; }
+.tpl-01 .skill-tag {
+  display: inline-block; background: #334155; color: #f8fafc;
+  padding: 2px 6px; font-size: 9.5px; border-radius: 3px; margin: 2px 2px;
+}
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/* TEMPLATE 02: MINIMALIST TECH (Clean Software / AI Engineer)                */
+/* ────────────────────────────────────────────────────────────────────────── */
+.resume-sheet.tpl-02 {
+  font-family: 'Inter', sans-serif;
+  color: #111827;
+  padding: 16mm 18mm;
+}
+.tpl-02 .header-block {
+  border-bottom: 2px solid #2563eb;
+  padding-bottom: 10px; margin-bottom: 14px;
+}
+.tpl-02 h1 { font-size: 22px; font-weight: 800; color: #1e3a8a; letter-spacing: -0.5px; }
+.tpl-02 .role-title { font-size: 12.5px; color: #2563eb; font-weight: 600; margin-top: 2px; }
+.tpl-02 .contact-bar {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  font-size: 10px; color: #4b5563; margin-top: 6px;
+}
+.tpl-02 h2 {
+  font-size: 11.5px; font-weight: 700; color: #1e3a8a;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-top: 12px; margin-bottom: 6px;
+  border-bottom: 1px solid #e2e8f0; padding-bottom: 2px;
+}
+.tpl-02 .item-header { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; color: #111827; }
+.tpl-02 .item-sub { font-size: 10.5px; color: #2563eb; font-weight: 500; margin-bottom: 3px; }
+.tpl-02 p, .tpl-02 li { font-size: 10.5px; line-height: 1.55; color: #374151; }
+.tpl-02 ul { padding-left: 16px; margin-bottom: 8px; }
+.tpl-02 .tech-badge {
+  display: inline-block; background: #eff6ff; border: 1px solid #bfdbfe;
+  color: #1d4ed8; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; margin: 2px;
+}
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/* TEMPLATE 03: CLASSIC CORPORATE ATS (100% Fail-Safe Enterprise Single Column)*/
+/* ────────────────────────────────────────────────────────────────────────── */
+.resume-sheet.tpl-03 {
+  font-family: 'Lora', Georgia, serif;
+  color: #111827;
+  padding: 16mm 18mm;
+  line-height: 1.5;
+}
+.tpl-03 .header-block { text-align: center; margin-bottom: 12px; }
+.tpl-03 h1 { font-size: 21px; font-weight: 600; letter-spacing: 0.5px; }
+.tpl-03 .role-title { font-size: 11.5px; font-style: italic; color: #4b5563; margin-top: 2px; }
+.tpl-03 .contact-bar {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; font-size: 9.5px;
+  color: #4b5563; margin-top: 6px; font-family: 'Inter', sans-serif;
+}
+.tpl-03 h2 {
+  font-size: 11.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; border-bottom: 1px solid #111827;
+  padding-bottom: 2px; margin-top: 12px; margin-bottom: 6px;
+  font-family: 'Inter', sans-serif;
+}
+.tpl-03 .item-header {
+  display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700;
+  font-family: 'Inter', sans-serif;
+}
+.tpl-03 .item-sub { font-size: 10.5px; font-style: italic; color: #374151; margin-bottom: 3px; }
+.tpl-03 p, .tpl-03 li { font-size: 10px; color: #1f2937; line-height: 1.5; }
+.tpl-03 ul { padding-left: 16px; margin-bottom: 6px; }
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/* TEMPLATE 04: CLEAN HYBRID DUAL-COLUMN (Emerald Accent & Metrics)          */
+/* ────────────────────────────────────────────────────────────────────────── */
+.resume-sheet.tpl-04 {
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+  padding: 16mm 18mm;
+}
+.tpl-04 .header-block {
+  text-align: center;
+  border-bottom: 2px solid #059669;
+  padding-bottom: 10px; margin-bottom: 14px;
+}
+.tpl-04 h1 { font-size: 22px; font-weight: 800; color: #065f46; }
+.tpl-04 .role-title { font-size: 12px; color: #059669; font-weight: 600; margin-top: 2px; }
+.tpl-04 .contact-bar {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 12px;
+  font-size: 9.5px; color: #64748b; margin-top: 6px;
+}
+.tpl-04 h2 {
+  font-size: 11.5px; font-weight: 700; color: #065f46;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-top: 12px; margin-bottom: 6px;
+  border-left: 3px solid #059669; padding-left: 6px;
+}
+.tpl-04 .item-header { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; color: #0f172a; }
+.tpl-04 .item-sub { font-size: 10.5px; color: #059669; font-weight: 500; margin-bottom: 3px; }
+.tpl-04 p, .tpl-04 li { font-size: 10px; line-height: 1.55; color: #334155; }
+.tpl-04 ul { padding-left: 16px; margin-bottom: 6px; }
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/* TEMPLATE 05: SLEEK COMPACT DEVELOPER (High Density Grid Layout)            */
+/* ────────────────────────────────────────────────────────────────────────── */
+.resume-sheet.tpl-05 {
+  font-family: 'Roboto Mono', monospace;
+  color: #0f172a;
+  padding: 14mm 16mm;
+  font-size: 10px;
+}
+.tpl-05 .header-block {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 12px;
+}
+.tpl-05 h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+.tpl-05 .role-title { font-size: 11px; color: #475569; font-weight: 600; }
+.tpl-05 .contact-info { text-align: right; font-size: 9px; color: #475569; line-height: 1.4; }
+.tpl-05 h2 {
+  font-size: 10.5px; font-weight: 700; color: #0f172a; text-transform: uppercase;
+  background: #f1f5f9; padding: 2px 6px; margin-top: 10px; margin-bottom: 6px;
+  border-left: 3px solid #0f172a;
+}
+.tpl-05 .item-header { display: flex; justify-content: space-between; font-weight: 700; font-size: 10.5px; color: #0f172a; }
+.tpl-05 .item-sub { color: #475569; font-size: 9.5px; margin-bottom: 2px; }
+.tpl-05 p, .tpl-05 li { font-size: 9.5px; line-height: 1.5; color: #334155; }
+.tpl-05 ul { padding-left: 14px; margin-bottom: 6px; }
+.tpl-05 .skill-pill {
+  display: inline-block; border: 1px solid #cbd5e1; background: #f8fafc;
+  padding: 1px 5px; font-size: 9px; margin: 1px;
+}
+
+/* CORNER BRACKETS FOR PLATFORM UI */
+.corner { position: absolute; width: 8px; height: 8px; border-color: var(--neon-green); border-style: solid; }
+.corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+.corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+.corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+</style>
+<link rel="stylesheet" href="/static/css/digipath-shell.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="brand-group">
+    <a href="/" class="logo-title">DIGIPATH<span>_AI</span></a>
+    <div class="credit-pill" id="creditPill">
+      <span>DOWNLOAD_ALLOWANCE:</span>
+      <b id="creditCount">-- FREE</b>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-amber" onclick="document.getElementById('autofillInput').click()">
+      <span>⚡ AUTOFILL_RESUME</span>
+    </button>
+    <input type="file" id="autofillInput" hidden accept=".pdf,.docx">
+
+    <a href="/resume-analyzer" class="btn btn-cyan">
+      <span>▦ ANALYZE_5D</span>
+    </a>
+
+    <button class="btn" onclick="initiatePDFExport()">
+      <span>📥 EXPORT_ATS_PDF</span>
+    </button>
+  </div>
+</header>
+
+<!-- APP SHELL -->
+<div class="app-shell">
+
+  <!-- LEFT: FORM EDITOR -->
+  <aside class="editor-pane">
+    <div class="pane-header">
+      <span class="pane-title">> 5_ATS_TEMPLATES_CONTROLLER</span>
+      <span style="font-size:10px; color:var(--text-mid);">CORPORATE ATS</span>
+    </div>
+
+    <!-- TEMPLATE SWITCHER (5 CORPORATE TEMPLATES) -->
+    <div class="template-selector">
+      <div class="selector-title">> SELECT_CORPORATE_ATS_LAYOUT:</div>
+      <div class="template-buttons">
+        <button class="tpl-btn active" onclick="switchTemplate('tpl-01', this)">01. MODERN EXECUTIVE</button>
+        <button class="tpl-btn" onclick="switchTemplate('tpl-02', this)">02. MINIMALIST TECH</button>
+        <button class="tpl-btn" onclick="switchTemplate('tpl-03', this)">03. CORPORATE FAIL-SAFE</button>
+        <button class="tpl-btn" onclick="switchTemplate('tpl-04', this)">04. CLEAN HYBRID DUAL</button>
+        <button class="tpl-btn" style="grid-column: 1 / -1;" onclick="switchTemplate('tpl-05', this)">05. SLEEK COMPACT DEVELOPER</button>
+      </div>
+    </div>
+
+    <!-- CONTACT DETAILS -->
+    <div class="form-section">
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+      <div class="section-heading">1. CONTACT_IDENTIFIERS</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">FULL NAME</label>
+          <input type="text" class="form-input" id="inpName" value="Aarav Kulkarni" oninput="updateResume()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">TARGET TITLE / ROLE</label>
+          <input type="text" class="form-input" id="inpRole" value="Software Development Engineer" oninput="updateResume()">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">EMAIL</label>
+          <input type="email" class="form-input" id="inpEmail" value="aarav.kulkarni@example.com" oninput="updateResume()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">PHONE</label>
+          <input type="text" class="form-input" id="inpPhone" value="+91 98765 43210" oninput="updateResume()">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">LOCATION</label>
+          <input type="text" class="form-input" id="inpLocation" value="Mumbai, Maharashtra" oninput="updateResume()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">LINKEDIN / GITHUB</label>
+          <input type="text" class="form-input" id="inpLinks" value="linkedin.com/in/aaravk | github.com/aaravk" oninput="updateResume()">
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="form-section">
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+      <div class="section-heading">2. PROFESSIONAL_SUMMARY</div>
+      <div class="form-group">
+        <textarea class="form-textarea" id="inpSummary" rows="3" oninput="updateResume()">Performance-driven Software Engineer with 2+ years of experience building high-throughput FastAPI and React web systems. Spearheaded cloud microservices architecture that scaled to 150k+ active users while optimizing database latency by 32%.</textarea>
+      </div>
+    </div>
+
+    <!-- TECHNICAL SKILLS -->
+    <div class="form-section">
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+      <div class="section-heading">3. TECHNICAL_SKILLS_MATRIX</div>
+      <div class="form-group">
+        <label class="form-label">SKILLS (COMMA-SEPARATED)</label>
+        <input type="text" class="form-input" id="inpSkills" value="Python, FastAPI, React, Node.js, TypeScript, PostgreSQL, Docker, AWS, Git, Redis, CI/CD, Microservices" oninput="updateResume()">
+      </div>
+    </div>
+
+    <!-- EXPERIENCE -->
+    <div class="form-section">
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+      <div class="section-heading">
+        <span>4. WORK_EXPERIENCE</span>
+        <button class="btn" style="padding:2px 8px; font-size:9px;" onclick="addExperience()">+ ADD</button>
+      </div>
+      <div id="expContainer"></div>
+    </div>
+
+    <!-- KEY ACHIEVEMENTS -->
+    <div class="form-section">
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+      <div class="section-heading">5. KEY_ACHIEVEMENTS_&amp;_METRICS</div>
+      <div class="form-group">
+        <textarea class="form-textarea" id="inpAchievements" rows="2" oninput="updateResume()">• Won 1st Place at Maharashtra State Engineering Hackathon 2024 among 300+ teams.
+• Accelerated REST API throughput by 40% through Redis caching and query indexing.</textarea>
+      </div>
+    </div>
+
+    <!-- EDUCATION -->
+    <div class="form-section">
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+      <div class="section-heading">6. EDUCATION_QUALIFICATIONS</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">DEGREE & BRANCH</label>
+          <input type="text" class="form-input" id="inpDegree" value="B.Tech in Computer Engineering" oninput="updateResume()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">INSTITUTE NAME</label>
+          <input type="text" class="form-input" id="inpCollege" value="VJTI Mumbai (Veermata Jijabai Technological Institute)" oninput="updateResume()">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">YEAR / DURATION</label>
+          <input type="text" class="form-input" id="inpEduYear" value="2021 – 2025" oninput="updateResume()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CGPA / PERCENTAGE</label>
+          <input type="text" class="form-input" id="inpCGPA" value="9.42 CGPA" oninput="updateResume()">
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- RIGHT: LIVE PREVIEW (HIGH-CONTRAST CLEAN CORPORATE ATS PAPER) -->
+  <main class="preview-pane">
+    <div class="resume-sheet tpl-01" id="resumePreview">
+      <!-- Content populated dynamically -->
+    </div>
+  </main>
+</div>
+
+<script>
+let currentTemplate = 'tpl-01';
+let experiences = [
+  {
+    role: "Full Stack Engineer",
+    company: "Nexus Technologies",
+    location: "Mumbai, Maharashtra",
+    period: "2023 – Present",
+    bullets: "Engineered scalable REST APIs using FastAPI and PostgreSQL handling 50k+ daily queries.\nOrchestrated Docker deployment pipelines reducing staging rollout time by 45%.\nCollaborated with frontend architects to construct reactive dashboard interfaces in React & TypeScript."
+  },
+  {
+    role: "Software Engineering Intern",
+    company: "Apex Cloud Labs",
+    location: "Pune, Maharashtra",
+    period: "Summer 2023",
+    bullets: "Developed automated data scraping and sanitization scripts using Python and Pandas.\nIntegrated AWS S3 cloud storage for secure multi-tenant document attachments."
+  }
+];
+
+function renderExpForm() {
+  const container = document.getElementById('expContainer');
+  container.innerHTML = experiences.map((exp, idx) => `
+    <div class="item-card">
+      <button class="remove-btn" onclick="removeExperience(${idx})">✕ REMOVE</button>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">JOB TITLE</label>
+          <input type="text" class="form-input" value="${exp.role}" oninput="updateExp(${idx}, 'role', this.value)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">COMPANY</label>
+          <input type="text" class="form-input" value="${exp.company}" oninput="updateExp(${idx}, 'company', this.value)">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">LOCATION</label>
+          <input type="text" class="form-input" value="${exp.location}" oninput="updateExp(${idx}, 'location', this.value)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">PERIOD</label>
+          <input type="text" class="form-input" value="${exp.period}" oninput="updateExp(${idx}, 'period', this.value)">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">BULLET POINTS (ONE PER LINE)</label>
+        <textarea class="form-textarea" rows="3" oninput="updateExp(${idx}, 'bullets', this.value)">${exp.bullets}</textarea>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addExperience() {
+  experiences.push({
+    role: "Software Developer",
+    company: "Company Name",
+    location: "City",
+    period: "2024",
+    bullets: "Engineered core feature sets and optimized throughput."
+  });
+  renderExpForm();
+  updateResume();
+}
+
+function removeExperience(idx) {
+  experiences.splice(idx, 1);
+  renderExpForm();
+  updateResume();
+}
+
+function updateExp(idx, field, val) {
+  experiences[idx][field] = val;
+  updateResume();
+}
+
+function switchTemplate(tplClass, btn) {
+  currentTemplate = tplClass;
+  document.querySelectorAll('.tpl-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  updateResume();
+}
+
+function updateResume() {
+  const name = document.getElementById('inpName').value;
+  const role = document.getElementById('inpRole').value;
+  const email = document.getElementById('inpEmail').value;
+  const phone = document.getElementById('inpPhone').value;
+  const loc = document.getElementById('inpLocation').value;
+  const links = document.getElementById('inpLinks').value;
+  const summary = document.getElementById('inpSummary').value;
+  const skills = document.getElementById('inpSkills').value.split(',').map(s => s.trim()).filter(Boolean);
+  const achievements = document.getElementById('inpAchievements').value.split('\n').filter(Boolean);
+  const degree = document.getElementById('inpDegree').value;
+  const college = document.getElementById('inpCollege').value;
+  const eduYear = document.getElementById('inpEduYear').value;
+  const cgpa = document.getElementById('inpCGPA').value;
+
+  const preview = document.getElementById('resumePreview');
+  preview.className = `resume-sheet ${currentTemplate}`;
+
+  if (currentTemplate === 'tpl-01') {
+    // 01. MODERN EXECUTIVE (Slate/Navy Left Sidebar)
+    preview.innerHTML = `
+      <div class="sidebar-col">
+        <h1>${name}</h1>
+        <div class="role-title">${role}</div>
+
+        <h2>CONTACT</h2>
+        <div class="contact-item">📧 ${email}</div>
+        <div class="contact-item">📞 ${phone}</div>
+        <div class="contact-item">📍 ${loc}</div>
+        <div class="contact-item">🔗 ${links}</div>
+
+        <h2>CORE SKILLS</h2>
+        <div>
+          ${skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}
+        </div>
+
+        <h2>EDUCATION</h2>
+        <div style="font-size:10.5px; font-weight:700; color:#fff;">${degree}</div>
+        <div style="font-size:10px; color:#38bdf8; margin-top:2px;">${college}</div>
+        <div style="font-size:9.5px; color:#94a3b8; margin-top:2px;">${eduYear} | ${cgpa}</div>
+      </div>
+
+      <div class="main-col">
+        <h2>EXECUTIVE SUMMARY</h2>
+        <p>${summary}</p>
+
+        <h2>PROFESSIONAL EXPERIENCE</h2>
+        ${experiences.map(exp => `
+          <div style="margin-bottom: 12px;">
+            <div class="item-header">
+              <span>${exp.role}</span>
+              <span>${exp.period}</span>
+            </div>
+            <div class="item-sub">${exp.company} — ${exp.location}</div>
+            <ul>
+              ${exp.bullets.split('\n').filter(Boolean).map(b => `<li>${b.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+            </ul>
+          </div>
+        `).join('')}
+
+        <h2>KEY ACHIEVEMENTS & METRICS</h2>
+        <ul>
+          ${achievements.map(a => `<li>${a.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  } else if (currentTemplate === 'tpl-02') {
+    // 02. MINIMALIST TECH (Clean Software / AI Engineer)
+    preview.innerHTML = `
+      <div class="header-block">
+        <h1>${name}</h1>
+        <div class="role-title">${role}</div>
+        <div class="contact-bar">
+          <span>📧 ${email}</span> • <span>📞 ${phone}</span> • <span>📍 ${loc}</span> • <span>🔗 ${links}</span>
+        </div>
+      </div>
+
+      <h2>PROFESSIONAL SUMMARY</h2>
+      <p>${summary}</p>
+
+      <h2>TECHNICAL SKILLS MATRIX</h2>
+      <div style="margin-bottom: 8px;">
+        ${skills.map(s => `<span class="tech-badge">${s}</span>`).join('')}
+      </div>
+
+      <h2>ENGINEERING EXPERIENCE</h2>
+      ${experiences.map(exp => `
+        <div style="margin-bottom: 10px;">
+          <div class="item-header">
+            <span>${exp.role}</span>
+            <span>${exp.period}</span>
+          </div>
+          <div class="item-sub">${exp.company} | ${exp.location}</div>
+          <ul>
+            ${exp.bullets.split('\n').filter(Boolean).map(b => `<li>${b.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('')}
+
+      <h2>KEY TECHNICAL HIGHLIGHTS</h2>
+      <ul>
+        ${achievements.map(a => `<li>${a.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+      </ul>
+
+      <h2>EDUCATION & CREDENTIALS</h2>
+      <div class="item-header">
+        <span>${degree} — ${college}</span>
+        <span>${eduYear}</span>
+      </div>
+      <p style="font-size:10px; color:#64748b; margin-top:2px;">Academic Performance: ${cgpa}</p>
+    `;
+  } else if (currentTemplate === 'tpl-03') {
+    // 03. CLASSIC CORPORATE ATS (100% Fail-Safe Single Column)
+    preview.innerHTML = `
+      <div class="header-block">
+        <h1>${name.toUpperCase()}</h1>
+        <div class="role-title">${role}</div>
+        <div class="contact-bar">
+          <span>${email}</span> | <span>${phone}</span> | <span>${loc}</span> | <span>${links}</span>
+        </div>
+      </div>
+
+      <h2>SUMMARY OF QUALIFICATIONS</h2>
+      <p>${summary}</p>
+
+      <h2>TECHNICAL SKILLS</h2>
+      <p><b>Core Proficiencies:</b> ${skills.join(', ')}</p>
+
+      <h2>PROFESSIONAL EXPERIENCE</h2>
+      ${experiences.map(exp => `
+        <div style="margin-bottom: 10px;">
+          <div class="item-header">
+            <span>${exp.company} — ${exp.role}</span>
+            <span>${exp.period}</span>
+          </div>
+          <div class="item-sub">${exp.location}</div>
+          <ul>
+            ${exp.bullets.split('\n').filter(Boolean).map(b => `<li>${b.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('')}
+
+      <h2>NOTABLE ACHIEVEMENTS</h2>
+      <ul>
+        ${achievements.map(a => `<li>${a.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+      </ul>
+
+      <h2>EDUCATION</h2>
+      <div class="item-header">
+        <span>${degree}, ${college}</span>
+        <span>${eduYear}</span>
+      </div>
+      <p style="font-size:10px; margin-top:2px;">Standing: ${cgpa}</p>
+    `;
+  } else if (currentTemplate === 'tpl-04') {
+    // 04. CLEAN HYBRID DUAL-COLUMN (Emerald Accent & Metrics)
+    preview.innerHTML = `
+      <div class="header-block">
+        <h1>${name}</h1>
+        <div class="role-title">${role}</div>
+        <div class="contact-bar">
+          <span>${email}</span> • <span>${phone}</span> • <span>${loc}</span> • <span>${links}</span>
+        </div>
+      </div>
+
+      <h2>PROFILE OVERVIEW</h2>
+      <p>${summary}</p>
+
+      <h2>TECHNICAL CORE COMPETENCIES</h2>
+      <p style="font-size:10.5px; line-height:1.5;">${skills.join(' • ')}</p>
+
+      <h2>PROFESSIONAL EXPERIENCE</h2>
+      ${experiences.map(exp => `
+        <div style="margin-bottom: 10px;">
+          <div class="item-header">
+            <span>${exp.role}</span>
+            <span>${exp.period}</span>
+          </div>
+          <div class="item-sub">${exp.company} | ${exp.location}</div>
+          <ul>
+            ${exp.bullets.split('\n').filter(Boolean).map(b => `<li>${b.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('')}
+
+      <h2>KEY HIGHLIGHTS & METRICS</h2>
+      <ul>
+        ${achievements.map(a => `<li>${a.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+      </ul>
+
+      <h2>ACADEMIC QUALIFICATIONS</h2>
+      <div class="item-header">
+        <span>${degree} — ${college}</span>
+        <span>${eduYear}</span>
+      </div>
+      <div class="item-sub">Academic Standing: ${cgpa}</div>
+    `;
+  } else if (currentTemplate === 'tpl-05') {
+    // 05. SLEEK COMPACT DEVELOPER (High-Density Grid Layout)
+    preview.innerHTML = `
+      <div class="header-block">
+        <div>
+          <h1>${name}</h1>
+          <div class="role-title">${role}</div>
+        </div>
+        <div class="contact-info">
+          <div>${email} | ${phone}</div>
+          <div>${loc} | ${links}</div>
+        </div>
+      </div>
+
+      <h2>// SUMMARY</h2>
+      <p>${summary}</p>
+
+      <h2>// TECHNICAL STACK</h2>
+      <div>
+        ${skills.map(s => `<span class="skill-pill">${s}</span>`).join('')}
+      </div>
+
+      <h2>// EXPERIENCE</h2>
+      ${experiences.map(exp => `
+        <div style="margin-bottom: 8px;">
+          <div class="item-header">
+            <span>${exp.role} @ ${exp.company}</span>
+            <span>${exp.period}</span>
+          </div>
+          <div class="item-sub">${exp.location}</div>
+          <ul>
+            ${exp.bullets.split('\n').filter(Boolean).map(b => `<li>${b.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('')}
+
+      <h2>// KEY METRICS & RECOGNITION</h2>
+      <ul>
+        ${achievements.map(a => `<li>${a.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+      </ul>
+
+      <h2>// EDUCATION</h2>
+      <div class="item-header">
+        <span>${degree} · ${college}</span>
+        <span>${eduYear} · ${cgpa}</span>
+      </div>
+    `;
+  }
+}
+
+// Check credits on load
+async function refreshCreditStatus() {
+  try {
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token.replace(/^Bearer\s+/i, '').trim()}`;
+
+    const res = await fetch('/api/user/credits', { headers, credentials: 'include' });
+    if (res.ok) {
+      const data = await res.json();
+      const countEl = document.getElementById('creditCount');
+      if (data.free_pdf_downloads > 0) {
+        countEl.textContent = `${data.free_pdf_downloads} FREE`;
+      } else if (data.credits > 0) {
+        countEl.textContent = `${data.credits} CREDITS`;
+      } else {
+        countEl.textContent = `0 (INSUFFICIENT)`;
+        countEl.style.color = 'var(--neon-magenta)';
+      }
+    }
+  } catch (e) {
+    console.warn('Could not load user credits:', e);
+  }
+}
+
+// PDF Export Handler with Credit Verification
+async function initiatePDFExport() {
+  const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token.replace(/^Bearer\s+/i, '').trim()}`;
+
+  try {
+    const deductRes = await fetch('/api/user/credits/deduct', {
+      method: 'POST',
+      headers,
+      credentials: 'include'
+    });
+
+    const data = await deductRes.json();
+    if (!deductRes.ok || !data.success) {
+      alert(`[ INSUFFICIENT_CREDITS ]\n\n${data.message || 'You have 0 free downloads remaining.'}\n\nTip: Navigate to the Scam Detector, file a suspect company report, and earn +5 Credits upon verification!`);
+      return;
+    }
+
+    // Refresh credit count in topbar
+    refreshCreditStatus();
+
+    // Export PDF
+    const element = document.getElementById('resumePreview');
+    const name = document.getElementById('inpName').value.replace(/\s+/g, '_') || 'Resume';
+
+    const opt = {
+      margin: 8,
+      filename: `${name}_ATS_Resume.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+
+  } catch (err) {
+    alert('Error processing PDF download: ' + err.message);
+  }
+}
+
+// Autofill from Uploaded Resume
+document.getElementById('autofillInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token.replace(/^Bearer\s+/i, '').trim()}`;
+
+    const res = await fetch('/api/resume/analyze', {
+      method: 'POST',
+      headers: headers,
+      credentials: 'include',
+      body: formData
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (data.skills_detected && data.skills_detected.length > 0) {
+      document.getElementById('inpSkills').value = data.skills_detected.join(', ');
+    }
+    if (data.domain) {
+      document.getElementById('inpRole').value = data.domain;
+    }
+
+    updateResume();
+    alert('>> SUCCESS: Extracted resume intelligence loaded into builder form!');
+  } catch (err) {
+    console.error('Autofill error:', err);
+    alert('Could not autofill resume: ' + err.message);
+  }
+});
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  renderExpForm();
+  updateResume();
+  refreshCreditStatus();
+});
+</script>
+<script src="/static/js/digipath-shell.js"></script>
+</body>
+</html>

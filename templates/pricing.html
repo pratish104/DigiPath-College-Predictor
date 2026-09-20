@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGIPATH // NEURAL_CREDIT_WALLET</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<!-- Cashfree Drop Checkout SDK v3 -->
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --obsidian: #030712;
+    --panel: #0a1120;
+    --card: #0d1527;
+    --emerald: #00FF66;
+    --emerald-dim: #064e3b;
+    --emerald-glow: rgba(0, 255, 102, 0.22);
+    --emerald-subtle: rgba(0, 255, 102, 0.08);
+    --crimson: #ef4444;
+    --crimson-glow: rgba(239, 68, 68, 0.25);
+    --border: #064e3b;
+    --border-active: #00FF66;
+    --text-primary: #00FF66;
+    --text-muted: #4ade80;
+    --text-dim: #059669;
+    --cyan: #00e5ff;
+  }
+
+  html, body {
+    min-height: 100%;
+    background-color: var(--obsidian);
+    color: var(--text-primary);
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  /* Scan-line overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 102, 0.02) 0px,
+      rgba(0, 255, 102, 0.02) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Top Navigation */
+  .top-nav {
+    height: 52px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-brand {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--emerald);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .nav-links a {
+    color: var(--text-dim);
+    font-size: 11px;
+    text-decoration: none;
+    letter-spacing: 1.5px;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: var(--emerald);
+  }
+
+  /* Credit Badge in Nav */
+  .credit-nav-badge {
+    padding: 5px 14px;
+    background: var(--emerald-subtle);
+    border: 1px solid var(--border-active);
+    color: var(--emerald);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    border-radius: 3px;
+    box-shadow: 0 0 10px var(--emerald-glow);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+  }
+
+  /* Container */
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  .hero-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .hero-pretitle {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: var(--emerald);
+    text-shadow: 0 0 20px var(--emerald-glow);
+    margin-bottom: 12px;
+  }
+
+  .hero-desc {
+    color: #94a3b8;
+    font-size: 13px;
+    max-width: 580px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+
+  .balance-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--panel);
+    border: 1px solid var(--emerald);
+    padding: 10px 22px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--emerald);
+    box-shadow: 0 0 18px var(--emerald-glow);
+  }
+
+  /* Pricing Grid */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 28px;
+    max-width: 860px;
+    margin: 0 auto 60px;
+  }
+
+  .pricing-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 32px 28px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+  }
+
+  .pricing-card.featured {
+    border-color: var(--emerald);
+    box-shadow: 0 0 30px var(--emerald-glow), 0 15px 40px rgba(0,0,0,0.6);
+  }
+
+  .pricing-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--emerald);
+  }
+
+  .card-badge {
+    position: absolute;
+    top: -12px;
+    right: 24px;
+    background: var(--emerald);
+    color: var(--obsidian);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border-radius: 2px;
+  }
+
+  .plan-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .plan-price-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .plan-currency {
+    font-size: 20px;
+    color: var(--emerald);
+  }
+
+  .plan-price {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--emerald);
+    line-height: 1;
+  }
+
+  .plan-denomination {
+    font-size: 11px;
+    color: #64748b;
+  }
+
+  .credits-yield {
+    font-size: 15px;
+    color: var(--cyan);
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  /* Feature Checklist */
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 32px;
+    flex: 1;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    color: #cbd5e1;
+    line-height: 1.4;
+  }
+
+  .feature-bullet {
+    color: var(--emerald);
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .feature-highlight {
+    color: var(--emerald);
+    font-weight: bold;
+  }
+
+  /* Upgrade CTA Button */
+  .btn-upgrade {
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    border: 1px solid var(--emerald);
+    color: var(--emerald);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .btn-upgrade::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--emerald);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+    z-index: 0;
+  }
+
+  .btn-upgrade:hover::before {
+    transform: scaleX(1);
+  }
+
+  .btn-upgrade span, .btn-upgrade svg {
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-upgrade:hover span {
+    color: var(--obsidian);
+  }
+
+  .btn-upgrade:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Security / Guarantee Callout */
+  .security-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* Breakdown Table */
+  .cost-breakdown {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .breakdown-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--emerald);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .breakdown-table th {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  .breakdown-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(6, 78, 59, 0.4);
+    color: #94a3b8;
+  }
+
+  .breakdown-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .breakdown-table .cost-badge {
+    color: var(--cyan);
+    font-weight: bold;
+  }
+
+  /* Modal & Toasts */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--card);
+    border: 1px solid var(--emerald);
+    color: var(--emerald);
+    padding: 14px 20px;
+    border-radius: 4px;
+    font-size: 12px;
+    box-shadow: 0 0 25px var(--emerald-glow);
+    display: none;
+    z-index: 10000;
+    max-width: 420px;
+    line-height: 1.5;
+  }
+
+  .toast.error {
+    border-color: var(--crimson);
+    color: var(--crimson);
+    box-shadow: 0 0 25px var(--crimson-glow);
+  }
+
+  .toast.show {
+    display: block;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Loading Overlay */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(3, 7, 18, 0.85);
+    backdrop-filter: blur(8px);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    gap: 16px;
+  }
+
+  .loading-overlay.active {
+    display: flex;
+  }
+
+  .spinner {
+    width: 44px;
+    height: 44px;
+    border: 3px solid var(--border);
+    border-top-color: var(--emerald);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Navigation -->
+<nav class="top-nav">
+  <div class="nav-brand">
+    <span>◈</span>
+    <span>DIGIPATH // WALLET</span>
+  </div>
+  <div class="nav-links">
+    <a href="/dashboard">&lt; DASHBOARD</a>
+    <a href="/predictor">PREDICTOR</a>
+    <a href="/roadmap">ROADMAP</a>
+    <a href="/chatbot">AI ASSISTANT</a>
+    <div class="credit-nav-badge" id="navCreditBadge">
+      <span>⚡</span>
+      <span id="creditBadge">BALANCE: {{ user.credits_balance if user and user.credits_balance is not none else 50 }} CREDITS</span>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Container -->
+<div class="container">
+
+  <!-- Hero Header -->
+  <div class="hero-header">
+    <div class="hero-pretitle">AUTHENTICATED FINANCIAL LEDGER</div>
+    <h1 class="hero-title">NEURAL CREDIT WALLET</h1>
+    <p class="hero-desc">
+      Empower your college admission strategy and career engineering with high-capacity neural compute credits. Powered by Cashfree Payment Gateway.
+    </p>
+    <div class="balance-pill">
+      <span>CURRENT WALLET BALANCE:</span>
+      <strong id="heroBalanceCount">{{ user.credits_balance if user and user.credits_balance is not none else 50 }}</strong>
+      <span>CREDITS</span>
+    </div>
+  </div>
+
+  <!-- Pricing Card Grid -->
+  <div class="pricing-grid">
+
+    <!-- Starter Pack -->
+    <div class="pricing-card featured">
+      <div class="card-badge">RECOMMENDED</div>
+      <div class="plan-name">STARTER PACK // LEVEL-1</div>
+
+      <div class="plan-price-wrap">
+        <span class="plan-currency">₹</span>
+        <span class="plan-price">50</span>
+        <span class="plan-denomination">INR / ONE-TIME</span>
+      </div>
+
+      <div class="credits-yield">
+        +300 DIGIPATH NEURAL CREDITS
+      </div>
+
+      <ul class="feature-list">
+        <li class="feature-item">
+          <span class="feature-bullet">✔</span>
+          <span><span class="feature-highlight">60 ML Admissions Predictions</span> (5 credits per inference query across 2,800+ colleges)</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-bullet">✔</span>
+          <span><span class="feature-highlight">150 AI Chat Mentor Queries</span> (2 credits per technical interview or career vector guidance)</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-bullet">✔</span>
+          <span><span class="feature-highlight">30 ATS Resume Intelligence Scans</span> (10 credits per deep ATS keyword & parsing analysis)</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-bullet">✔</span>
+          <span>Instant Wallet Crediting via Cashfree Drop Checkout (UPI, Cards, NetBanking)</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-bullet">✔</span>
+          <span>Zero Expiry Date — Credits remain active across all semesters</span>
+        </li>
+      </ul>
+
+      <button class="btn-upgrade" id="btnUpgrade" onclick="initiateCashfreePayment()">
+        <span>[ UPGRADE NOW — ₹50 ]</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+      <div class="security-strip">
+        <span>🔒 256-Bit SSL Encrypted</span>
+        <span>⚡ Instant Automated Delivery</span>
+        <span>🛡️ Cashfree PG Verified</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Feature Cost Breakdown -->
+  <div class="cost-breakdown">
+    <div class="breakdown-title">
+      <span>◈</span>
+      <span>COMPUTE USAGE LEDGER & TRANSACTION TARIFF</span>
+    </div>
+    <table class="breakdown-table">
+      <thead>
+        <tr>
+          <th>NEURAL MODULE</th>
+          <th>CREDIT COST</th>
+          <th>COMPUTE SPECIFICATION</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CET & Diploma ML Predictor</td>
+          <td class="cost-badge">5 Credits</td>
+          <td>Scikit-Learn Ensemble Inference (RF + DT + LR) + Sigmoid Scaling</td>
+        </tr>
+        <tr>
+          <td>AI Assistant Intent Mentor</td>
+          <td class="cost-badge">2 Credits</td>
+          <td>Vector RAG Semantic Search & LLM Technical Coaching</td>
+        </tr>
+        <tr>
+          <td>Resume 5D ATS Analyzer</td>
+          <td class="cost-badge">10 Credits</td>
+          <td>Document Parsing, Skill Extraction & Keyword Gap Matrix</td>
+        </tr>
+        <tr>
+          <td>New Account Sign-up Bonus</td>
+          <td style="color: var(--emerald); font-weight: bold;">+50 Credits</td>
+          <td>Complimentary gift upon candidate registration</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div style="color: var(--emerald); font-size: 13px; letter-spacing: 2px;">
+    CONNECTING TO CASHFREE SECURE PAYMENT GATEWAY...
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toastNotification"></div>
+
+<script>
+// ── Cashfree SDK Instance Initialization ─────────────────────────────────────
+let cashfreeInstance = null;
+
+function getAuthHeaders() {
+  const headers = { 'Content-Type': 'application/json' };
+  const rawCookie = document.cookie.split(';').map(c => c.trim());
+  const tokenCookie = rawCookie.find(c => c.startsWith('access_token='));
+  if (tokenCookie) {
+    headers['Authorization'] = `Bearer ${tokenCookie.split('=')[1]}`;
+  }
+  return headers;
+}
+
+function showToast(message, isError = false) {
+  const toast = document.getElementById('toastNotification');
+  toast.textContent = message;
+  toast.className = `toast ${isError ? 'error' : ''} show`;
+  setTimeout(() => {
+    toast.className = 'toast';
+  }, 6000);
+}
+
+function showLoader(show) {
+  const overlay = document.getElementById('loadingOverlay');
+  if (show) {
+    overlay.classList.add('active');
+  } else {
+    overlay.classList.remove('active');
+  }
+}
+
+function updateWalletDisplay(newBalance) {
+  const navBadge = document.getElementById('creditBadge');
+  const heroBadge = document.getElementById('heroBalanceCount');
+  if (navBadge) navBadge.textContent = `BALANCE: ${newBalance} CREDITS`;
+  if (heroBadge) heroBadge.textContent = newBalance;
+}
+
+// ── 1. Initiate Cashfree Drop Checkout ────────────────────────────────────────
+async function initiateCashfreePayment() {
+  const upgradeBtn = document.getElementById('btnUpgrade');
+  upgradeBtn.disabled = true;
+  showLoader(true);
+
+  try {
+    const res = await fetch('/api/payment/create-order', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ amount: 50.0, credits_to_add: 300 }),
+    });
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        showToast('[ AUTH_REQUIRED ] Please log in to top up your wallet.', true);
+        setTimeout(() => window.location.href = '/login?next=/pricing', 1500);
+        return;
+      }
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.detail || `Order initialization failed: HTTP ${res.status}`);
+    }
+
+    const orderData = await res.json();
+    const paymentSessionId = orderData.payment_session_id;
+    const orderId = orderData.order_id;
+    const cfEnv = orderData.cf_env || 'SANDBOX';
+
+    showLoader(false);
+
+    if (!paymentSessionId) {
+      throw new Error('Missing payment session from Cashfree gateway.');
+    }
+
+    // Initialize Cashfree Drop Checkout SDK
+    cashfreeInstance = Cashfree({
+      mode: cfEnv === 'PRODUCTION' ? 'production' : 'sandbox'
+    });
+
+    // Open Modal Checkout
+    const checkoutOptions = {
+      paymentSessionId: paymentSessionId,
+      redirectTarget: "_modal",
+    };
+
+    cashfreeInstance.checkout(checkoutOptions).then((result) => {
+      showLoader(true);
+      // Verify payment with DigiPath backend
+      verifyPaymentOrder(orderId);
+    }).catch((sdkErr) => {
+      console.warn('Cashfree Checkout callback / modal closed:', sdkErr);
+      // Check order status regardless in case payment went through
+      verifyPaymentOrder(orderId);
+    });
+
+  } catch (error) {
+    console.error('Payment initialization error:', error);
+    showLoader(false);
+    showToast(`[ PAYMENT ERROR ] ${error.message}`, true);
+  } finally {
+    upgradeBtn.disabled = false;
+  }
+}
+
+// ── 2. Verify Order Settlement ────────────────────────────────────────────────
+async function verifyPaymentOrder(orderId) {
+  showLoader(true);
+  try {
+    const res = await fetch('/api/payment/verify', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ order_id: orderId }),
+    });
+
+    const verifyData = await res.json().catch(() => ({}));
+    showLoader(false);
+
+    if (res.ok && verifyData.success) {
+      updateWalletDisplay(verifyData.new_balance);
+      showToast(`[ SUCCESS ] ${verifyData.message || 'Payment confirmed! +300 Credits added to your wallet.'}`);
+    } else {
+      showToast(`[ VERIFICATION NOTICE ] ${verifyData.message || 'Payment could not be verified automatically. Check with support.'}`, true);
+    }
+  } catch (verErr) {
+    console.error('Verification error:', verErr);
+    showLoader(false);
+    showToast(`[ VERIFICATION ERROR ] ${verErr.message}`, true);
+  }
+}
+
+// Check for redirect return_url order_id param if redirected
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderId = urlParams.get('order_id');
+  if (orderId) {
+    verifyPaymentOrder(orderId);
+  }
+});
+</script>
+</body>
+</html>

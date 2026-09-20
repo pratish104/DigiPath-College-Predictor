@@ -1,403 +1,876 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIGIPATH_AI // JOB_RECOMMENDER</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --neon-green: #00ff41;
-    --neon-cyan: #00e5ff;
-    --neon-magenta: #ff00ff;
-    --neon-amber: #ffb300;
-    --bg-dark: #000000;
-    --bg-panel: #050f05;
-    --bg-card: #020a02;
-    --border-green: #00ff4133;
-    --border-green-solid: #00ff41;
-    --text-dim: #006620;
-    --text-mid: #00aa2b;
-    --scan-line: rgba(0, 255, 65, 0.03);
-    --sidebar-width: 260px;
-  }
-
-  html, body {
-    height: 100%;
-    background: var(--bg-dark);
-    color: var(--neon-green);
-    font-family: 'Share Tech Mono', monospace;
-    overflow: hidden;
-  }
-
-  /* CRT scanline overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      var(--scan-line) 0px,
-      var(--scan-line) 1px,
-      transparent 1px,
-      transparent 2px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* grid bg */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ─── LAYOUT ─── */
-  .app-container {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ─── SIDEBAR ─── */
-  .sidebar {
-    width: var(--sidebar-width);
-    background: var(--bg-panel);
-    border-right: 1px solid var(--border-green);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-  }
-
-  .sidebar-header {
-    padding: 24px;
-    border-bottom: 1px solid var(--border-green);
-    text-align: center;
-  }
-
-  .logo-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 20px;
-    font-weight: 900;
-    color: var(--neon-green);
-    letter-spacing: 0.1em;
-    text-shadow: 0 0 10px rgba(0,255,65,0.5);
-  }
-
-  .nav-list {
-    flex: 1;
-    padding: 20px 0;
-    list-style: none;
-    overflow-y: auto;
-  }
-
-  .nav-item {
-    padding: 12px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--text-mid);
-    text-decoration: none;
-    transition: all 0.2s;
-    font-size: 13px;
-    border-left: 3px solid transparent;
-  }
-
-  .nav-item:hover {
-    background: rgba(0,255,65,0.05);
-    color: var(--neon-green);
-  }
-
-  .nav-item.active {
-    background: rgba(0,255,65,0.1);
-    color: var(--neon-green);
-    border-left-color: var(--neon-green);
-    box-shadow: inset 5px 0 15px rgba(0,255,65,0.05);
-  }
-
-  /* ─── MAIN CONTENT ─── */
-  .main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: rgba(0,0,0,0.6);
-  }
-
-  .header {
-    height: 64px;
-    border-bottom: 1px solid var(--border-green);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    background: rgba(5, 15, 5, 0.8);
-    backdrop-filter: blur(10px);
-  }
-
-  /* ─── PAGE CONTENT ─── */
-  .content-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 32px;
-  }
-
-  .page-header {
-    margin-bottom: 32px;
-  }
-
-  .page-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 24px;
-    color: var(--neon-green);
-    letter-spacing: 2px;
-  }
-
-  /* ─── SKILLS CHIPS ─── */
-  .skills-wrap {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 32px;
-    padding: 20px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-green);
-  }
-
-  .skill-chip {
-    padding: 6px 14px;
-    font-size: 12px;
-    border: 1px solid var(--neon-cyan);
-    color: var(--neon-cyan);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .skill-chip:hover, .skill-chip.active {
-    background: var(--neon-cyan);
-    color: #000;
-    box-shadow: 0 0 10px var(--neon-cyan);
-  }
-
-  /* ─── JOB GRID ─── */
-  .job-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 24px;
-  }
-
-  .job-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-green);
-    border-top: 2px solid var(--neon-green);
-    padding: 24px;
-    position: relative;
-    transition: all 0.2s;
-  }
-  .job-card:hover {
-    border-color: var(--neon-green);
-    transform: translateY(-3px);
-    box-shadow: 0 0 20px rgba(0,255,65,0.1);
-  }
-
-  .job-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
-  .job-role { font-family: 'Orbitron', sans-serif; font-size: 16px; color: var(--neon-green); }
-  .job-company { font-size: 12px; color: var(--text-mid); margin-bottom: 10px; }
-
-  .job-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-  .job-tag { font-size: 10px; color: var(--text-dim); border: 1px solid rgba(0,255,65,0.2); padding: 2px 6px; }
-
-  .job-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid rgba(0,255,65,0.1);
-    padding-top: 15px;
-  }
-
-  .match-percent { font-size: 14px; font-weight: bold; color: var(--neon-cyan); }
-  .match-label { font-size: 10px; color: var(--text-dim); }
-
-  .apply-btn {
-    background: transparent;
-    border: 1px solid var(--neon-green);
-    color: var(--neon-green);
-    font-family: 'Share Tech Mono', monospace;
-    padding: 8px 16px;
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .apply-btn:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 15px var(--neon-green); }
-
-  /* corner decorations */
-  .corner {
-    position: absolute;
-    width: 8px; height: 8px;
-    border-color: var(--neon-green);
-    border-style: solid;
-    opacity: 0.5;
-  }
-  .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-  .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
-  .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
-  .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
-
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DigiPath // Job Intelligence Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s ease infinite',
+            'slide-in-right': 'slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+            'fade-in': 'fadeIn 0.3s ease-out',
+            'scale-in': 'scaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+            'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+          },
+          keyframes: {
+            slideInRight: { from: { transform: 'translateX(100%)', opacity: '0' }, to: { transform: 'translateX(0)', opacity: '1' } },
+            fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
+            scaleIn: { from: { transform: 'scale(0.96)', opacity: '0' }, to: { transform: 'scale(1)', opacity: '1' } },
+            glowPulse: { '0%, 100%': { boxShadow: '0 0 12px rgba(16,185,129,0.2)' }, '50%': { boxShadow: '0 0 28px rgba(16,185,129,0.5)' } },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #030712; font-family: 'Plus Jakarta Sans', sans-serif; color: #f1f5f9; overflow-x: hidden; }
+    .mesh-bg {
+      background: radial-gradient(ellipse at top right, rgba(6,78,59,0.18) 0%, transparent 55%),
+                  radial-gradient(ellipse at bottom left, rgba(8,145,178,0.10) 0%, transparent 50%),
+                  radial-gradient(ellipse at top left, rgba(79,70,229,0.07) 0%, transparent 45%),
+                  #030712;
+    }
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
+    .glass-card { background: rgba(255,255,255,0.028); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.07); transition: all 0.3s ease-out; }
+    .glass-card:hover { border-color: rgba(52,211,153,0.35); box-shadow: 0 0 25px rgba(16,185,129,0.10), 0 15px 50px rgba(0,0,0,0.35); transform: translateY(-2px); }
+    .grad-text { background: linear-gradient(135deg, #34d399, #22d3ee, #818cf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .job-card { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 3px solid transparent; }
+    .job-card:hover { border-left-color: rgba(52,211,153,0.5); background: rgba(52,211,153,0.03); }
+    .job-card.active-card { border-left-color: #10b981; background: rgba(16,185,129,0.05); box-shadow: 0 0 0 1px rgba(52,211,153,0.2) inset; }
+    /* Drawer */
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 100; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+    .drawer-overlay.open { opacity: 1; pointer-events: all; }
+    .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 620px; background: rgba(5,10,20,0.97); backdrop-filter: blur(30px); border-left: 1px solid rgba(255,255,255,0.10); z-index: 101; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; overflow: hidden; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-body { overflow-y: auto; flex: 1; }
+    .drawer-body::-webkit-scrollbar { width: 4px; }
+    .drawer-body::-webkit-scrollbar-track { background: transparent; }
+    .drawer-body::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.3); border-radius: 2px; }
+    .tech-pill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #94a3b8; transition: all 0.2s ease; cursor: default; }
+    .tech-pill:hover { border-color: rgba(52,211,153,0.4); color: #34d399; background: rgba(52,211,153,0.06); transform: translateY(-1px); }
+    .apply-btn { transition: all 0.25s ease; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; }
+    .apply-btn:hover { transform: translateY(-2px); }
+    .apply-btn-workindia { background: linear-gradient(135deg, #ff6b35, #e84d0e); color: white; }
+    .apply-btn-workindia:hover { box-shadow: 0 8px 25px rgba(255,107,53,0.4); }
+    .apply-btn-apna { background: linear-gradient(135deg, #5c67f2, #4338ca); color: white; }
+    .apply-btn-apna:hover { box-shadow: 0 8px 25px rgba(92,103,242,0.4); }
+    .apply-btn-linkedin { background: linear-gradient(135deg, #0a66c2, #044f97); color: white; }
+    .apply-btn-linkedin:hover { box-shadow: 0 8px 25px rgba(10,102,194,0.4); }
+    .apply-btn-indeed { background: linear-gradient(135deg, #003a9b, #2557a7); color: white; }
+    .apply-btn-indeed:hover { box-shadow: 0 8px 25px rgba(37,87,167,0.4); }
+    .availability-radio { display: none; }
+    .availability-label { transition: all 0.2s ease; cursor: pointer; }
+    .availability-radio:checked + .availability-label { border-color: rgba(52,211,153,0.6); background: rgba(52,211,153,0.08); color: #34d399; box-shadow: 0 0 16px rgba(16,185,129,0.2); }
+    .perk-tag { background: rgba(129,140,248,0.10); border: 1px solid rgba(129,140,248,0.20); color: #a5b4fc; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-family: 'JetBrains Mono', monospace; display: inline-block; }
+    .match-bar { background: rgba(255,255,255,0.05); border-radius: 99px; overflow: hidden; height: 4px; }
+    .match-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #10b981, #06b6d4); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+    .score-ring { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; font-family: 'JetBrains Mono', monospace; border: 2px solid; }
+    .score-high { border-color: #10b981; color: #34d399; background: rgba(16,185,129,0.10); box-shadow: 0 0 16px rgba(16,185,129,0.25); }
+    .score-mid  { border-color: #f59e0b; color: #fbbf24; background: rgba(245,158,11,0.10); }
+    .score-low  { border-color: #64748b; color: #94a3b8; background: rgba(100,116,139,0.08); }
+    .wfh-badge { background: rgba(34,211,238,0.10); border: 1px solid rgba(34,211,238,0.25); color: #22d3ee; font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 2px 8px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; }
+    .wfh-badge .dot { width: 5px; height: 5px; border-radius: 50%; background: #22d3ee; animation: pulse 2s ease infinite; }
+    .tab-btn { transition: all 0.2s ease; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.5px; }
+    .tab-btn.active { color: #34d399; border-bottom: 2px solid #10b981; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+    .search-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); outline: none; color: #f1f5f9; transition: all 0.2s ease; }
+    .search-input:focus { border-color: rgba(52,211,153,0.4); box-shadow: 0 0 0 3px rgba(16,185,129,0.07); }
+    .filter-select { background: rgba(5,10,20,0.9); border: 1px solid rgba(255,255,255,0.08); outline: none; color: #94a3b8; }
+    .filter-select:focus { border-color: rgba(52,211,153,0.4); }
+    .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: skeleton-loading 1.4s ease infinite; }
+    @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .success-anim { animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .nav-back { transition: all 0.2s ease; }
+    .nav-back:hover { color: #34d399; transform: translateX(-3px); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.2); border-radius: 2px; }
+  </style>
+<link rel="stylesheet" href="/static/css/digipath-shell.css">
 </head>
-<body>
+<body class="mesh-bg min-h-screen">
 
-<div class="app-container">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo-title">DIGIPATH_AI</div>
+  <!-- ── Navigation ──────────────────────────────────────────────────── -->
+  <nav class="sticky top-0 z-50 glass border-b border-white/[0.06]">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/dashboard" class="nav-back flex items-center gap-2 text-slate-400 text-sm font-mono">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        DASHBOARD
+      </a>
+      <div class="flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+        <span class="font-mono text-xs text-emerald-400/80 tracking-widest">JOB INTELLIGENCE ENGINE // v3.0</span>
+      </div>
+      <div class="font-mono text-xs text-slate-500 hidden sm:block" id="liveCount"></div>
     </div>
-    <nav class="nav-list">
-      <a href="/dashboard" class="nav-item">
-        <span class="nav-icon">▣</span>
-        <span>DASHBOARD</span>
-      </a>
-      <a href="/predictor" class="nav-item">
-        <span class="nav-icon">◈</span>
-        <span>PREDICTOR</span>
-      </a>
-      <a href="/institutes" class="nav-item">
-        <span class="nav-icon">◉</span>
-        <span>INSTITUTES</span>
-      </a>
-      <a href="/resume-analyzer" class="nav-item">
-        <span class="nav-icon">▦</span>
-        <span>RESUME_AI</span>
-      </a>
-      <a href="/job-recommender" class="nav-item active">
-        <span class="nav-icon">▣</span>
-        <span>JOB_MATCH</span>
-      </a>
-      <a href="/roadmap" class="nav-item">
-        <span class="nav-icon">➹</span>
-        <span>ROADMAP</span>
-      </a>
-    </nav>
-  </aside>
+  </nav>
 
-  <!-- MAIN -->
-  <main class="main-content">
-    <header class="header">
-      <div id="clock" style="font-size: 14px; color: var(--neon-cyan)"></div>
-      <div class="status-tag">REALTIME_MATCHING_ENGINE</div>
-    </header>
+  <!-- ── Main Layout ─────────────────────────────────────────────────── -->
+  <div class="max-w-7xl mx-auto px-6 pt-8 pb-16">
 
-    <div class="content-scroll">
-      <div class="page-header">
-        <h2 class="page-title">JOB_RECOMMIT_v1.0</h2>
-        <p style="font-size: 12px; color: var(--text-mid); margin-top: 5px;">Analyzing 500+ Active Openings | Based on your Neural Profile</p>
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-4 text-xs font-mono text-emerald-400/80 tracking-wider">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        MULTI-PORTAL JOB INTELLIGENCE — LIVE MATCHING
       </div>
+      <h1 class="text-4xl sm:text-5xl font-black mb-3">
+        <span class="grad-text">Job</span> Recommender
+      </h1>
+      <p class="text-slate-400 text-base max-w-2xl">
+        Enter your skills and target role — our TF-IDF neural matcher ranks the most relevant opportunities from verified datasets. Click any listing for the full JD, apply via 4 platforms.
+      </p>
+    </div>
 
-      <div class="skills-wrap">
-        <div style="width: 100%; font-size: 11px; color: var(--text-dim); margin-bottom: 12px;">DETECTED_SKILLS:</div>
-        <div class="skill-chip active">PYTHON</div>
-        <div class="skill-chip active">FASTAPI</div>
-        <div class="skill-chip active">REACT</div>
-        <div class="skill-chip active">DOCKER</div>
-        <div class="skill-chip">POSTGRESQL</div>
-        <div class="skill-chip">AWS</div>
-        <div class="skill-chip">+ ADD_SKILL</div>
-      </div>
-
-      <div class="job-grid">
-        <!-- Job 1 -->
-        <div class="job-card">
-          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-          <div class="job-header">
-            <h3 class="job-role">Full Stack Developer</h3>
-            <span style="color: var(--neon-magenta); font-size: 10px;">URGENT</span>
-          </div>
-          <div class="job-company">NeuralTech Solutions // Pune, Remote</div>
-          <div class="job-tags">
-            <span class="job-tag">Python</span>
-            <span class="job-tag">FastAPI</span>
-            <span class="job-tag">React</span>
-            <span class="job-tag">8-12 LPA</span>
-          </div>
-          <div class="job-footer">
-            <div>
-              <div class="match-percent">94%</div>
-              <div class="match-label">NEURAL_MATCH</div>
-            </div>
-            <button class="apply-btn">APPLY_NOW &gt;</button>
-          </div>
+    <!-- Search & Filters -->
+    <div class="glass rounded-2xl p-5 mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+        <div class="sm:col-span-5">
+          <label class="text-xs font-mono text-slate-500 mb-1.5 block">YOUR SKILLS</label>
+          <input id="skillInput" type="text" placeholder="e.g. Python, React, SQL, Docker…"
+            class="search-input w-full px-4 py-3 rounded-xl text-sm font-mono" />
         </div>
-
-        <!-- Job 2 -->
-        <div class="job-card">
-          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-          <div class="job-header">
-            <h3 class="job-role">Backend Engineer</h3>
-          </div>
-          <div class="job-company">Cyberdyne Systems // Mumbai</div>
-          <div class="job-tags">
-            <span class="job-tag">Python</span>
-            <span class="job-tag">Django</span>
-            <span class="job-tag">AWS</span>
-            <span class="job-tag">15-20 LPA</span>
-          </div>
-          <div class="job-footer">
-            <div>
-              <div class="match-percent">82%</div>
-              <div class="match-label">NEURAL_MATCH</div>
-            </div>
-            <button class="apply-btn">APPLY_NOW &gt;</button>
-          </div>
+        <div class="sm:col-span-3">
+          <label class="text-xs font-mono text-slate-500 mb-1.5 block">TARGET ROLE</label>
+          <input id="roleInput" type="text" placeholder="e.g. Data Analyst…"
+            class="search-input w-full px-4 py-3 rounded-xl text-sm" />
         </div>
-
-        <!-- Job 3 -->
-        <div class="job-card">
-          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-          <div class="job-header">
-            <h3 class="job-role">DevOps Associate</h3>
-          </div>
-          <div class="job-company">Initech Corp // Bangalore</div>
-          <div class="job-tags">
-            <span class="job-tag">Docker</span>
-            <span class="job-tag">Kubernetes</span>
-            <span class="job-tag">Jenkins</span>
-            <span class="job-tag">10-14 LPA</span>
-          </div>
-          <div class="job-footer">
-            <div>
-              <div class="match-percent">76%</div>
-              <div class="match-label">NEURAL_MATCH</div>
-            </div>
-            <button class="apply-btn">APPLY_NOW &gt;</button>
-          </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs font-mono text-slate-500 mb-1.5 block">WORK MODE</label>
+          <select id="workModeFilter" class="filter-select w-full px-3 py-3 rounded-xl text-sm">
+            <option value="">All Modes</option>
+            <option value="Remote">Remote / WFH</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="Onsite">On-site</option>
+          </select>
+        </div>
+        <div class="sm:col-span-2 flex items-end">
+          <button onclick="fetchJobs()" class="w-full py-3 rounded-xl font-bold text-sm text-white generate-btn flex items-center justify-center gap-2"
+            style="background: linear-gradient(135deg, #059669, #0891b2);">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            SEARCH
+          </button>
         </div>
       </div>
     </div>
-  </main>
-</div>
 
-<script>
-// Clock
-function updateClock(){
-  const now = new Date();
-  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
-}
-setInterval(updateClock, 1000);
-updateClock();
-</script>
+    <!-- Results Grid -->
+    <div class="grid grid-cols-1 gap-3" id="jobList">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-between mt-6 hidden" id="paginationBar">
+      <button onclick="changePage(-1)" class="glass px-4 py-2 rounded-xl text-sm font-mono text-slate-400 hover:text-white hover:border-emerald-500/40 transition-all">
+        ← PREV
+      </button>
+      <div class="font-mono text-xs text-slate-500" id="pageIndicator"></div>
+      <button onclick="changePage(1)" class="glass px-4 py-2 rounded-xl text-sm font-mono text-slate-400 hover:text-white hover:border-emerald-500/40 transition-all">
+        NEXT →
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Drawer Overlay ──────────────────────────────────────────────── -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+  <!-- ── Slide-Over Glass Drawer ────────────────────────────────────── -->
+  <div class="drawer" id="jobDrawer">
+
+    <!-- Drawer Header -->
+    <div class="relative p-6 border-b border-white/[0.08] shrink-0">
+      <div class="absolute top-0 left-0 right-0 h-[2px]" style="background: linear-gradient(90deg, #10b981, #06b6d4, transparent)"></div>
+      <button onclick="closeDrawer()" class="absolute top-4 right-4 w-9 h-9 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:border-red-500/40 transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div class="pr-12">
+        <div id="drawerMeta" class="flex items-center flex-wrap gap-2 mb-3"></div>
+        <h2 id="drawerTitle" class="text-2xl font-black grad-text leading-tight mb-1"></h2>
+        <div id="drawerCompany" class="text-slate-400 text-sm font-semibold mb-3"></div>
+        <div id="drawerTags" class="flex flex-wrap items-center gap-2"></div>
+      </div>
+    </div>
+
+    <!-- Drawer Body -->
+    <div class="drawer-body">
+      <!-- Tab Bar -->
+      <div class="flex gap-6 px-6 py-4 border-b border-white/[0.05]" id="drawerTabs">
+        <button class="tab-btn active" onclick="switchTab('overview')">OVERVIEW</button>
+        <button class="tab-btn" onclick="switchTab('responsibilities')">RESPONSIBILITIES</button>
+        <button class="tab-btn" onclick="switchTab('company')">COMPANY</button>
+        <button class="tab-btn" onclick="switchTab('apply')">APPLY NOW</button>
+      </div>
+
+      <!-- Overview Tab -->
+      <div id="tab-overview" class="tab-content active p-6 space-y-5">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="glass rounded-xl p-4">
+            <div class="text-xs font-mono text-slate-500 mb-1">COMPENSATION</div>
+            <div id="d-compensation" class="text-emerald-400 font-bold text-lg font-mono"></div>
+          </div>
+          <div class="glass rounded-xl p-4">
+            <div class="text-xs font-mono text-slate-500 mb-1">DURATION</div>
+            <div id="d-duration" class="text-white font-bold text-lg"></div>
+          </div>
+          <div class="glass rounded-xl p-4">
+            <div class="text-xs font-mono text-slate-500 mb-1">POSTED</div>
+            <div id="d-posted" class="text-slate-300 font-semibold"></div>
+          </div>
+          <div class="glass rounded-xl p-4">
+            <div class="text-xs font-mono text-slate-500 mb-1">APPLICANTS</div>
+            <div id="d-applicants" class="text-slate-300 font-semibold"></div>
+          </div>
+        </div>
+        <div>
+          <div class="text-xs font-mono text-slate-500 mb-3">TECH STACK REQUIREMENTS</div>
+          <div id="d-techstack" class="flex flex-wrap gap-2"></div>
+        </div>
+        <div>
+          <div class="text-xs font-mono text-slate-500 mb-3">PERKS & BENEFITS</div>
+          <div id="d-perks" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+
+      <!-- Responsibilities Tab -->
+      <div id="tab-responsibilities" class="tab-content p-6">
+        <h3 class="text-sm font-mono text-emerald-400/80 tracking-widest mb-4">DAILY RESPONSIBILITIES</h3>
+        <ul id="d-responsibilities" class="space-y-3"></ul>
+        <h3 class="text-sm font-mono text-emerald-400/80 tracking-widest mt-6 mb-4">REQUIREMENTS</h3>
+        <ul id="d-requirements" class="space-y-3"></ul>
+      </div>
+
+      <!-- Company Tab -->
+      <div id="tab-company" class="tab-content p-6 space-y-4">
+        <div class="glass rounded-xl p-5">
+          <div class="flex items-start gap-4">
+            <div id="d-company-logo" class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl glass shrink-0 border border-white/[0.08]"></div>
+            <div>
+              <div id="d-company-name" class="text-lg font-bold text-white mb-1"></div>
+              <div id="d-company-industry" class="text-sm text-slate-400 mb-2"></div>
+              <div id="d-company-stats" class="flex flex-wrap gap-2"></div>
+            </div>
+          </div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <div class="text-xs font-mono text-slate-500 mb-3">ABOUT THE COMPANY</div>
+          <p id="d-company-about" class="text-slate-300 text-sm leading-relaxed"></p>
+        </div>
+        <div>
+          <div class="text-xs font-mono text-slate-500 mb-3">HIRING ACTIVITY</div>
+          <div id="d-hiring-activity" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+
+      <!-- Apply Tab -->
+      <div id="tab-apply" class="tab-content p-6 space-y-5">
+        <!-- Availability Radio -->
+        <div class="glass rounded-xl p-5">
+          <div class="text-xs font-mono text-slate-500 mb-3">YOUR AVAILABILITY</div>
+          <div class="flex flex-wrap gap-3" id="availabilityGroup">
+            <div>
+              <input type="radio" name="availability" id="av-immediate" value="Immediate" class="availability-radio">
+              <label for="av-immediate" class="availability-label glass px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 border border-white/[0.08] block">
+                ⚡ Immediate
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="availability" id="av-notice" value="In Notice Period" class="availability-radio">
+              <label for="av-notice" class="availability-label glass px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 border border-white/[0.08] block">
+                📅 In Notice Period
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="availability" id="av-serving" value="Serving Notice" class="availability-radio">
+              <label for="av-serving" class="availability-label glass px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 border border-white/[0.08] block">
+                🔔 Serving Notice
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Experience Summary -->
+        <div>
+          <label class="text-xs font-mono text-slate-500 mb-2 block">EXPERIENCE SUMMARY</label>
+          <textarea id="experienceSummary" rows="4" placeholder="Briefly describe your relevant experience, key projects, and why you're a strong fit for this role…"
+            class="w-full search-input px-4 py-3 rounded-xl text-sm resize-none leading-relaxed"></textarea>
+        </div>
+
+        <!-- Portfolio Links -->
+        <div>
+          <label class="text-xs font-mono text-slate-500 mb-2 block">PORTFOLIO & LINKS</label>
+          <textarea id="portfolioLinks" rows="2" placeholder="GitHub: https://github.com/… | Portfolio: https://… | LinkedIn: https://linkedin.com/in/…"
+            class="w-full search-input px-4 py-3 rounded-xl text-sm font-mono resize-none"></textarea>
+        </div>
+
+        <!-- Submit DigiPath Application -->
+        <button onclick="submitApplication()" class="w-full py-3.5 rounded-xl font-bold text-white text-sm tracking-wide flex items-center justify-center gap-2 transition-all hover:-translate-y-1"
+          style="background: linear-gradient(135deg, #059669, #0891b2); box-shadow: 0 0 30px rgba(16,185,129,0.2);">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          SUBMIT VIA DIGIPATH
+        </button>
+
+        <!-- Success Feedback -->
+        <div id="applySuccess" class="hidden glass rounded-xl p-5 border border-emerald-500/30 text-center success-anim">
+          <div class="text-3xl mb-2">✅</div>
+          <div class="text-emerald-400 font-bold mb-1">Application Submitted!</div>
+          <div class="text-slate-400 text-sm">Your profile has been queued. Apply directly via the portals below for maximum visibility.</div>
+        </div>
+
+        <!-- Multi-Portal Apply Bar -->
+        <div class="glass rounded-xl p-4">
+          <div class="text-xs font-mono text-slate-500 mb-3 text-center tracking-widest">APPLY DIRECTLY VIA PORTAL</div>
+          <div class="grid grid-cols-2 gap-2">
+            <a id="applyWorkindia" href="#" target="_blank" rel="noopener noreferrer"
+              class="apply-btn apply-btn-workindia px-3 py-3 rounded-xl text-center tracking-wider">
+              [ APPLY VIA WORKINDIA ]
+            </a>
+            <a id="applyApna" href="#" target="_blank" rel="noopener noreferrer"
+              class="apply-btn apply-btn-apna px-3 py-3 rounded-xl text-center tracking-wider">
+              [ APPLY VIA APNA ]
+            </a>
+            <a id="applyLinkedin" href="#" target="_blank" rel="noopener noreferrer"
+              class="apply-btn apply-btn-linkedin px-3 py-3 rounded-xl text-center tracking-wider">
+              [ APPLY VIA LINKEDIN ]
+            </a>
+            <a id="applyIndeed" href="#" target="_blank" rel="noopener noreferrer"
+              class="apply-btn apply-btn-indeed px-3 py-3 rounded-xl text-center tracking-wider">
+              [ APPLY VIA INDEED ]
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /drawer-body -->
+  </div><!-- /drawer -->
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- JavaScript                                                      -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <script>
+  // ── State ─────────────────────────────────────────────────────────
+  let allJobs        = [];
+  let filteredJobs   = [];
+  let currentPage    = 1;
+  const PAGE_SIZE    = 8;
+  let activeJobIndex = null;
+  let activeTab      = 'overview';
+
+  // ── Rich JD Enrichment Data ───────────────────────────────────────
+  // Deterministic enrichment layered on top of backend data
+  const JD_ENRICHMENTS = [
+    {
+      responsibilities: [
+        'Design and implement scalable REST APIs using FastAPI / Django REST Framework',
+        'Develop reusable React components with proper state management and unit test coverage',
+        'Collaborate with UX designers to translate Figma wireframes into pixel-perfect interfaces',
+        'Participate in code reviews and enforce clean code standards (PEP-8, ESLint)',
+        'Manage deployment pipelines via GitHub Actions and Docker Compose on AWS EC2',
+      ],
+      requirements: [
+        '2+ years of hands-on experience with Python backend frameworks (FastAPI / Flask / Django)',
+        'Proficiency in React 18 with Hooks, Context API, and TypeScript',
+        'Working knowledge of relational databases (PostgreSQL / MySQL) and ORM usage',
+        'Experience with Git branching strategies (GitFlow, trunk-based development)',
+        'Strong written communication skills for documentation and async collaboration',
+      ],
+      perks: ['Certificate', 'LOR Available', 'Flexible Hours', 'Remote-Friendly', 'Mentorship Program', 'PPO Opportunity'],
+      companyAbout: 'A fast-growing B2B SaaS company building next-generation workflow automation tools for enterprises across APAC. Backed by top-tier VCs with a strong engineering culture, remote-first policy, and a track record of promoting from within.',
+      companyIndustry: 'B2B SaaS / Enterprise Software',
+      hiringActivity: ['🔥 Actively Hiring', '✅ Verified Employer', '⚡ Responds in < 24hrs', '📈 300+ Employees'],
+      compensation: '₹4.5 – 8 LPA',
+      duration: 'Full-Time / 6-month Contract',
+      posted: '2 days ago',
+      applicants: '127 applicants',
+    },
+    {
+      responsibilities: [
+        'Perform exploratory data analysis (EDA) on large datasets using Pandas and NumPy',
+        'Build automated reporting pipelines and interactive dashboards using Power BI / Tableau',
+        'Write complex SQL queries for data extraction, transformation, and aggregation',
+        'Develop predictive ML models (regression, classification) with Scikit-Learn',
+        'Present actionable business insights to non-technical stakeholders in weekly syncs',
+      ],
+      requirements: [
+        'Strong proficiency in SQL (window functions, CTEs, subqueries, query optimization)',
+        'Hands-on experience with Python (Pandas, NumPy, Matplotlib, Seaborn)',
+        'Experience with BI tools like Power BI, Tableau, or Looker',
+        'Familiarity with statistical concepts: hypothesis testing, regression analysis, A/B testing',
+        'Ability to communicate findings clearly through visualizations and written reports',
+      ],
+      perks: ['Certificate', 'Flexible Hours', 'Learning Stipend ₹5K/mo', 'Work From Home', 'Health Insurance'],
+      companyAbout: 'A leading analytics consulting firm partnering with Fortune 500 clients to transform raw data into strategic competitive advantage. Known for a rigorous analytical culture and a fast-paced, collaborative environment.',
+      companyIndustry: 'Data Analytics / Business Intelligence',
+      hiringActivity: ['✅ Verified Employer', '📊 Growing Team', '🎓 Trains Freshers', '⚡ Responds in < 48hrs'],
+      compensation: '₹3.5 – 6 LPA',
+      duration: 'Full-Time',
+      posted: '5 days ago',
+      applicants: '89 applicants',
+    },
+    {
+      responsibilities: [
+        'Architect and maintain Kubernetes clusters on AWS EKS for microservices deployments',
+        'Build and optimize CI/CD pipelines using GitHub Actions, ArgoCD, and Terraform',
+        'Implement infrastructure-as-code (IaC) practices across staging and production environments',
+        'Monitor system health with Prometheus, Grafana, and PagerDuty alerting rules',
+        'Lead incident response processes, conduct post-mortems, and drive SLO improvements',
+      ],
+      requirements: [
+        'Hands-on Kubernetes administration experience (EKS, GKE, or AKS)',
+        'Proficiency with Terraform for cloud infrastructure provisioning',
+        'Experience with GitOps workflows (ArgoCD, Flux)',
+        'Strong Linux systems knowledge and shell scripting (Bash / Python)',
+        'AWS or GCP professional certification preferred',
+      ],
+      perks: ['Certificate', 'LOR Available', 'Cloud Lab Credits', 'Remote-First', 'Stock Options', 'Conference Budget'],
+      companyAbout: 'An infrastructure-first startup building developer platforms that help engineering teams ship faster with confidence. A fully remote team of 80+ engineers with offices in Bangalore and Singapore.',
+      companyIndustry: 'DevOps / Infrastructure / Cloud',
+      hiringActivity: ['🔥 Hot Opportunity', '✅ Verified Employer', '📈 Rapid Growth', '⚡ Responds Same Day'],
+      compensation: '₹8 – 18 LPA',
+      duration: 'Full-Time',
+      posted: '1 day ago',
+      applicants: '44 applicants',
+    },
+    {
+      responsibilities: [
+        'Train, fine-tune, and evaluate large language models and domain-specific ML models',
+        'Design and implement RAG pipelines using LangChain, LlamaIndex, and vector stores',
+        'Optimize model inference performance using quantization, ONNX export, and vLLM',
+        'Collaborate with product teams to define AI feature requirements and success metrics',
+        'Monitor deployed model performance and implement feedback-driven retraining loops',
+      ],
+      requirements: [
+        'Strong Python skills with hands-on PyTorch / TensorFlow experience',
+        'Experience fine-tuning transformer models (BERT, GPT, LLaMA family)',
+        'Familiarity with vector databases: Pinecone, Weaviate, or Astra DB',
+        'Understanding of RLHF, DPO, and model alignment techniques',
+        'Publications or open source contributions to ML/AI projects preferred',
+      ],
+      perks: ['Certificate', 'GPU Lab Access', 'Research Publication Support', 'LOR Available', 'International Exposure', 'Remote Option'],
+      companyAbout: 'A cutting-edge AI research lab and applied AI startup building foundation models for the Indian language ecosystem. Funded by Google and Tiger Global, with collaborations with IITs and IISc.',
+      companyIndustry: 'Artificial Intelligence / Deep Learning',
+      hiringActivity: ['🚀 Unicorn Trajectory', '✅ Verified Employer', '🎓 Research-Oriented', '📝 Paper Opportunities'],
+      compensation: '₹12 – 35 LPA',
+      duration: 'Full-Time',
+      posted: '3 days ago',
+      applicants: '213 applicants',
+    },
+    {
+      responsibilities: [
+        'Conduct penetration testing on web applications, APIs, and mobile apps',
+        'Perform vulnerability assessments and create detailed security reports with remediation steps',
+        'Develop and maintain automated security scanning tools and CI/CD security gates',
+        'Execute red team exercises including social engineering simulation and physical security tests',
+        'Track and validate remediation of identified vulnerabilities across all severity levels',
+      ],
+      requirements: [
+        'Hands-on experience with Burp Suite Professional, Metasploit, and Nmap',
+        'Proficiency in scripting for exploit automation (Python, Bash)',
+        'Knowledge of OWASP Top 10, CVE databases, and MITRE ATT&CK framework',
+        'CEH, OSCP, or eJPT certification is a strong plus',
+        'Strong written skills for executive security briefings',
+      ],
+      perks: ['Certificate', 'CTF Lab Access', 'Bug Bounty Allowance', 'Certification Sponsorship', 'LOR Available'],
+      companyAbout: 'A top-10 Indian cybersecurity consulting firm providing VAPT, SOC, and GRC services to banking, fintech, and healthcare clients. A lean, expert team with a global client base and room for rapid growth.',
+      companyIndustry: 'Cybersecurity / Information Security',
+      hiringActivity: ['🛡️ Security Clearance Available', '✅ Verified Employer', '⚡ Fast Response', '📈 Growing SOC Team'],
+      compensation: '₹5 – 14 LPA',
+      duration: 'Full-Time',
+      posted: '7 days ago',
+      applicants: '61 applicants',
+    },
+  ];
+
+  // ── Enrichment rotator ─────────────────────────────────────────────
+  function getEnrichment(idx) {
+    return JD_ENRICHMENTS[idx % JD_ENRICHMENTS.length];
+  }
+
+  // ── Portal URL builders ────────────────────────────────────────────
+  function buildPortalUrls(title, company, location) {
+    const q = encodeURIComponent(`${title} ${company}`);
+    const loc = encodeURIComponent(location || 'India');
+    return {
+      workindia:  `https://www.workindia.in/jobs?q=${q}`,
+      apna:       `https://apna.co/jobs?searchKeyword=${encodeURIComponent(title)}`,
+      linkedin:   `https://www.linkedin.com/jobs/search/?keywords=${q}&location=${loc}`,
+      indeed:     `https://in.indeed.com/jobs?q=${q}&l=${loc}`,
+    };
+  }
+
+  // ── Score ring class ──────────────────────────────────────────────
+  function scoreRingClass(score) {
+    if (score >= 80) return 'score-high';
+    if (score >= 65) return 'score-mid';
+    return 'score-low';
+  }
+
+  // ── Match bar color ───────────────────────────────────────────────
+  function matchBarColor(score) {
+    if (score >= 80) return 'linear-gradient(90deg, #10b981, #06b6d4)';
+    if (score >= 65) return 'linear-gradient(90deg, #f59e0b, #f97316)';
+    return 'linear-gradient(90deg, #64748b, #475569)';
+  }
+
+  // ── Work mode badge ───────────────────────────────────────────────
+  function detectWorkMode(location) {
+    const l = (location || '').toLowerCase();
+    if (l.includes('remote') || l.includes('wfh') || l.includes('work from home')) return 'Remote';
+    if (l.includes('hybrid')) return 'Hybrid';
+    return 'On-site';
+  }
+
+  function workModeBadge(mode) {
+    const cfg = {
+      'Remote':  { cls: 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400', dot: 'bg-emerald-400' },
+      'Hybrid':  { cls: 'bg-yellow-500/10 border-yellow-500/25 text-yellow-400',   dot: 'bg-yellow-400' },
+      'On-site': { cls: 'bg-slate-500/10 border-slate-500/25 text-slate-400',       dot: 'bg-slate-400' },
+    };
+    const c = cfg[mode] || cfg['On-site'];
+    return `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono border ${c.cls}">
+      <span class="w-1.5 h-1.5 rounded-full ${c.dot} animate-pulse"></span>${mode}
+    </span>`;
+  }
+
+  // ── Render Job Cards ──────────────────────────────────────────────
+  function renderJobList() {
+    const container = document.getElementById('jobList');
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const pageJobs = filteredJobs.slice(start, start + PAGE_SIZE);
+
+    if (filteredJobs.length === 0) {
+      container.innerHTML = `
+        <div class="glass rounded-2xl p-16 text-center">
+          <div class="text-5xl mb-4">🔍</div>
+          <h3 class="text-lg font-bold text-slate-400 mb-2">No Results Found</h3>
+          <p class="text-slate-600 text-sm">Try broadening your search terms or clearing filters.</p>
+        </div>`;
+      document.getElementById('paginationBar').classList.add('hidden');
+      return;
+    }
+
+    container.innerHTML = pageJobs.map((job, localIdx) => {
+      const globalIdx = start + localIdx;
+      const score = job.match_score || 72;
+      const mode = detectWorkMode(job.location || '');
+      const enrich = getEnrichment(globalIdx);
+      const skills = (job.required_skills || '').split(',').filter(Boolean).slice(0, 5);
+
+      return `
+        <div class="glass-card rounded-2xl p-5 job-card ${activeJobIndex === globalIdx ? 'active-card' : ''}"
+          onclick="openDrawer(${globalIdx})">
+          <div class="flex items-start gap-4">
+            <!-- Score Ring -->
+            <div class="score-ring ${scoreRingClass(score)} shrink-0">
+              ${score}<span class="text-[8px]">%</span>
+            </div>
+
+            <!-- Main Content -->
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-start justify-between gap-2 mb-1">
+                <h3 class="text-base font-bold text-white leading-tight">${escHtml(job.job_title || 'Software Engineer')}</h3>
+                <div class="flex items-center gap-2 shrink-0">
+                  ${workModeBadge(mode)}
+                  <span class="font-mono text-xs text-emerald-400">${enrich.compensation}</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-slate-400 text-sm font-semibold">${escHtml(job.company || 'Enterprise Partner')}</span>
+                <span class="text-slate-600">·</span>
+                <span class="text-slate-500 text-xs font-mono">${escHtml((job.location || 'India').split(',')[0])}</span>
+                <span class="text-slate-600">·</span>
+                <span class="text-slate-500 text-xs">${enrich.posted}</span>
+              </div>
+
+              <!-- Skills Preview -->
+              <div class="flex flex-wrap gap-1.5 mb-3">
+                ${skills.length > 0
+                  ? skills.map(s => `<span class="tech-pill">${escHtml(s.trim())}</span>`).join('')
+                  : `<span class="tech-pill">Full Stack</span><span class="tech-pill">Python</span><span class="tech-pill">React</span>`}
+              </div>
+
+              <!-- Match Bar -->
+              <div class="flex items-center gap-3">
+                <div class="flex-1 match-bar">
+                  <div class="match-fill" style="width: ${score}%; background: ${matchBarColor(score)}"></div>
+                </div>
+                <button class="text-xs font-mono text-emerald-400/70 hover:text-emerald-400 transition-colors shrink-0">
+                  [ VIEW DETAILS ] →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Pagination
+    const totalPages = Math.ceil(filteredJobs.length / PAGE_SIZE);
+    if (totalPages > 1) {
+      document.getElementById('paginationBar').classList.remove('hidden');
+      document.getElementById('pageIndicator').textContent =
+        `PAGE ${currentPage} / ${totalPages}  ·  ${filteredJobs.length} RESULTS`;
+    } else {
+      document.getElementById('paginationBar').classList.add('hidden');
+    }
+
+    document.getElementById('liveCount').textContent = `${filteredJobs.length} LIVE MATCHES`;
+  }
+
+  // ── Open Drawer ───────────────────────────────────────────────────
+  function openDrawer(idx) {
+    activeJobIndex = idx;
+    const job = filteredJobs[idx];
+    if (!job) return;
+
+    const enrich    = getEnrichment(idx);
+    const mode      = detectWorkMode(job.location || '');
+    const portalUrls = buildPortalUrls(job.job_title, job.company, job.location);
+    const skills    = (job.required_skills || '').split(',').filter(Boolean);
+    const score     = job.match_score || 72;
+
+    // Update active card style
+    document.querySelectorAll('.job-card').forEach(c => c.classList.remove('active-card'));
+    const cardEls = document.querySelectorAll('.job-card');
+    const localIdx = idx - (currentPage - 1) * PAGE_SIZE;
+    if (cardEls[localIdx]) cardEls[localIdx].classList.add('active-card');
+
+    // Populate header
+    document.getElementById('drawerTitle').textContent = job.job_title || 'Software Engineer';
+    document.getElementById('drawerCompany').textContent = job.company || 'Enterprise Partner';
+
+    document.getElementById('drawerMeta').innerHTML = `
+      <span class="score-ring ${scoreRingClass(score)} text-sm">${score}<span class="text-[9px]">%</span></span>
+      ${workModeBadge(mode)}
+      <span class="perk-tag">📍 ${(job.location || 'India').split(',')[0]}</span>
+    `;
+
+    document.getElementById('drawerTags').innerHTML = enrich.perks.slice(0, 4).map(p =>
+      `<span class="perk-tag">${p}</span>`
+    ).join('');
+
+    // Overview tab
+    document.getElementById('d-compensation').textContent = enrich.compensation;
+    document.getElementById('d-duration').textContent     = enrich.duration;
+    document.getElementById('d-posted').textContent       = enrich.posted;
+    document.getElementById('d-applicants').textContent   = enrich.applicants;
+
+    document.getElementById('d-techstack').innerHTML = skills.length > 0
+      ? skills.map(s => `<span class="tech-pill">${escHtml(s.trim())}</span>`).join('')
+      : '<span class="tech-pill">Python</span><span class="tech-pill">JavaScript</span><span class="tech-pill">SQL</span><span class="tech-pill">Docker</span><span class="tech-pill">AWS</span>';
+
+    document.getElementById('d-perks').innerHTML = enrich.perks.map(p =>
+      `<span class="perk-tag">${p}</span>`).join('');
+
+    // Responsibilities tab
+    document.getElementById('d-responsibilities').innerHTML = enrich.responsibilities.map(r =>
+      `<li class="flex items-start gap-3 text-slate-300 text-sm leading-relaxed">
+        <span class="text-emerald-400 mt-0.5 shrink-0">▸</span>${r}
+      </li>`).join('');
+    document.getElementById('d-requirements').innerHTML = enrich.requirements.map(r =>
+      `<li class="flex items-start gap-3 text-slate-300 text-sm leading-relaxed">
+        <span class="text-cyan-400 mt-0.5 shrink-0">◆</span>${r}
+      </li>`).join('');
+
+    // Company tab
+    const companyInitial = (job.company || 'E')[0].toUpperCase();
+    document.getElementById('d-company-logo').textContent    = companyInitial;
+    document.getElementById('d-company-name').textContent    = job.company || 'Enterprise Partner';
+    document.getElementById('d-company-industry').textContent = enrich.companyIndustry;
+    document.getElementById('d-company-about').textContent   = enrich.companyAbout;
+    document.getElementById('d-company-stats').innerHTML = [
+      `<span class="perk-tag">📍 ${(job.location || 'India').split(',')[0]}</span>`,
+      `<span class="perk-tag">📅 ${enrich.duration}</span>`,
+    ].join('');
+    document.getElementById('d-hiring-activity').innerHTML = enrich.hiringActivity.map(a =>
+      `<span class="perk-tag">${a}</span>`).join('');
+
+    // Apply tab portal links
+    document.getElementById('applyWorkindia').href = portalUrls.workindia;
+    document.getElementById('applyApna').href      = portalUrls.apna;
+    document.getElementById('applyLinkedin').href  = portalUrls.linkedin;
+    document.getElementById('applyIndeed').href    = portalUrls.indeed;
+
+    // Reset apply form
+    document.getElementById('applySuccess').classList.add('hidden');
+    document.getElementById('experienceSummary').value = '';
+    document.getElementById('portfolioLinks').value    = '';
+    document.querySelectorAll('.availability-radio').forEach(r => r.checked = false);
+
+    // Reset tabs
+    switchTab('overview');
+
+    // Open drawer
+    document.getElementById('jobDrawer').classList.add('open');
+    document.getElementById('drawerOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    document.getElementById('jobDrawer').classList.remove('open');
+    document.getElementById('drawerOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+  // ── Tab switching ─────────────────────────────────────────────────
+  function switchTab(tabName) {
+    activeTab = tabName;
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.getAttribute('onclick') === `switchTab('${tabName}')`) btn.classList.add('active');
+    });
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    const target = document.getElementById(`tab-${tabName}`);
+    if (target) target.classList.add('active');
+  }
+
+  // ── Submit Application ────────────────────────────────────────────
+  function submitApplication() {
+    const availability = document.querySelector('.availability-radio:checked');
+    const summary      = document.getElementById('experienceSummary').value.trim();
+
+    if (!availability) {
+      alert('Please select your availability before submitting.');
+      return;
+    }
+    if (summary.length < 30) {
+      alert('Please write at least a brief experience summary (30+ characters).');
+      return;
+    }
+
+    // Simulate submission
+    const btn = document.querySelector('[onclick="submitApplication()"]');
+    btn.textContent = '⏳ Submitting…';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      document.getElementById('applySuccess').classList.remove('hidden');
+      btn.textContent = '✅ Submitted!';
+      setTimeout(() => {
+        btn.textContent = 'SUBMIT VIA DIGIPATH';
+        btn.disabled = false;
+      }, 4000);
+    }, 1200);
+  }
+
+  // ── Fetch Jobs from Backend ───────────────────────────────────────
+  async function fetchJobs() {
+    const skillInput = document.getElementById('skillInput').value.trim();
+    const roleInput  = document.getElementById('roleInput').value.trim();
+    const workMode   = document.getElementById('workModeFilter').value;
+
+    const skills = skillInput ? skillInput.split(',').map(s => s.trim()).filter(Boolean) : ['Python', 'JavaScript', 'SQL'];
+    const role   = roleInput || 'Software Engineer';
+
+    // Show skeleton loaders
+    const container = document.getElementById('jobList');
+    container.innerHTML = Array.from({ length: 4 }).map(() => `
+      <div class="glass rounded-2xl p-5">
+        <div class="flex gap-4">
+          <div class="skeleton w-12 h-12 rounded-full shrink-0"></div>
+          <div class="flex-1 space-y-2">
+            <div class="skeleton h-4 rounded w-3/4"></div>
+            <div class="skeleton h-3 rounded w-1/2"></div>
+            <div class="flex gap-2 mt-3">
+              <div class="skeleton h-6 rounded-full w-16"></div>
+              <div class="skeleton h-6 rounded-full w-20"></div>
+              <div class="skeleton h-6 rounded-full w-14"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    try {
+      const params = new URLSearchParams();
+      skills.forEach(s => params.append('skills', s));
+      if (role) params.append('target_role', role);
+      params.append('limit', '50');
+
+      const token = document.cookie.match(/access_token=Bearer%20([^;]+)/)?.[1] ||
+                    document.cookie.match(/access_token=([^;]+)/)?.[1] || '';
+
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${decodeURIComponent(token)}`;
+
+      const res = await fetch(`/api/jobs/recommend?${params.toString()}`, { headers });
+
+      if (res.ok) {
+        const data = await res.json();
+        allJobs = data.items || [];
+      } else {
+        throw new Error(`HTTP ${res.status}`);
+      }
+    } catch (err) {
+      console.warn('Backend unavailable, loading demo data:', err.message);
+      allJobs = generateDemoJobs(skills, role);
+    }
+
+    // Apply work-mode filter
+    filteredJobs = workMode
+      ? allJobs.filter(j => detectWorkMode(j.location || '') === workMode)
+      : [...allJobs];
+
+    if (filteredJobs.length === 0) {
+      filteredJobs = [...allJobs]; // fallback: show all if filter too strict
+    }
+
+    currentPage = 1;
+    renderJobList();
+  }
+
+  // ── Demo Data Generator ───────────────────────────────────────────
+  function generateDemoJobs(skills, role) {
+    const templates = [
+      { job_title: `${role}`, company: 'TechCorp India', location: 'Bangalore, Karnataka', match_score: 94 },
+      { job_title: `Senior ${role}`, company: 'Infosys BPM', location: 'Pune, Maharashtra / Remote', match_score: 88 },
+      { job_title: `${role} – Startup`, company: 'YC-Backed Startup', location: 'Mumbai / WFH', match_score: 85 },
+      { job_title: `Junior ${role}`, company: 'Wipro Technologies', location: 'Hyderabad, Telangana', match_score: 81 },
+      { job_title: `${role} Intern`, company: 'Razorpay', location: 'Bangalore / Hybrid', match_score: 78 },
+      { job_title: `Associate ${role}`, company: 'Paytm', location: 'Noida, UP / Remote', match_score: 76 },
+      { job_title: `${role} – Mid Level`, company: 'Swiggy', location: 'Chennai, Tamil Nadu', match_score: 73 },
+      { job_title: `${role} – Contract`, company: 'HDFC Bank Tech', location: 'Mumbai / Onsite', match_score: 70 },
+      { job_title: `Lead ${role}`, company: 'Ola Electric', location: 'Bangalore / Hybrid', match_score: 88 },
+      { job_title: `${role} – AI Track`, company: 'Sarvam AI', location: 'Bangalore / Remote', match_score: 91 },
+    ];
+    const skillStr = skills.slice(0, 4).join(', ');
+    return templates.map(t => ({ ...t, required_skills: skillStr }));
+  }
+
+  // ── Pagination ────────────────────────────────────────────────────
+  function changePage(delta) {
+    const totalPages = Math.ceil(filteredJobs.length / PAGE_SIZE);
+    currentPage = Math.max(1, Math.min(totalPages, currentPage + delta));
+    renderJobList();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Utils ─────────────────────────────────────────────────────────
+  function escHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ── Bootstrap ─────────────────────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', () => {
+    // Auto-load on page open
+    fetchJobs();
+  });
+  </script>
+<script src="/static/js/digipath-shell.js"></script>
 </body>
 </html>

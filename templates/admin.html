@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGIPATH_AI // ROOT_ADMIN_COMMAND_CENTER</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --neon-red: #ff0055;
+    --neon-cyan: #00e5ff;
+    --neon-green: #00ff41;
+    --neon-amber: #ffb300;
+    --bg-dark: #000000;
+    --bg-panel: #060408;
+    --bg-card: #0c050b;
+    --border-red: rgba(255, 0, 85, 0.35);
+    --border-cyan: rgba(0, 229, 255, 0.3);
+    --text-dim: #881b37;
+    --text-mid: #ff4d79;
+    --scan-line: rgba(255, 0, 85, 0.03);
+    --sidebar-width: 280px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-dark);
+    color: var(--neon-red);
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+  }
+
+  /* CRT scanlines */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, var(--scan-line) 0px, var(--scan-line) 1px, transparent 1px, transparent 2px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Cyber Grid */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,0,85,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-red);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-shadow: 5px 0 25px rgba(255, 0, 85, 0.08);
+  }
+
+  .sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border-red);
+    text-align: center;
+    background: rgba(255, 0, 85, 0.04);
+  }
+
+  .admin-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: rgba(255, 0, 85, 0.15);
+    border: 1px solid var(--neon-red);
+    color: #fff;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 8px var(--neon-red);
+    box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+  }
+
+  .logo-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px; font-weight: 900;
+    color: #fff; letter-spacing: 0.1em;
+    text-shadow: 0 0 12px var(--neon-red);
+    text-decoration: none; display: block;
+  }
+  .logo-title span { color: var(--neon-cyan); }
+
+  .nav-list {
+    flex: 1; padding: 20px 0; list-style: none; overflow-y: auto;
+  }
+
+  .nav-item {
+    padding: 14px 22px; display: flex; align-items: center; gap: 12px;
+    color: var(--text-mid); text-decoration: none; transition: all 0.2s;
+    font-size: 12px; border-left: 3px solid transparent; cursor: pointer;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,0,85,0.08); color: #fff;
+  }
+
+  .nav-item.active {
+    background: rgba(255,0,85,0.15); color: #fff;
+    border-left-color: var(--neon-red); box-shadow: inset 6px 0 15px rgba(255,0,85,0.15);
+    text-shadow: 0 0 8px var(--neon-red);
+  }
+
+  .nav-icon { font-size: 15px; width: 22px; text-align: center; color: var(--neon-cyan); }
+  .nav-item.active .nav-icon { color: var(--neon-red); text-shadow: 0 0 8px var(--neon-red); }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-red);
+    font-size: 11px;
+    color: var(--text-mid);
+    background: rgba(0,0,0,0.5);
+  }
+
+  /* Main Terminal Viewport */
+  .main-content {
+    flex: 1; display: flex; flex-direction: column;
+    overflow-y: auto; background: rgba(5, 2, 6, 0.7);
+  }
+
+  .header {
+    height: 64px; border-bottom: 1px solid var(--border-red);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; background: rgba(8, 3, 7, 0.92);
+    backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 10;
+  }
+
+  .status-tag {
+    font-size: 11px; color: var(--neon-red); letter-spacing: 1.5px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--neon-red); box-shadow: 0 0 10px var(--neon-red);
+    animation: pulseRed 1.8s infinite;
+  }
+  @keyframes pulseRed {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 15px var(--neon-red); }
+    100% { transform: scale(0.9); opacity: 0.7; }
+  }
+
+  .header-actions {
+    display: flex; align-items: center; gap: 16px;
+  }
+
+  .exit-btn {
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    background: rgba(0, 229, 255, 0.05);
+    padding: 6px 14px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .exit-btn:hover {
+    background: var(--neon-cyan);
+    color: #000;
+    box-shadow: 0 0 12px var(--neon-cyan);
+  }
+
+  .content-area {
+    padding: 28px 32px 60px; max-width: 1360px; width: 100%; margin: 0 auto;
+  }
+
+  .terminal-banner {
+    border: 1px solid var(--border-red);
+    background: linear-gradient(90deg, rgba(255,0,85,0.1) 0%, rgba(0,229,255,0.05) 100%);
+    padding: 20px 24px;
+    margin-bottom: 26px;
+    position: relative;
+  }
+
+  .terminal-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px; font-weight: 900; color: #fff;
+    letter-spacing: 2px; text-shadow: 0 0 15px var(--neon-red);
+    margin-bottom: 6px;
+  }
+  .terminal-title span { color: var(--neon-cyan); }
+  .terminal-desc {
+    font-size: 12px; color: var(--text-mid); line-height: 1.5;
+  }
+
+  /* Metric Ribbon */
+  .metrics-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 26px;
+  }
+  .metric-card {
+    background: var(--bg-card); border: 1px solid var(--border-red);
+    padding: 16px 20px; position: relative;
+  }
+  .metric-label {
+    font-size: 10px; color: var(--text-mid); letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase;
+  }
+  .metric-val {
+    font-family: 'Orbitron', sans-serif; font-size: 24px; font-weight: 900; color: #fff;
+    text-shadow: 0 0 10px var(--neon-red);
+  }
+  .metric-val.cyan { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+  .metric-val.green { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+  .metric-val.amber { color: var(--neon-amber); text-shadow: 0 0 10px var(--neon-amber); }
+
+  /* TAB PANELS */
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* Cyberpunk Table Component */
+  .table-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border-red);
+    overflow-x: auto;
+    position: relative;
+    margin-bottom: 24px;
+  }
+
+  .cyber-table {
+    width: 100%; border-collapse: collapse; text-align: left; font-size: 12px;
+  }
+  .cyber-table th {
+    background: rgba(255, 0, 85, 0.12);
+    color: var(--neon-cyan);
+    padding: 14px 16px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid var(--border-red);
+    white-space: nowrap;
+  }
+  .cyber-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 0, 85, 0.12);
+    color: #e0d0d8;
+    vertical-align: middle;
+  }
+  .cyber-table tr:hover td {
+    background: rgba(255, 0, 85, 0.04);
+    color: #fff;
+  }
+
+  /* Status Badges */
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    border: 1px solid transparent;
+  }
+  .badge-pending {
+    background: rgba(255, 179, 0, 0.12);
+    color: var(--neon-amber);
+    border-color: var(--neon-amber);
+  }
+  .badge-verified {
+    background: rgba(255, 0, 85, 0.18);
+    color: var(--neon-red);
+    border-color: var(--neon-red);
+    text-shadow: 0 0 6px var(--neon-red);
+  }
+  .badge-dismissed {
+    background: rgba(255, 255, 255, 0.05);
+    color: #777;
+    border-color: #555;
+  }
+  .badge-active {
+    background: rgba(0, 255, 65, 0.12);
+    color: var(--neon-green);
+    border-color: var(--neon-green);
+  }
+  .badge-banned {
+    background: rgba(255, 0, 85, 0.2);
+    color: var(--neon-red);
+    border-color: var(--neon-red);
+  }
+  .badge-premium {
+    background: rgba(0, 229, 255, 0.15);
+    color: var(--neon-cyan);
+    border-color: var(--neon-cyan);
+    text-shadow: 0 0 6px var(--neon-cyan);
+  }
+  .badge-free {
+    background: rgba(255, 255, 255, 0.05);
+    color: #aaa;
+    border-color: #666;
+  }
+
+  /* Action Buttons */
+  .btn-action {
+    padding: 6px 12px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+    border: 1px solid transparent;
+    background: transparent;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 6px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+  }
+  .btn-verify {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    background: rgba(0, 255, 65, 0.06);
+  }
+  .btn-verify:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 12px var(--neon-green);
+  }
+
+  .btn-dismiss {
+    border-color: #666;
+    color: #999;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .btn-dismiss:hover {
+    background: #444;
+    color: #fff;
+  }
+
+  .btn-danger {
+    border-color: var(--neon-red);
+    color: var(--neon-red);
+    background: rgba(255, 0, 85, 0.06);
+  }
+  .btn-danger:hover {
+    background: var(--neon-red);
+    color: #fff;
+    box-shadow: 0 0 12px var(--neon-red);
+  }
+
+  .btn-cyan {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+    background: rgba(0, 229, 255, 0.06);
+  }
+  .btn-cyan:hover {
+    background: var(--neon-cyan);
+    color: #000;
+    box-shadow: 0 0 12px var(--neon-cyan);
+  }
+
+  .btn-amber {
+    border-color: var(--neon-amber);
+    color: var(--neon-amber);
+    background: rgba(255, 179, 0, 0.06);
+  }
+  .btn-amber:hover {
+    background: var(--neon-amber);
+    color: #000;
+    box-shadow: 0 0 12px var(--neon-amber);
+  }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    display: none; align-items: center; justify-content: center; z-index: 1000;
+    backdrop-filter: blur(6px);
+  }
+  .modal-box {
+    background: #090308; border: 1px solid var(--neon-red);
+    width: 90%; max-width: 580px; padding: 28px; position: relative;
+    box-shadow: 0 0 30px rgba(255,0,85,0.25);
+  }
+  .modal-title {
+    font-family: 'Orbitron', sans-serif; font-size: 16px; color: #fff;
+    margin-bottom: 18px; border-bottom: 1px solid var(--border-red); padding-bottom: 10px;
+    letter-spacing: 1.5px; text-shadow: 0 0 10px var(--neon-red);
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-label {
+    display: block; font-size: 11px; color: var(--neon-cyan); margin-bottom: 6px; letter-spacing: 1px;
+  }
+  .form-control {
+    width: 100%; background: #000; border: 1px solid var(--border-red);
+    color: #fff; padding: 10px 14px; font-family: 'Share Tech Mono', monospace; font-size: 13px;
+  }
+  .form-control:focus {
+    outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0,229,255,0.3);
+  }
+  .modal-actions {
+    display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;
+  }
+
+  /* Analytics Charts Grid */
+  .charts-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  .chart-card {
+    background: var(--bg-card); border: 1px solid var(--border-red);
+    padding: 20px; text-align: center;
+  }
+  .chart-card.full-width {
+    grid-column: 1 / -1;
+  }
+  .chart-title {
+    font-family: 'Orbitron', sans-serif; font-size: 13px; color: var(--neon-cyan);
+    margin-bottom: 14px; letter-spacing: 1px; text-align: left;
+  }
+  .chart-img {
+    max-width: 100%; height: auto; border: 1px solid rgba(255,0,85,0.15);
+  }
+
+  /* Corner decors */
+  .corner { position: absolute; width: 8px; height: 8px; border-color: var(--neon-red); border-style: solid; }
+  .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+  .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+  /* Cyber Alert Toast */
+  #cyberToast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 10000;
+    padding: 14px 20px; background: #0c0208; border: 1px solid var(--neon-red);
+    color: #fff; font-size: 12px; letter-spacing: 1px; display: none;
+    box-shadow: 0 0 20px rgba(255,0,85,0.4); max-width: 450px;
+  }
+
+  @media (max-width: 1024px) {
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
+    .charts-grid { grid-template-columns: 1fr; }
+  }
+</style>
+<link rel="stylesheet" href="/static/css/digipath-shell.css">
+</head>
+<body>
+
+<div class="app-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="admin-badge">ROOT_COMMAND_LEVEL_5</div>
+      <a href="/admin" class="logo-title">DIGIPATH<span>_ROOT</span></a>
+    </div>
+    <nav class="nav-list">
+      <div class="nav-item active" onclick="switchTab('reports')">
+        <span class="nav-icon">⚠</span>
+        <span>SCAM_REPORTS_QUEUE</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('blacklist')">
+        <span class="nav-icon">⛔</span>
+        <span>GLOBAL_BLACKLIST</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('users')">
+        <span class="nav-icon">👥</span>
+        <span>USER_PERMISSIONS</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('analytics')">
+        <span class="nav-icon">📊</span>
+        <span>TELEMETRY_&_CHARTS</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div>OPERATOR: {{ user.email }}</div>
+      <div style="color:var(--neon-cyan); margin-top:4px;">ROLE: ROOT_ADMINISTRATOR</div>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="main-content">
+    <header class="header">
+      <div class="status-tag">
+        <span class="status-dot"></span>
+        <span>ACTIVE_ROOT_SESSION // 0xAF44_SECURE</span>
+      </div>
+      <div class="header-actions">
+        <div id="adminClock" style="font-size: 12px; color: var(--neon-cyan);">&gt; 00:00:00 UTC</div>
+        <a href="/dashboard" class="exit-btn">&lt; CANDIDATE_DASHBOARD</a>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <!-- TOP BANNER -->
+      <div class="terminal-banner">
+        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+        <h1 class="terminal-title">ROOT COMMAND &amp; MODERATION <span>MATRIX</span></h1>
+        <p class="terminal-desc">Automated Recruitment Fraud Moderation, Candidate Reward Disbursements (+5 Tokens), Global Entity Blacklisting &amp; Permission Access Control.</p>
+      </div>
+
+      <!-- METRIC SUMMARY -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+          <div class="metric-label">PENDING SCAM AUDITS</div>
+          <div class="metric-val" id="metricPending">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+          <div class="metric-label">VERIFIED FRAUD ENTITIES</div>
+          <div class="metric-val cyan" id="metricVerified">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+          <div class="metric-label">REWARD CREDITS AWARDED</div>
+          <div class="metric-val green" id="metricCredits">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+          <div class="metric-label">TOTAL REGISTERED USERS</div>
+          <div class="metric-val amber" id="metricUsers">0</div>
+        </div>
+      </div>
+
+      <!-- TAB 1: PENDING SCAM REPORTS QUEUE -->
+      <div id="tab-reports" class="tab-pane active">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h2 style="font-family:'Orbitron', sans-serif; font-size:16px; color:#fff; letter-spacing:1.5px;">[ 1. CANDIDATE_SCAM_INTELLIGENCE_QUEUE ]</h2>
+          <button class="btn-action btn-cyan" onclick="loadReports()">&olarr; REFRESH_QUEUE</button>
+        </div>
+
+        <div class="table-container">
+          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+          <table class="cyber-table">
+            <thead>
+              <tr>
+                <th>REPORT_ID</th>
+                <th>REPORTER</th>
+                <th>SCAMMER_ENTITY</th>
+                <th>PLATFORM / TYPE</th>
+                <th>THREAT_DESCRIPTION</th>
+                <th>STATUS</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="reportsTableBody">
+              <tr>
+                <td colspan="7" style="text-align:center; padding:30px; color:var(--text-mid);">&gt; SCANNING SCAM INTEL ARCHIVES...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: GLOBAL BLACKLIST REGISTRY -->
+      <div id="tab-blacklist" class="tab-pane">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h2 style="font-family:'Orbitron', sans-serif; font-size:16px; color:#fff; letter-spacing:1.5px;">[ 2. GLOBAL_THREAT_&amp;_COMPANY_BLACKLIST_REGISTRY ]</h2>
+          <div>
+            <button class="btn-action btn-danger" onclick="openAddBlacklistModal()">+ ADD_MANUAL_BLACKLIST</button>
+            <button class="btn-action btn-cyan" onclick="loadBlacklist()">&olarr; REFRESH</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+          <table class="cyber-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>COMPANY_NAME</th>
+                <th>BLOCKED_DOMAIN</th>
+                <th>SCAM_PATTERN / MOTIF</th>
+                <th>SEVERITY</th>
+                <th>DATE_ADDED</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="blacklistTableBody">
+              <tr>
+                <td colspan="7" style="text-align:center; padding:30px; color:var(--text-mid);">&gt; RETRIEVING BLACKLIST REGISTRY...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: USER PERMISSIONS MATRIX -->
+      <div id="tab-users" class="tab-pane">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h2 style="font-family:'Orbitron', sans-serif; font-size:16px; color:#fff; letter-spacing:1.5px;">[ 3. USER_MANAGEMENT_&amp;_PERMISSIONS_MATRIX ]</h2>
+          <button class="btn-action btn-cyan" onclick="loadUsers()">&olarr; REFRESH_USERS</button>
+        </div>
+
+        <div class="table-container">
+          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+          <table class="cyber-table">
+            <thead>
+              <tr>
+                <th>USER_ID</th>
+                <th>IDENTIFIER / USERNAME</th>
+                <th>EMAIL</th>
+                <th>ROLE</th>
+                <th>TIER</th>
+                <th>CREDIT_BALANCE</th>
+                <th>STATUS</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <tr>
+                <td colspan="8" style="text-align:center; padding:30px; color:var(--text-mid);">&gt; LOADING USER DIRECTORY...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 4: SYSTEM ANALYTICS & TELEMETRY -->
+      <div id="tab-analytics" class="tab-pane">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h2 style="font-family:'Orbitron', sans-serif; font-size:16px; color:#fff; letter-spacing:1.5px;">[ 4. SYSTEM_ANALYTICS_&amp;_TELEMETRY_CHARTS ]</h2>
+          <button class="btn-action btn-cyan" onclick="loadAnalytics()">&olarr; REGENERATE_CHARTS</button>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card full-width">
+            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+            <div class="chart-title">&gt; CAP ROUND CUTOFF TRENDS &amp; 2026 FORECAST</div>
+            <div id="cutoffChartContainer" style="color:var(--text-mid); padding:20px;">Rendering graph...</div>
+          </div>
+
+          <div class="chart-card">
+            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+            <div class="chart-title">&gt; FRAUD INTEL THREAT RATIO</div>
+            <div id="scamChartContainer" style="color:var(--text-mid); padding:20px;">Rendering graph...</div>
+          </div>
+
+          <div class="chart-card">
+            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+            <div class="chart-title">&gt; CANDIDATE 5D ATS SCORE DISTRIBUTION</div>
+            <div id="resumeChartContainer" style="color:var(--text-mid); padding:20px;">Rendering graph...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- MODAL: ADD BLACKLIST -->
+<div id="addBlacklistModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <h3 class="modal-title">&gt; ADD MANUAL COMPANY BLACKLIST</h3>
+    <form id="addBlacklistForm" onsubmit="submitAddBlacklist(event)">
+      <div class="form-group">
+        <label class="form-label">COMPANY / ENTITY NAME *</label>
+        <input type="text" id="blCompanyName" class="form-control" placeholder="e.g. Apex Global Hiring Ltd" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SUSPICIOUS DOMAIN / URL</label>
+        <input type="text" id="blDomain" class="form-control" placeholder="e.g. apex-jobs-portal.xyz">
+      </div>
+      <div class="form-group">
+        <label class="form-label">FRAUD PATTERN / DETAILS</label>
+        <textarea id="blPattern" class="form-control" rows="3" placeholder="Demands ₹3,000 security deposit via GPay before interview"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SEVERITY RATING</label>
+        <select id="blSeverity" class="form-control">
+          <option value="CRITICAL">CRITICAL (100% SCAM)</option>
+          <option value="HIGH">HIGH RISK</option>
+          <option value="MODERATE">MODERATE RISK</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-action btn-dismiss" onclick="closeModal('addBlacklistModal')">CANCEL</button>
+        <button type="submit" class="btn-action btn-danger">BLOCK_ENTITY_GLOBALLY</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: ADJUST CREDITS -->
+<div id="creditModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <h3 class="modal-title">&gt; ADJUST USER PDF TOKENS &amp; CREDITS</h3>
+    <div style="font-size:12px; color:var(--text-mid); margin-bottom:16px;">TARGET OPERATOR: <b id="creditTargetUser" style="color:#fff;">--</b></div>
+    <form id="adjustCreditForm" onsubmit="submitAdjustCredits(event)">
+      <input type="hidden" id="creditTargetUserId">
+      <div class="form-group">
+        <label class="form-label">SELECT ADJUSTMENT DELTA</label>
+        <div style="display:flex; gap:10px; margin-bottom:12px;">
+          <button type="button" class="btn-action btn-verify" onclick="setCreditDelta(5)">+5 TOKENS</button>
+          <button type="button" class="btn-action btn-verify" onclick="setCreditDelta(10)">+10 TOKENS</button>
+          <button type="button" class="btn-action btn-verify" onclick="setCreditDelta(50)">+50 TOKENS</button>
+        </div>
+        <input type="number" id="creditDeltaInput" class="form-control" placeholder="Enter custom amount (+10 or -5)" required>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-action btn-dismiss" onclick="closeModal('creditModal')">CANCEL</button>
+        <button type="submit" class="btn-action btn-cyan">APPLY_CREDIT_LEDGER</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CYBER TOAST NOTIFICATION -->
+<div id="cyberToast"></div>
+
+<script src="/static/js/app.js"></script>
+<script src="/static/js/digipath-shell.js"></script>
+<script>
+// Tab Switching
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+
+  const targetPane = document.getElementById('tab-' + tabId);
+  if (targetPane) targetPane.classList.add('active');
+
+  const navItems = document.querySelectorAll('.nav-item');
+  if (tabId === 'reports' && navItems[0]) navItems[0].classList.add('active');
+  if (tabId === 'blacklist' && navItems[1]) navItems[1].classList.add('active');
+  if (tabId === 'users' && navItems[2]) navItems[2].classList.add('active');
+  if (tabId === 'analytics' && navItems[3]) {
+    navItems[3].classList.add('active');
+    loadAnalytics();
+  }
+}
+
+function showToast(msg, isSuccess = true) {
+  const t = document.getElementById('cyberToast');
+  t.textContent = (isSuccess ? '⚡ [SUCCESS] ' : '🚨 [ERROR] ') + msg;
+  t.style.borderColor = isSuccess ? 'var(--neon-green)' : 'var(--neon-red)';
+  t.style.color = isSuccess ? 'var(--neon-green)' : '#fff';
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 4000);
+}
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('adminClock').textContent = '> ' + now.toUTCString().split(' ')[4] + ' UTC';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── 1. Scam Reports Logic ──────────────────────────────────────────────────
+async function loadReports() {
+  const tbody = document.getElementById('reportsTableBody');
+  try {
+    const res = await fetch('/api/admin/reports', {
+      headers: DigiPathApp.auth.getAuthHeaders(),
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    document.getElementById('metricPending').textContent = data.stats.pending_reports || 0;
+    document.getElementById('metricVerified').textContent = data.stats.verified_scams || 0;
+    document.getElementById('metricCredits').textContent = data.stats.total_credits_awarded || 0;
+    document.getElementById('metricUsers').textContent = data.stats.total_users || 0;
+
+    if (!data.reports || data.reports.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-mid);">&gt; NO PENDING FRAUD SUBMISSIONS RECORDED.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.reports.map(r => {
+      const isPending = (r.status || 'PENDING') === 'PENDING';
+      const statusBadge = isPending
+        ? '<span class="badge badge-pending">PENDING_REVIEW</span>'
+        : (r.status === 'VERIFIED_SCAM' ? '<span class="badge badge-verified">VERIFIED_SCAM (+5 REWARDED)</span>' : '<span class="badge badge-dismissed">DISMISSED</span>');
+
+      const actions = isPending ? `
+        <button class="btn-action btn-verify" onclick="verifyReport(${r.id})">✓ VERIFY &amp; REWARD +5 CREDITS</button>
+        <button class="btn-action btn-dismiss" onclick="dismissReport(${r.id})">✕ DISMISS</button>
+      ` : '<span style="color:#666; font-size:11px;">NO_ACTION_REQUIRED</span>';
+
+      return `
+        <tr>
+          <td style="font-weight:bold; color:var(--neon-cyan);">#${r.id}</td>
+          <td>${r.user_email || 'Anonymous'}</td>
+          <td style="color:#fff; font-weight:bold;">${r.scammer_entity}</td>
+          <td><span style="color:var(--neon-amber);">${r.platform || 'Web'}</span> / ${r.scam_type || 'Job Fraud'}</td>
+          <td style="max-width:320px; font-size:11px; color:#bbb;">
+            <div>${r.description}</div>
+            ${r.evidence_url ? `<a href="${r.evidence_url}" target="_blank" style="color:var(--neon-cyan); font-size:10px;">[LINKED_EVIDENCE]</a>` : ''}
+          </td>
+          <td>${statusBadge}</td>
+          <td>${actions}</td>
+        </tr>
+      `;
+    }).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--neon-red);">&gt; ERROR FETCHING REPORTS: ${err.message}</td></tr>`;
+  }
+}
+
+async function verifyReport(reportId) {
+  if (!confirm(`Verify Scam Report #${reportId}? This will auto-add entity to Global Blacklist and disburse +5 Credits to reporter.`)) return;
+  try {
+    const res = await fetch(`/api/admin/reports/${reportId}/verify`, {
+      method: 'POST',
+      headers: DigiPathApp.auth.getAuthHeaders(),
+      credentials: 'include'
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.detail || 'Verification failed');
+    showToast(result.message || 'Scam verified and +5 Credits disbursed!');
+    loadReports();
+    loadBlacklist();
+  } catch (err) {
+    showToast(err.message, false);
+  }
+}
+
+async function dismissReport(reportId) {
+  if (!confirm(`Dismiss Scam Report #${reportId}?`)) return;
+  try {
+    const res = await fetch(`/api/admin/reports/${reportId}/dismiss`, {
+      method: 'POST',
+      headers: DigiPathApp.auth.getAuthHeaders(),
+      credentials: 'include'
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.detail || 'Dismissal failed');
+    showToast(result.message || 'Report dismissed.');
+    loadReports();
+  } catch (err) {
+    showToast(err.message, false);
+  }
+}
+
+// ── 2. Blacklist Management Logic ──────────────────────────────────────────
+async function loadBlacklist() {
+  const tbody = document.getElementById('blacklistTableBody');
+  try {
+    const res = await fetch('/api/admin/blacklist', {
+      headers: DigiPathApp.auth.getAuthHeaders(),
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    if (!data.blacklist || data.blacklist.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-mid);">&gt; NO BLACKLISTED ENTITIES REGISTERED.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.blacklist.map(b => `
+      <tr>
+        <td style="color:var(--neon-cyan); font-weight:bold;">#${b.id}</td>
+        <td style="color:#fff; font-weight:bold;">${b.company_name}</td>
+        <td style="color:var(--neon-cyan);">${b.domain || 'N/A'}</td>
+        <td style="max-width:320px; font-size:11px; color:#bbb;">${b.scam_pattern || 'Recruitment fraud'}</td>
+        <td><span class="badge badge-verified">${b.severity || 'CRITICAL'}</span></td>
+        <td style="font-size:11px; color:#888;">${b.added_at ? b.added_at.substring(0,10) : 'N/A'}</td>
+        <td>
+          <button class="btn-action btn-danger" onclick="deleteBlacklist(${b.id}, '${b.company_name}')">✕ UNBLOCK</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--neon-red);">&gt; ERROR FETCHING BLACKLIST: ${err.message}</td></tr>`;
+  }
+}
+
+function openAddBlacklistModal() {
+  document.getElementById('addBlacklistModal').style.display = 'flex';
+}
+
+async function submitAddBlacklist(e) {
+  e.preventDefault();
+  const payload = {
+    company_name: document.getElementById('blCompanyName').value.trim(),
+    domain: document.getElementById('blDomain').value.trim(),
+    scam_pattern: document.getElementById('blPattern').value.trim(),
+    severity: document.getElementById('blSeverity').value
+  };
+
+  try {
+    const res = await fetch('/api/admin/blacklist/add', {
+      method: 'POST',
+      headers: DigiPathApp.auth.getAuthHeaders({ 'Content-Type': 'application/json' }),
+      credentials: 'include',
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.detail || 'Failed to add blacklist');
+    showToast(result.message || 'Entity blacklisted successfully!');
+    closeModal('addBlacklistModal');
+    document.getElementById('addBlacklistForm').reset();
+    loadBlacklist();
+  } catch (err) {
+    showToast(err.message, false);
+  }
+}
+
+async function deleteBlacklist(id, name) {
+  if (!confirm(`Unblock '${name}' from Global Blacklist?`)) return;
+  try {
+    const res = await fetch(`/api/admin/blacklist/${id}`, {
+      method: 'DELETE',
+      headers: DigiPathApp.auth.getAuthHeaders(),
+      credentials: 'include'
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.detail || 'Unblock failed');
+    showToast(result.message || 'Entity unblocked.');
+    loadBlacklist();
+  } catch (err) {
+    showToast(err.message, false);
+  }
+}
+
+// ── 3. User Permissions Matrix Logic ───────────────────────────────────────
+async function loadUsers() {
+  const tbody = document.getElementById('usersTableBody');
+  try {
+    const res = await fetch('/api/admin/users', {
+      headers: DigiPathApp.auth.getAuthHeaders(),
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    if (!data.users || data.users.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-mid);">&gt; NO USERS RETRIEVED.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.users.map(u => {
+      const isAdm = u.is_admin || u.role === 'ADMIN';
+      const roleBadge = isAdm ? '<span class="badge badge-verified">ADMIN</span>' : '<span class="badge badge-dismissed">USER</span>';
+      const tierBadge = u.is_premium ? '<span class="badge badge-premium">PREMIUM</span>' : '<span class="badge badge-free">FREE</span>';
+      const statusBadge = u.is_banned ? '<span class="badge badge-banned">BANNED</span>' : '<span class="badge badge-active">ACTIVE</span>';
+
+      return `
+        <tr>
+          <td style="color:var(--neon-cyan); font-weight:bold;">#${u.user_id}</td>
+          <td style="color:#fff; font-weight:bold;">${u.username || 'Candidate'}</td>
+          <td>${u.email}</td>
+          <td>${roleBadge}</td>
+          <td>${tierBadge}</td>
+          <td style="font-weight:bold; color:var(--neon-green);">${u.credit_balance} TOKENS</td>
+          <td>${statusBadge}</td>
+          <td>
+            <button class="btn-action btn-cyan" onclick="togglePremium(${u.user_id})">⚡ TOGGLE_TIER</button>
+            <button class="btn-action btn-amber" onclick="openCreditModal(${u.user_id}, '${u.email}')">💳 CREDITS</button>
+            ${!isAdm ? `<button class="btn-action btn-danger" onclick="toggleBan(${u.user_id})">${u.is_banned ? '✓ UNBAN' : '⛔ BAN'}</button>` : ''}
+          </td>
+        </tr>
+      `;
+    }).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--neon-red);">&gt; ERROR FETCHING USERS: ${err.message}</td></tr>`;
+  }
+}
+
+async function togglePremium(userId) {
+  try {
+    const res = await fetch(`/api/admin/users/${userId}/toggle-premium`, {
+      method: 'POST',
+      headers: DigiPathApp.auth.getAuthHeaders(),
+      credentials: 'include'
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.detail || 'Tier toggle failed');
+    showToast(`User #${userId} tier switched to ${result.tier}`);
+    loadUsers();
+  } catch (err) {
+    showToast(err.message, false);
+  }
+}
+
+async function toggleBan(userId) {
+  try {
+    const res = await fetch(`/api/admin/users/${userId}/toggle-ban`, {
+      method: 'POST',
+      headers: DigiPathApp.auth.getAuthHeaders(),
+      credentials: 'include'
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.detail || 'Ban toggle failed');
+    showToast(`User #${userId} account status set to ${result.status}`);
+    loadUsers();
+  } catch (err) {
+    showToast(err.message, false);
+  }
+}
+
+function openCreditModal(userId, email) {
+  document.getElementById('creditTargetUserId').value = userId;
+  document.getElementById('creditTargetUser').textContent = email;
+  document.getElementById('creditDeltaInput').value = 10;
+  document.getElementById('creditModal').style.display = 'flex';
+}
+
+function setCreditDelta(amt) {
+  document.getElementById('creditDeltaInput').value = amt;
+}
+
+async function submitAdjustCredits(e) {
+  e.preventDefault();
+  const userId = document.getElementById('creditTargetUserId').value;
+  const delta = parseInt(document.getElementById('creditDeltaInput').value, 10);
+
+  try {
+    const res = await fetch(`/api/admin/users/${userId}/credits`, {
+      method: 'POST',
+      headers: DigiPathApp.auth.getAuthHeaders({ 'Content-Type': 'application/json' }),
+      credentials: 'include',
+      body: JSON.stringify({ credits_to_add: delta })
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.detail || 'Credit adjustment failed');
+    showToast(`Credits updated! New balance: ${result.new_credit_balance}`);
+    closeModal('creditModal');
+    loadUsers();
+  } catch (err) {
+    showToast(err.message, false);
+  }
+}
+
+// ── 4. Telemetry & Analytics Logic ─────────────────────────────────────────
+async function loadAnalytics() {
+  try {
+    const res = await fetch('/api/analytics/charts', {
+      headers: DigiPathApp.auth.getAuthHeaders(),
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const charts = await res.json();
+
+    if (charts.cutoff_trends) {
+      document.getElementById('cutoffChartContainer').innerHTML = `<img src="${charts.cutoff_trends}" class="chart-img" alt="Cutoff Trends">`;
+    }
+    if (charts.scam_risk_donut) {
+      document.getElementById('scamChartContainer').innerHTML = `<img src="${charts.scam_risk_donut}" class="chart-img" alt="Scam Threat Donut">`;
+    }
+    if (charts.resume_score_histogram) {
+      document.getElementById('resumeChartContainer').innerHTML = `<img src="${charts.resume_score_histogram}" class="chart-img" alt="ATS Resume Histogram">`;
+    }
+  } catch (err) {
+    console.warn('Chart telemetry load error:', err);
+  }
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
+}
+
+// Close modals on escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+  }
+});
+
+// Bootstrap
+document.addEventListener('DOMContentLoaded', () => {
+  loadReports();
+  loadBlacklist();
+  loadUsers();
+});
+</script>
+</body>
+</html>

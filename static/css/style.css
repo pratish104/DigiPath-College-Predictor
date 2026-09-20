@@ -1,0 +1,30 @@
+﻿/* DigiPath AI - Core Terminal Stylesheet */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;900&display=swap');
+
+:root {
+  --bg-dark: #030712;
+  --card-bg: rgba(3, 7, 18, 0.95);
+  --border-green: #064e3b;
+  --border-green-bright: #00ff66;
+  --neon-green: #00ff66;
+  --neon-cyan: #00e5ff;
+  --neon-magenta: #d500f9;
+  --neon-purple: #d500f9;
+  --neon-amber: #ffb300;
+  --neon-red: #ff3366;
+  --text-main: #f3f4f6;
+  --text-dim: #6b7280;
+  --text-mid: #9ca3af;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Share Tech Mono', monospace;
+  margin: 0;
+  padding: 0;
+}

@@ -3,20 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIGIPATH_AI // AUTHENTICATION</title>
+<title>DIGIPATH_AI // AUTHENTICATION_TERMINAL</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --neon-green: #00ff41;
     --neon-cyan: #00e5ff;
-    --neon-magenta: #ff00ff;
+    --neon-magenta: #ff0055;
     --neon-amber: #ffb300;
     --bg-dark: #000000;
     --bg-panel: #050f05;
     --bg-card: #020a02;
     --border-green: #00ff4133;
     --border-green-solid: #00ff41;
+    --border-admin: #ff005566;
     --text-dim: #006620;
     --text-mid: #00aa2b;
     --scan-line: rgba(0, 255, 65, 0.03);
@@ -68,188 +69,427 @@
     margin-right: 5px;
   }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
   .login-container { width: 100%; max-width: 540px; }
-  .logo-block { text-align: center; margin-bottom: 28px; }
+  .logo-block { text-align: center; margin-bottom: 24px; }
   .logo-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 48px;
+    font-size: 42px;
     font-weight: 900;
     color: var(--neon-green);
     letter-spacing: 0.12em;
     text-shadow: 0 0 20px rgba(0,255,65,0.7);
+    text-decoration: none;
   }
+  .logo-title span { color: var(--neon-cyan); }
+
+  /* DUAL-MODE SWITCHER (USER VS ADMIN) */
+  .mode-switch-row {
+    display: flex; gap: 8px; margin-bottom: 16px;
+  }
+  .mode-pill {
+    flex: 1; text-align: center; padding: 8px 12px;
+    background: rgba(0,255,65,0.04); border: 1px solid rgba(0,255,65,0.25);
+    color: var(--text-mid); font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 1.5px; cursor: pointer; transition: all 0.2s;
+  }
+  .mode-pill:hover {
+    color: var(--neon-green); border-color: var(--neon-green);
+  }
+  .mode-pill.active {
+    background: rgba(0,255,65,0.12); color: var(--neon-green);
+    border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0,255,65,0.3);
+  }
+  .mode-pill.admin-mode-pill:hover {
+    color: var(--neon-magenta); border-color: var(--neon-magenta);
+  }
+  .mode-pill.admin-mode-pill.active {
+    background: rgba(255,0,85,0.15); color: var(--neon-magenta);
+    border-color: var(--neon-magenta); box-shadow: 0 0 12px rgba(255,0,85,0.4);
+  }
+
   .card {
     background: var(--bg-card);
     border: 1px solid #00ff4155;
     border-top: 2px solid var(--neon-green);
     padding: 28px 32px 32px;
     position: relative;
+    transition: all 0.3s;
   }
-  .corner { position: absolute; width: 14px; height: 14px; border-color: var(--neon-green); border-style: solid; }
+  .card.admin-theme {
+    border-color: var(--border-admin);
+    border-top: 2px solid var(--neon-magenta);
+    box-shadow: inset 0 0 30px rgba(255,0,85,0.04);
+  }
+
+  .corner { position: absolute; width: 14px; height: 14px; border-color: var(--neon-green); border-style: solid; transition: border-color 0.3s; }
+  .card.admin-theme .corner { border-color: var(--neon-magenta); }
   .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
   .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
   .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
   .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
   .tab-row { display: flex; margin-bottom: 24px; border: 1px solid #00ff4133; }
   .tab-btn {
     flex: 1; background: none; border: none; color: var(--text-dim);
     font-family: 'Share Tech Mono', monospace; font-size: 12px;
     padding: 9px 0; cursor: pointer; border-right: 1px solid #00ff4133;
   }
+  .tab-btn:last-child { border-right: none; }
   .tab-btn.active { background: rgba(0,255,65,0.1); color: var(--neon-green); }
+
   .form-group { margin-bottom: 18px; }
-  .form-label { display: block; font-size: 11px; color: var(--neon-cyan); margin-bottom: 6px; }
+  .form-label {
+    display: block; font-size: 11px; color: var(--neon-cyan);
+    letter-spacing: 0.1em; margin-bottom: 6px; text-transform: uppercase;
+  }
   .form-input {
-    width: 100%; background: #000; border: 1px solid #00ff4140;
+    width: 100%; background: #000;
+    border: 1px solid rgba(0, 255, 65, 0.3);
     color: var(--neon-green); font-family: 'Share Tech Mono', monospace;
-    padding: 10px; outline: none;
+    font-size: 13px; padding: 10px 14px; outline: none; transition: all 0.2s;
   }
+  .form-input:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
+  }
+  .card.admin-theme .form-input:focus {
+    border-color: var(--neon-magenta);
+    box-shadow: 0 0 8px rgba(255, 0, 85, 0.4);
+  }
+
   .submit-btn {
-    width: 100%; background: transparent; border: 1px solid var(--neon-green);
-    color: var(--neon-green); font-family: 'Share Tech Mono', monospace;
-    padding: 13px; cursor: pointer; margin-top: 10px;
+    width: 100%;
+    font-family: 'Share Tech Mono', monospace; font-size: 13px;
+    letter-spacing: 2px; padding: 12px;
+    border: 1px solid var(--neon-green); background: rgba(0,255,65,0.1);
+    color: var(--neon-green); cursor: pointer; transition: all 0.2s;
+    margin-top: 8px;
   }
-  .submit-btn:hover { background: var(--neon-green); color: #000; }
-  .alert { display: none; padding: 10px; margin-bottom: 15px; font-size: 12px; border-left: 3px solid; }
-  .alert.show { display: block; }
-  .alert.error { border-color: #ff3333; color: #ff5555; background: rgba(255,0,0,0.05); }
-  .alert.success { border-color: var(--neon-green); color: var(--neon-green); background: rgba(0,255,65,0.05); }
-  .register-panel { display: none; }
-  .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-  .role-card {
-    border: 1px solid #00ff4130; padding: 8px; cursor: pointer; text-align: center; font-size: 11px;
+  .submit-btn:hover {
+    background: var(--neon-green); color: #000;
+    box-shadow: 0 0 15px var(--neon-green);
   }
-  .role-card.selected { border-color: var(--neon-green); background: rgba(0,255,65,0.1); }
-  .auth-overlay {
-    display: none; position: fixed; inset: 0; background: #000; z-index: 9999;
-    flex-direction: column; align-items: center; justify-content: center;
+  .submit-btn.admin-btn {
+    border-color: var(--neon-magenta); color: var(--neon-magenta);
+    background: rgba(255,0,85,0.1);
   }
-  .auth-overlay.show { display: flex; }
+  .submit-btn.admin-btn:hover {
+    background: var(--neon-magenta); color: #fff;
+    box-shadow: 0 0 15px var(--neon-magenta);
+  }
+
+  .alert-box {
+    display: none; padding: 10px 14px; margin-bottom: 18px;
+    font-size: 11px; line-height: 1.5; border: 1px solid;
+  }
+  .alert-error {
+    background: rgba(255,0,85,0.08); border-color: var(--neon-magenta); color: #ff88a3;
+  }
+  .alert-success {
+    background: rgba(0,255,65,0.08); border-color: var(--neon-green); color: var(--neon-green);
+  }
+
+  .admin-hint-badge {
+    display: none; font-size: 10px; color: var(--neon-magenta);
+    border: 1px dashed var(--neon-magenta); padding: 4px 8px; margin-top: 10px;
+    background: rgba(255,0,85,0.05); text-align: center;
+  }
 </style>
 </head>
 <body>
+
 <div class="status-bar">
-  <div class="status-left"><span><span class="status-dot"></span>SYSTEM_ONLINE</span><span>DIGIPATH_AI // v4.1</span></div>
-  <div class="status-right"><span class="active">AUTH_MODULE</span><span>SSL_SECURE</span></div>
+  <div>
+    <span class="status-dot" id="statusDot"></span>
+    <span id="sessionStatus">NEURAL_AUTH_CORE // READY</span>
+  </div>
+  <div id="liveClock">> TIME: --:--:--</div>
 </div>
-<div class="auth-overlay" id="authOverlay">
-  <div style="font-family:'Orbitron'; font-size: 24px; color: var(--neon-green); letter-spacing: 0.2em;">AUTHENTICATING...</div>
-  <div id="overlayLog" style="margin-top: 20px; font-size: 12px;"></div>
-</div>
+
 <div class="page-wrapper">
   <div class="login-container">
-    <div class="logo-block"><div class="logo-title">DIGIPATH_AI</div></div>
-    <div class="card">
-      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-      <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-      <div class="tab-row">
-        <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">[ LOGIN ]</button>
-        <button class="tab-btn" id="tabReg" onclick="switchTab('register')">[ REGISTER ]</button>
-      </div>
-      <div id="alert" class="alert"></div>
-      
-      <!-- LOGIN -->
-      <div id="loginPanel">
-        <div class="form-group">
-          <label class="form-label">> EMAIL_IDENTIFIER</label>
-          <input class="form-input" type="email" id="loginEmail" placeholder="agent@digipath.ai">
-        </div>
-        <div class="form-group">
-          <label class="form-label">> ACCESS_KEY</label>
-          <input class="form-input" type="password" id="loginPass" placeholder="••••••••">
-        </div>
-        <button class="submit-btn" onclick="doLogin()"><span>⚡ INITIATE_AUTH</span></button>
-      </div>
 
-      <!-- REGISTER -->
-      <div id="registerPanel" class="register-panel">
-        <div class="form-group">
-          <label class="form-label">> FULL_NAME</label>
-          <input class="form-input" type="text" id="regName" placeholder="ENTER_NAME">
-        </div>
-        <div class="form-group">
-          <label class="form-label">> EMAIL_ADDRESS</label>
-          <input class="form-input" type="email" id="regEmail" placeholder="agent@digipath.ai">
-        </div>
-        <div class="form-group">
-          <label class="form-label">> ACCESS_KEY</label>
-          <input class="form-input" type="password" id="regPass" placeholder="MIN_8_CHARS">
-        </div>
-        <div class="form-group">
-          <label class="form-label">> SELECT_ROLE</label>
-          <div class="role-grid">
-            <div class="role-card selected" onclick="selectRole(this)" data-role="USER">USER</div>
-            <div class="role-card" onclick="selectRole(this)" data-role="ADMIN">ADMIN</div>
-          </div>
-        </div>
-        <button class="submit-btn" onclick="doRegister()"><span>⚡ INITIALIZE_ACCOUNT</span></button>
+    <div class="logo-block">
+      <a href="/" class="logo-title">DIGIPATH<span>_AI</span></a>
+      <div style="font-size:11px; color:var(--text-mid); margin-top:4px; letter-spacing:2px;">
+        ENGINEERING ADMISSIONS &amp; ATS CAREER MATRIX
       </div>
     </div>
+
+    <!-- DUAL-MODE SEGMENT SWITCHER -->
+    <div class="mode-switch-row">
+      <button class="mode-pill active" id="btnCandidateMode" onclick="setLoginMode('user')">
+        [ CANDIDATE_LOGIN ]
+      </button>
+      <button class="mode-pill admin-mode-pill" id="btnAdminMode" onclick="setLoginMode('admin')">
+        [ ADMIN_TERMINAL ]
+      </button>
+    </div>
+
+    <div class="card" id="authCard">
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+
+      <!-- Action Tabs (Login vs Register) -->
+      <div class="tab-row" id="tabRow">
+        <button class="tab-btn active" id="tabLogin" onclick="switchActionTab('login')">LOGIN_ACCESS</button>
+        <button class="tab-btn" id="tabRegister" onclick="switchActionTab('register')">CREATE_IDENTITY</button>
+      </div>
+
+      <div id="alertBox" class="alert-box"></div>
+
+      <div style="font-size:12px; color:var(--neon-green); margin-bottom:16px;" id="modeHeading">
+        &gt; CANDIDATE_AUTHENTICATION_GATEWAY
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <input type="hidden" id="loginMode" value="user">
+
+        <div class="form-group">
+          <label class="form-label" id="lblIdentifier">EMAIL_IDENTIFIER / OPERATOR_NAME</label>
+          <input type="text" class="form-input" id="loginEmail" required placeholder="e.g. operator@domain.com or admin" autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ACCESS_PASSPHRASE</label>
+          <input type="password" class="form-input" id="loginPassword" required placeholder="••••••••••••" autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="submit-btn" id="loginSubmitBtn">
+          INITIALIZE_SESSION &gt;
+        </button>
+
+        <div class="admin-hint-badge" id="adminHint">
+          ⚡ DEFAULT ROOT CREDENTIALS: <b>admin@digipath.ai</b> | Access Key: <b>admin123</b>
+        </div>
+      </form>
+
+      <!-- REGISTRATION FORM -->
+      <form id="registerForm" style="display:none;" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label class="form-label">OPERATOR_FULL_NAME</label>
+          <input type="text" class="form-input" id="regName" required placeholder="e.g. Aarav Kulkarni">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">EMAIL_IDENTIFIER</label>
+          <input type="email" class="form-input" id="regEmail" required placeholder="e.g. candidate@domain.com">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">CREATE_ACCESS_PASSPHRASE (MIN 8 CHARS)</label>
+          <input type="password" class="form-input" id="regPassword" required minlength="8" placeholder="••••••••••••">
+        </div>
+
+        <button type="submit" class="submit-btn">
+          REGISTER_NEW_OPERATOR &gt;
+        </button>
+      </form>
+
+    </div>
+
+    <div style="text-align:center; margin-top:20px; font-size:11px; color:var(--text-dim);">
+      &gt; SECURE SHA-256 JWT ENCRYPTION // HTTP-ONLY SESSION GUARD
+    </div>
+
   </div>
 </div>
+
 <script>
-function switchTab(t){
-  document.getElementById('loginPanel').style.display = t==='login'?'block':'none';
-  document.getElementById('registerPanel').style.display = t==='register'?'block':'none';
-  document.getElementById('tabLogin').classList.toggle('active', t==='login');
-  document.getElementById('tabReg').classList.toggle('active', t==='register');
+// Live clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('liveClock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN', { hour12: false });
 }
-function selectRole(el){
-  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
+setInterval(updateClock, 1000);
+updateClock();
+
+// Extract query parameters
+const urlParams = new URLSearchParams(window.location.search);
+const nextParam = urlParams.get('next') || '';
+const tabParam = urlParams.get('tab') || '';
+
+let currentMode = 'user';
+
+function setLoginMode(mode) {
+  currentMode = mode;
+  document.getElementById('loginMode').value = mode;
+
+  const card = document.getElementById('authCard');
+  const btnCandidate = document.getElementById('btnCandidateMode');
+  const btnAdmin = document.getElementById('btnAdminMode');
+  const modeHeading = document.getElementById('modeHeading');
+  const submitBtn = document.getElementById('loginSubmitBtn');
+  const adminHint = document.getElementById('adminHint');
+  const tabRow = document.getElementById('tabRow');
+  const dot = document.getElementById('statusDot');
+  const statusTxt = document.getElementById('sessionStatus');
+
+  if (mode === 'admin') {
+    btnCandidate.classList.remove('active');
+    btnAdmin.classList.add('active');
+    card.classList.add('admin-theme');
+    modeHeading.textContent = '> SYSTEM_ADMINISTRATION_AUTH';
+    modeHeading.style.color = 'var(--neon-magenta)';
+    submitBtn.classList.add('admin-btn');
+    submitBtn.textContent = 'AUTHENTICATE_ADMIN_TERMINAL >';
+    adminHint.style.display = 'block';
+    tabRow.style.display = 'none'; // Only login for admin
+    dot.style.background = 'var(--neon-magenta)';
+    dot.style.boxShadow = '0 0 6px var(--neon-magenta)';
+    statusTxt.textContent = 'ADMIN_SUPERUSER_AUTH // RESTRICTED';
+    statusTxt.style.color = 'var(--neon-magenta)';
+
+    // Switch to login tab if register was open
+    switchActionTab('login');
+  } else {
+    btnCandidate.classList.add('active');
+    btnAdmin.classList.remove('active');
+    card.classList.remove('admin-theme');
+    modeHeading.textContent = '> CANDIDATE_AUTHENTICATION_GATEWAY';
+    modeHeading.style.color = 'var(--neon-green)';
+    submitBtn.classList.remove('admin-btn');
+    submitBtn.textContent = 'INITIALIZE_SESSION >';
+    adminHint.style.display = 'none';
+    tabRow.style.display = 'flex';
+    dot.style.background = 'var(--neon-green)';
+    dot.style.boxShadow = '0 0 6px var(--neon-green)';
+    statusTxt.textContent = 'NEURAL_AUTH_CORE // READY';
+    statusTxt.style.color = 'var(--text-mid)';
+  }
 }
-function showAlert(msg, type){
-  const el = document.getElementById('alert');
-  el.textContent = msg;
-  el.className = `alert ${type} show`;
+
+function switchActionTab(action) {
+  const tabLogin = document.getElementById('tabLogin');
+  const tabRegister = document.getElementById('tabRegister');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const alertBox = document.getElementById('alertBox');
+  alertBox.style.display = 'none';
+
+  if (action === 'register') {
+    tabLogin.classList.remove('active');
+    tabRegister.classList.add('active');
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
+  } else {
+    tabLogin.classList.add('active');
+    tabRegister.classList.remove('active');
+    loginForm.style.display = 'block';
+    registerForm.style.display = 'none';
+  }
 }
-async function doLogin(){
-  const email = document.getElementById('loginEmail').value;
-  const pass = document.getElementById('loginPass').value;
-  if(!email || !pass) return showAlert('MISSING FIELDS', 'error');
-  
+
+function showAlert(msg, isError = true) {
+  const alertBox = document.getElementById('alertBox');
+  alertBox.className = 'alert-box ' + (isError ? 'alert-error' : 'alert-success');
+  alertBox.textContent = (isError ? '❌ ' : '✔ ') + msg;
+  alertBox.style.display = 'block';
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const loginMode = document.getElementById('loginMode').value;
+
   try {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email, password: pass})
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        login_mode: loginMode
+      })
     });
+
     const data = await res.json();
-    if(res.ok){
-      document.getElementById('authOverlay').classList.add('show');
-      setTimeout(() => window.location.href = '/dashboard', 1000);
-    } else {
-      showAlert(data.detail || 'AUTH FAILED', 'error');
+    if (!res.ok) {
+      throw new Error(data.detail || 'Authentication failed. Please verify credentials.');
     }
-  } catch(e) { showAlert('CONNECTION ERROR', 'error'); }
+
+    // Persist token in local storage & session storage
+    if (data.access_token) {
+      localStorage.setItem('access_token', data.access_token);
+      sessionStorage.setItem('access_token', data.access_token);
+      document.cookie = `access_token=Bearer ${data.access_token}; path=/; max-age=86400; SameSite=Lax`;
+    }
+
+    showAlert('ACCESS_GRANTED: Session initialized successfully! Redirecting...', false);
+
+    // Smart Redirect Logic
+    setTimeout(() => {
+      const isAdmin = data.is_admin === true || (data.role && data.role.toUpperCase() === 'ADMIN');
+
+      if (isAdmin) {
+        // Admin always routes to /admin or requested admin path
+        if (nextParam && nextParam.startsWith('/admin')) {
+          window.location.href = nextParam;
+        } else {
+          window.location.href = '/admin';
+        }
+      } else {
+        // Regular candidate
+        if (nextParam && !nextParam.startsWith('/admin')) {
+          window.location.href = nextParam;
+        } else {
+          window.location.href = '/dashboard';
+        }
+      }
+    }, 450);
+
+  } catch (err) {
+    showAlert(err.message, true);
+  }
 }
-async function doRegister(){
-  const name = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
-  const pass = document.getElementById('regPass').value;
-  const role = document.querySelector('.role-card.selected').dataset.role;
-  if(!name || !email || !pass) return showAlert('MISSING FIELDS', 'error');
-  
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+
   try {
     const res = await fetch('/api/auth/register', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({full_name: name, email, password: pass, role})
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        full_name: name,
+        email: email,
+        password: password,
+        role: 'USER'
+      })
     });
+
     const data = await res.json();
-    if(res.ok){
-      showAlert('ACCOUNT CREATED. PLEASE LOGIN.', 'success');
-      switchTab('login');
-    } else {
-      showAlert(data.detail || 'REGISTRATION FAILED', 'error');
+    if (!res.ok) {
+      throw new Error(data.detail || 'Registration failed.');
     }
-  } catch(e) { showAlert('CONNECTION ERROR', 'error'); }
+
+    showAlert('IDENTITY_CREATED: Registration complete. Logging in...', false);
+
+    // Auto-login with registered credentials
+    document.getElementById('loginEmail').value = email;
+    document.getElementById('loginPassword').value = password;
+    switchActionTab('login');
+    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+
+  } catch (err) {
+    showAlert(err.message, true);
+  }
 }
 
-// Handle initial tab from server
-{% if tab == 'register' %}
-switchTab('register');
-{% endif %}
+// Check initial query params
+document.addEventListener('DOMContentLoaded', () => {
+  if (nextParam.includes('admin')) {
+    setLoginMode('admin');
+  } else if (tabParam === 'register') {
+    switchActionTab('register');
+  }
+});
 </script>
 </body>
 </html>

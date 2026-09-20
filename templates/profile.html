@@ -1,0 +1,670 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGIPATH_AI // USER_PROFILE &amp; SETTINGS</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --neon: #00ff66; --neon-dim: rgba(0,255,102,0.12); --cyan: #00e5ff;
+    --magenta: #ff00ff; --amber: #ffb300; --red: #ff0055;
+    --bg: #0a0e14; --bg2: #070b10; --panel: rgba(0,255,102,0.04);
+    --border: rgba(0,255,102,0.18); --text-dim: #005522; --text-mid: #00aa44;
+    --mono: 'Share Tech Mono', monospace; --orb: 'Orbitron', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--neon); font-family: var(--mono); min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(0,255,102,0.025) 0px, rgba(0,255,102,0.025) 1px, transparent 1px, transparent 2px);
+    pointer-events: none; z-index: 9999;
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,255,102,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,102,0.03) 1px, transparent 1px);
+    background-size: 48px 48px; pointer-events: none; z-index: 0;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: 56px;
+    background: rgba(7,11,16,0.95); border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: space-between; padding: 0 32px;
+  }
+  .topbar-brand { font-family: var(--orb); font-weight: 900; font-size: 18px; color: var(--neon); text-decoration: none; letter-spacing: 0.12em; text-shadow: 0 0 12px var(--neon); }
+  .topbar-nav { display: flex; align-items: center; gap: 24px; }
+  .topbar-nav a { color: var(--text-mid); font-size: 11px; letter-spacing: 2px; text-decoration: none; transition: color 0.2s; }
+  .topbar-nav a:hover, .topbar-nav a.active { color: var(--neon); }
+
+  .user-pill-wrap { position: relative; }
+  .user-pill { display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(0,255,102,0.06); border: 1px solid var(--border); padding: 6px 14px 6px 10px; transition: border-color 0.2s; }
+  .user-pill:hover { border-color: var(--neon); }
+  .user-avatar { width: 28px; height: 28px; background: var(--neon); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-size: 11px; font-weight: 900; font-family: var(--orb); }
+  .user-active-dot { width: 6px; height: 6px; border-radius: 50%; background: #00ff66; box-shadow: 0 0 6px #00ff66; }
+  .user-name { font-size: 11px; color: var(--neon); }
+  .user-dropdown { display: none; position: absolute; top: calc(100% + 6px); right: 0; background: rgba(7,11,16,0.97); border: 1px solid var(--border); backdrop-filter: blur(16px); min-width: 240px; z-index: 600; padding: 6px 0; }
+  .user-pill-wrap:hover .user-dropdown { display: block; }
+  .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 11px 18px; font-size: 11px; letter-spacing: 1.5px; color: var(--text-mid); text-decoration: none; transition: all 0.15s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; }
+  .dropdown-item:hover { background: rgba(0,255,102,0.07); color: var(--neon); }
+  .dropdown-item.danger:hover { background: rgba(255,0,102,0.07); color: var(--red); }
+  .dropdown-sep { border-top: 1px solid var(--border); margin: 4px 0; }
+
+  /* ── STATUS BAR ── */
+  .statusbar { height: 28px; background: rgba(0,0,0,0.6); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-size: 10px; color: var(--text-mid); letter-spacing: 2px; position: fixed; top: 56px; left: 0; right: 0; z-index: 490; }
+
+  /* ── PAGE LAYOUT ── */
+  .page-wrap { padding-top: 100px; padding-bottom: 60px; max-width: 1060px; margin: 0 auto; padding-left: 24px; padding-right: 24px; position: relative; z-index: 1; }
+
+  /* ── PAGE HEADER ── */
+  .page-header { display: flex; align-items: flex-start; gap: 24px; margin-bottom: 40px; }
+  .profile-avatar-lg {
+    width: 76px; height: 76px; background: var(--neon); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #000; font-family: var(--orb); font-size: 26px; font-weight: 900; flex-shrink: 0;
+    box-shadow: 0 0 30px rgba(0,255,102,0.4);
+  }
+  .page-header-info { flex: 1; }
+  .page-header-info h1 { font-family: var(--orb); font-size: clamp(20px,3vw,30px); color: var(--neon); letter-spacing: 0.08em; margin-bottom: 6px; }
+  .page-header-info p { font-size: 12px; color: var(--text-mid); letter-spacing: 1.5px; }
+  .header-badge { display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(0,255,102,0.2); padding: 4px 12px; font-size: 10px; color: var(--neon); letter-spacing: 2px; margin-top: 10px; }
+  .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--neon); animation: blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+  /* ── TABS ── */
+  .tab-bar { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 36px; gap: 0; }
+  .tab-btn {
+    background: none; border: none; border-bottom: 2px solid transparent;
+    color: var(--text-mid); font-family: var(--mono); font-size: 11px; letter-spacing: 2.5px;
+    padding: 12px 28px; cursor: pointer; transition: all 0.2s; margin-bottom: -1px;
+  }
+  .tab-btn.active { color: var(--neon); border-bottom-color: var(--neon); background: rgba(0,255,102,0.03); }
+  .tab-btn:hover:not(.active) { color: var(--neon); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── PANELS / CARDS ── */
+  .info-panel {
+    background: var(--panel); border: 1px solid var(--border);
+    padding: 32px; margin-bottom: 24px; position: relative;
+  }
+  .panel-title { font-size: 10px; color: var(--neon); letter-spacing: 3px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+
+  /* ── FORM GRID ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label { font-size: 10px; color: var(--text-mid); letter-spacing: 2.5px; }
+  .form-input {
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(0,255,102,0.2);
+    color: var(--neon); font-family: var(--mono); font-size: 13px; padding: 10px 14px;
+    outline: none; transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .form-input:focus { border-color: var(--neon); box-shadow: 0 0 0 1px rgba(0,255,102,0.15); }
+  .form-input::placeholder { color: var(--text-dim); }
+  .form-input[disabled] { opacity: 0.5; cursor: not-allowed; }
+  select.form-input option { background: #0a0e14; color: var(--neon); }
+
+  .btn-save {
+    background: var(--neon); color: #000; border: none; font-family: var(--mono);
+    font-size: 12px; letter-spacing: 3px; padding: 12px 32px; cursor: pointer;
+    transition: all 0.2s; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  }
+  .btn-save:hover { box-shadow: 0 0 24px rgba(0,255,102,0.5); transform: translateY(-1px); }
+  .btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .btn-danger {
+    background: transparent; border: 1px solid var(--red); color: var(--red);
+    font-family: var(--mono); font-size: 12px; letter-spacing: 2px; padding: 11px 28px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-danger:hover { background: rgba(255,0,85,0.08); }
+
+  /* Alert flash */
+  .flash-msg { padding: 10px 16px; font-size: 12px; letter-spacing: 1.5px; margin-bottom: 20px; display: none; }
+  .flash-msg.success { border: 1px solid rgba(0,255,102,0.3); background: rgba(0,255,102,0.06); color: var(--neon); }
+  .flash-msg.error { border: 1px solid rgba(255,0,85,0.3); background: rgba(255,0,85,0.06); color: var(--red); }
+  .flash-msg.show { display: block; }
+
+  /* ── SECURITY PANEL ── */
+  .security-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid rgba(0,255,102,0.08); }
+  .security-row:last-child { border-bottom: none; }
+  .security-label { font-size: 11px; color: var(--neon); letter-spacing: 2px; }
+  .security-value { font-size: 11px; color: var(--text-mid); }
+  .security-badge { font-size: 9px; padding: 3px 10px; border: 1px solid; letter-spacing: 2px; }
+  .security-badge.ok { border-color: rgba(0,255,102,0.3); color: var(--neon); }
+  .security-badge.warn { border-color: rgba(255,179,0,0.3); color: var(--amber); }
+
+  /* API Key display */
+  .api-key-row { display: flex; gap: 12px; align-items: center; }
+  .api-key-val { font-size: 12px; color: var(--text-mid); flex: 1; border: 1px solid var(--border); padding: 8px 12px; letter-spacing: 1px; background: rgba(0,0,0,0.3); }
+  .btn-sm { background: none; border: 1px solid var(--border); color: var(--text-mid); font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 6px 14px; cursor: pointer; transition: all 0.2s; }
+  .btn-sm:hover { border-color: var(--neon); color: var(--neon); }
+
+  /* ── BOOKMARKS ── */
+  .bookmark-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+  .bookmark-card { background: var(--panel); border: 1px solid var(--border); padding: 18px 20px; position: relative; }
+  .bookmark-card:hover { border-color: var(--neon); }
+  .bk-label { font-size: 9px; color: var(--text-dim); letter-spacing: 3px; margin-bottom: 6px; }
+  .bk-title { font-size: 13px; color: var(--neon); margin-bottom: 4px; }
+  .bk-sub { font-size: 11px; color: var(--text-mid); }
+  .bk-remove { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--text-dim); font-size: 14px; cursor: pointer; transition: color 0.2s; }
+  .bk-remove:hover { color: var(--red); }
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--text-mid); font-size: 12px; letter-spacing: 2px; border: 1px dashed rgba(0,255,102,0.1); }
+  .empty-state a { color: var(--neon); text-decoration: none; }
+
+  /* Corner decorators */
+  .hud-corner { position: absolute; width: 8px; height: 8px; border-color: var(--neon); border-style: solid; }
+  .hud-corner.tl { top: 0; left: 0; border-width: 1px 0 0 1px; }
+  .hud-corner.tr { top: 0; right: 0; border-width: 1px 1px 0 0; }
+  .hud-corner.bl { bottom: 0; left: 0; border-width: 0 0 1px 1px; }
+  .hud-corner.br { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+
+  /* Loading skeleton */
+  .skeleton { background: linear-gradient(90deg, rgba(0,255,102,0.03) 25%, rgba(0,255,102,0.08) 50%, rgba(0,255,102,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; height: 18px; border-radius: 2px; }
+  @keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+  @media (max-width: 680px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .page-header { flex-direction: column; }
+    .tab-btn { padding: 10px 16px; font-size: 10px; }
+  }
+</style>
+<link rel="stylesheet" href="/static/css/digipath-shell.css">
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<nav class="topbar">
+  <a href="/" class="topbar-brand">DIGIPATH_AI</a>
+  <div class="topbar-nav">
+    <a href="/dashboard">[ DASHBOARD ]</a>
+    <a href="/predictor">[ PREDICTOR ]</a>
+    <a href="/resume-analyzer">[ RESUME_AI ]</a>
+    <a href="/profile" class="active">[ PROFILE ]</a>
+    <div class="user-pill-wrap">
+      <div class="user-pill">
+        <div class="user-avatar" id="navInitials">?</div>
+        <span class="user-name" id="navName">LOADING...</span>
+        <div class="user-active-dot"></div>
+      </div>
+      <div class="user-dropdown">
+        <a href="/profile" class="dropdown-item">&#x25C6; [ USER PROFILE &amp; SETTINGS ]</a>
+        <a href="/dashboard" class="dropdown-item">&#x25C6; [ SYSTEM DASHBOARD ]</a>
+        <div class="dropdown-sep"></div>
+        <button class="dropdown-item danger" onclick="DigiPathApp.auth.logout()">&#x25C6; [ LOGOUT ]</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── STATUS BAR ── -->
+<div class="statusbar">
+  <div>USER_PROFILE_SETTINGS // DIGIPATH_AI v3.2</div>
+  <div id="clock"></div>
+</div>
+
+<!-- ── PAGE ── -->
+<div class="page-wrap">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="profile-avatar-lg" id="headerAvatar">?</div>
+    <div class="page-header-info">
+      <h1 id="headerName">LOADING_PROFILE...</h1>
+      <p id="headerEmail" style="color:var(--text-mid);font-size:12px;margin-top:4px;">Retrieving user data...</p>
+      <div class="header-badge"><div class="badge-dot"></div><span id="headerRole">OPERATOR</span> | DIGIPATH_AI SESSION ACTIVE</div>
+    </div>
+  </div>
+
+  <!-- Flash message -->
+  <div class="flash-msg" id="flashMsg"></div>
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="tab-info">[ PERSONAL_INFO ]</button>
+    <button class="tab-btn" data-tab="tab-security">[ ACCOUNT_SECURITY ]</button>
+    <button class="tab-btn" data-tab="tab-bookmarks">[ SAVED_ITEMS ]</button>
+  </div>
+
+  <!-- TAB 1: Personal Info -->
+  <div class="tab-panel active" id="tab-info">
+    <div class="info-panel">
+      <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+      <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+      <div class="panel-title">&#x25BA; IDENTITY_MATRIX // PERSONAL INFORMATION</div>
+      <div class="form-grid" id="personalForm">
+        <div class="form-group">
+          <label class="form-label">FULL_NAME</label>
+          <input class="form-input" id="fName" type="text" placeholder="Enter full name" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">EMAIL_ADDRESS</label>
+          <input class="form-input" id="fEmail" type="email" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">MHT-CET ROLL_NUMBER</label>
+          <input class="form-input" id="fRoll" type="text" placeholder="e.g. MH2024XXXXXX" maxlength="24">
+        </div>
+        <div class="form-group">
+          <label class="form-label">PREFERRED_BRANCH</label>
+          <select class="form-input" id="fBranch">
+            <option value="">-- SELECT BRANCH --</option>
+            <option>Computer Engineering</option>
+            <option>Information Technology</option>
+            <option>AI & Data Science</option>
+            <option>Mechanical Engineering</option>
+            <option>Electronics & Telecommunication</option>
+            <option>Civil Engineering</option>
+            <option>Electrical Engineering</option>
+            <option>Chemical Engineering</option>
+            <option>Production Engineering</option>
+            <option>Instrumentation Engineering</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">CATEGORY</label>
+          <select class="form-input" id="fCategory">
+            <option value="">-- SELECT CATEGORY --</option>
+            <option>OPEN</option>
+            <option>OBC</option>
+            <option>SC</option>
+            <option>ST</option>
+            <option>EWS</option>
+            <option>VJNT</option>
+            <option>SBC</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">TARGET_CITY</label>
+          <select class="form-input" id="fCity">
+            <option value="">-- SELECT CITY --</option>
+            <option>Mumbai</option>
+            <option>Pune</option>
+            <option>Nagpur</option>
+            <option>Nashik</option>
+            <option>Aurangabad</option>
+            <option>Thane</option>
+            <option>Kolhapur</option>
+            <option>Solapur</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ACCOUNT_ROLE</label>
+          <input class="form-input" id="fRole" type="text" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">MEMBER_SINCE</label>
+          <input class="form-input" id="fCreated" type="text" disabled>
+        </div>
+      </div>
+      <div style="margin-top:28px;display:flex;gap:12px;align-items:center;">
+        <button class="btn-save" id="btnSaveProfile" onclick="saveProfile()">[ SAVE_PROFILE ]</button>
+        <span id="saveStatus" style="font-size:11px;color:var(--text-mid);"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Account Security -->
+  <div class="tab-panel" id="tab-security">
+    <div class="info-panel" style="margin-bottom:24px;">
+      <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+      <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+      <div class="panel-title">&#x25BA; SECURITY_MATRIX // ACCOUNT OVERVIEW</div>
+      <div class="security-row">
+        <div>
+          <div class="security-label">SESSION_STATUS</div>
+          <div class="security-value">Active — HTTP-Only Cookie + JWT Bearer</div>
+        </div>
+        <span class="security-badge ok">AUTHENTICATED</span>
+      </div>
+      <div class="security-row">
+        <div>
+          <div class="security-label">2FA_STATUS</div>
+          <div class="security-value">Two-Factor Authentication</div>
+        </div>
+        <span class="security-badge warn">NOT_ENABLED</span>
+      </div>
+      <div class="security-row">
+        <div>
+          <div class="security-label">LAST_LOGIN</div>
+          <div class="security-value" id="lastLoginVal">Current session</div>
+        </div>
+        <span class="security-badge ok">VERIFIED</span>
+      </div>
+    </div>
+
+    <div class="info-panel" style="margin-bottom:24px;">
+      <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+      <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+      <div class="panel-title">&#x25BA; CHANGE_PASSWORD</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">CURRENT_PASSWORD</label>
+          <input class="form-input" id="pwCurrent" type="password" placeholder="Enter current password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">NEW_PASSWORD</label>
+          <input class="form-input" id="pwNew" type="password" placeholder="Min 8 characters">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CONFIRM_NEW_PASSWORD</label>
+          <input class="form-input" id="pwConfirm" type="password" placeholder="Repeat new password">
+        </div>
+      </div>
+      <div style="margin-top:24px;display:flex;gap:12px;align-items:center;">
+        <button class="btn-save" onclick="changePassword()">[ UPDATE_PASSWORD ]</button>
+        <span id="pwStatus" style="font-size:11px;color:var(--text-mid);"></span>
+      </div>
+    </div>
+
+    <div class="info-panel">
+      <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+      <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+      <div class="panel-title">&#x25BA; API_KEY // DEVELOPMENT ACCESS</div>
+      <div style="margin-bottom:16px;font-size:11px;color:var(--text-mid);">Use this key for DigiPath API integrations. Keep it secret.</div>
+      <div class="api-key-row">
+        <div class="api-key-val" id="apiKeyDisplay">dpk_••••••••••••••••••••••••••••••••</div>
+        <button class="btn-sm" onclick="toggleApiKey()">[ REVEAL ]</button>
+        <button class="btn-sm" onclick="copyApiKey()">[ COPY ]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Bookmarks -->
+  <div class="tab-panel" id="tab-bookmarks">
+    <!-- Saved Colleges -->
+    <div class="info-panel" style="margin-bottom:24px;">
+      <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+      <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+      <div class="panel-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>&#x25BA; SAVED_COLLEGES</span>
+        <a href="/institutes" style="font-size:10px;color:var(--cyan);text-decoration:none;letter-spacing:2px;">[ ADD_MORE ]</a>
+      </div>
+      <div class="bookmark-grid" id="savedCollegesGrid">
+        <div class="empty-state" id="collegeEmpty" style="display:none;">
+          No saved colleges yet. <a href="/institutes">Browse &amp; bookmark colleges »</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved Jobs -->
+    <div class="info-panel">
+      <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+      <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+      <div class="panel-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>&#x25BA; SAVED_JOBS</span>
+        <a href="/job-recommender" style="font-size:10px;color:var(--cyan);text-decoration:none;letter-spacing:2px;">[ FIND_MORE ]</a>
+      </div>
+      <div class="bookmark-grid" id="savedJobsGrid">
+        <div class="empty-state" id="jobEmpty" style="display:none;">
+          No saved jobs yet. <a href="/job-recommender">Discover matching jobs »</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .page-wrap -->
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+// Clock
+// ─────────────────────────────────────────────────────────────────
+function updateClock(){
+  const n = new Date();
+  document.getElementById('clock').textContent = '> SYS_TIME: ' + n.toLocaleTimeString('en-IN',{hour12:false});
+}
+setInterval(updateClock, 1000); updateClock();
+
+// ─────────────────────────────────────────────────────────────────
+// Tab switching
+// ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────
+// Flash message helper
+// ─────────────────────────────────────────────────────────────────
+function showFlash(msg, type = 'success') {
+  const el = document.getElementById('flashMsg');
+  el.textContent = msg;
+  el.className = 'flash-msg ' + type + ' show';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Load profile on page open
+// ─────────────────────────────────────────────────────────────────
+let _profileCache = null;
+let _apiKeyRaw = null;
+
+async function loadProfile() {
+  try {
+    const headers = window.DigiPathApp ? DigiPathApp.auth.getAuthHeaders() : {};
+    const res = await fetch('/api/user/profile', { headers, credentials: 'include' });
+    if (res.status === 401) {
+      window.location.href = '/login';
+      return;
+    }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const d = await res.json();
+    _profileCache = d;
+
+    // Update page header
+    const initials = (d.full_name || d.email || 'U').substring(0, 2).toUpperCase();
+    document.getElementById('headerAvatar').textContent = initials;
+    document.getElementById('headerName').textContent = d.full_name || d.email;
+    document.getElementById('headerEmail').textContent = d.email;
+    document.getElementById('headerRole').textContent = d.role || 'USER';
+
+    // Update topbar pill
+    document.getElementById('navInitials').textContent = initials;
+    document.getElementById('navName').textContent = (d.full_name || d.email || 'OPERATOR').split(' ')[0].toUpperCase();
+
+    // Fill form fields
+    setVal('fName', d.full_name || '');
+    setVal('fEmail', d.email || '');
+    setVal('fRoll', d.roll_number || '');
+    setVal('fBranch', d.preferred_branch || '');
+    setVal('fCategory', d.category || '');
+    setVal('fCity', d.target_city || '');
+    setVal('fRole', d.role || '');
+    setVal('fCreated', d.created_at ? new Date(d.created_at).toLocaleDateString('en-IN') : '—');
+
+    // Generate a fake stable API key from user ID (demo)
+    _apiKeyRaw = 'dpk_' + btoa((d.email || 'user') + '_digipath_2026').replace(/[^a-zA-Z0-9]/g, '').substring(0, 32);
+
+    // Load bookmarks
+    renderColleges(d.saved_colleges || []);
+    renderJobs(d.saved_jobs || []);
+
+  } catch (err) {
+    showFlash('ERROR: Failed to load profile — ' + err.message, 'error');
+  }
+}
+
+function setVal(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.tagName === 'SELECT') el.value = val;
+  else el.value = val;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Save profile
+// ─────────────────────────────────────────────────────────────────
+async function saveProfile() {
+  const btn = document.getElementById('btnSaveProfile');
+  const statusEl = document.getElementById('saveStatus');
+  btn.disabled = true;
+  statusEl.textContent = '[ SAVING... ]';
+
+  const payload = {
+    full_name: document.getElementById('fName').value.trim() || null,
+    roll_number: document.getElementById('fRoll').value.trim() || null,
+    preferred_branch: document.getElementById('fBranch').value || null,
+    category: document.getElementById('fCategory').value || null,
+    target_city: document.getElementById('fCity').value || null,
+  };
+
+  try {
+    const headers = window.DigiPathApp ? DigiPathApp.auth.getAuthHeaders({ 'Content-Type': 'application/json' }) : { 'Content-Type': 'application/json' };
+    const res = await fetch('/api/user/profile', { method: 'POST', headers, credentials: 'include', body: JSON.stringify(payload) });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.detail || 'HTTP ' + res.status);
+    }
+    statusEl.textContent = '[ SAVED ✓ ]';
+    statusEl.style.color = 'var(--neon)';
+    showFlash('[ PROFILE_UPDATED ] — Personal information saved successfully.', 'success');
+    await loadProfile();
+  } catch (err) {
+    statusEl.textContent = '[ ERROR ]';
+    statusEl.style.color = 'var(--red, #ff0055)';
+    showFlash('ERROR: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => { statusEl.textContent = ''; }, 3000);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Change password
+// ─────────────────────────────────────────────────────────────────
+async function changePassword() {
+  const current = document.getElementById('pwCurrent').value;
+  const newPw = document.getElementById('pwNew').value;
+  const confirm = document.getElementById('pwConfirm').value;
+  const statusEl = document.getElementById('pwStatus');
+
+  if (!current || !newPw || !confirm) { showFlash('ERROR: All password fields are required.', 'error'); return; }
+  if (newPw !== confirm) { showFlash('ERROR: New passwords do not match.', 'error'); return; }
+  if (newPw.length < 8) { showFlash('ERROR: New password must be at least 8 characters.', 'error'); return; }
+
+  statusEl.textContent = '[ UPDATING... ]';
+  try {
+    const headers = window.DigiPathApp ? DigiPathApp.auth.getAuthHeaders({ 'Content-Type': 'application/json' }) : { 'Content-Type': 'application/json' };
+    const res = await fetch('/api/user/settings', {
+      method: 'POST', headers, credentials: 'include',
+      body: JSON.stringify({ current_password: current, new_password: newPw })
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.detail || 'HTTP ' + res.status);
+    }
+    statusEl.textContent = '[ CHANGED ✓ ]';
+    statusEl.style.color = 'var(--neon)';
+    document.getElementById('pwCurrent').value = '';
+    document.getElementById('pwNew').value = '';
+    document.getElementById('pwConfirm').value = '';
+    showFlash('[ PASSWORD_UPDATED ] — New credentials active. Re-login recommended.', 'success');
+  } catch (err) {
+    statusEl.textContent = '[ ERROR ]';
+    statusEl.style.color = '#ff0055';
+    showFlash('ERROR: ' + err.message, 'error');
+  } finally {
+    setTimeout(() => { statusEl.textContent = ''; }, 3500);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// API Key toggle / copy
+// ─────────────────────────────────────────────────────────────────
+let _apiRevealed = false;
+function toggleApiKey() {
+  _apiRevealed = !_apiRevealed;
+  const el = document.getElementById('apiKeyDisplay');
+  el.textContent = _apiRevealed ? (_apiKeyRaw || 'dpk_not_loaded') : 'dpk_••••••••••••••••••••••••••••••••';
+}
+function copyApiKey() {
+  if (!_apiKeyRaw) return;
+  navigator.clipboard.writeText(_apiKeyRaw).then(() => showFlash('[ API_KEY COPIED ] — Keep it secret!', 'success'));
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Bookmarks rendering
+// ─────────────────────────────────────────────────────────────────
+function renderColleges(colleges) {
+  const grid = document.getElementById('savedCollegesGrid');
+  const empty = document.getElementById('collegeEmpty');
+  if (!colleges || colleges.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    grid.appendChild(empty);
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = colleges.map(c => `
+    <div class="bookmark-card" id="college-${c.dte_code}">
+      <div class="bk-label">SAVED_COLLEGE // DTE: ${c.dte_code || 'N/A'}</div>
+      <div class="bk-title">${c.name || 'Institute of Technology'}</div>
+      <div class="bk-sub">${c.city || 'Maharashtra'}</div>
+      <button class="bk-remove" title="Remove" onclick="removeCollege('${c.dte_code}')">&#x2715;</button>
+    </div>
+  `).join('');
+}
+
+function renderJobs(jobs) {
+  const grid = document.getElementById('savedJobsGrid');
+  const empty = document.getElementById('jobEmpty');
+  if (!jobs || jobs.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    grid.appendChild(empty);
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = jobs.map(j => `
+    <div class="bookmark-card" id="job-${j.job_id}">
+      <div class="bk-label">SAVED_JOB // ID: ${j.job_id}</div>
+      <div class="bk-title">${j.title || 'Software Engineer'}</div>
+      <div class="bk-sub">${j.company || 'Company'}</div>
+      <button class="bk-remove" title="Remove" onclick="removeJob('${j.job_id}')">&#x2715;</button>
+    </div>
+  `).join('');
+}
+
+async function removeCollege(dteCode) {
+  try {
+    const headers = window.DigiPathApp ? DigiPathApp.auth.getAuthHeaders() : {};
+    const res = await fetch('/api/user/bookmarks/college/' + dteCode, { method: 'DELETE', headers, credentials: 'include' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    showFlash('[ COLLEGE_REMOVED ] — DTE ' + dteCode + ' removed from bookmarks.', 'success');
+    await loadProfile();
+  } catch (err) {
+    showFlash('ERROR: ' + err.message, 'error');
+  }
+}
+
+async function removeJob(jobId) {
+  try {
+    const headers = window.DigiPathApp ? DigiPathApp.auth.getAuthHeaders() : {};
+    const res = await fetch('/api/user/bookmarks/job/' + jobId, { method: 'DELETE', headers, credentials: 'include' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    showFlash('[ JOB_REMOVED ] — Job ' + jobId + ' removed from bookmarks.', 'success');
+    await loadProfile();
+  } catch (err) {
+    showFlash('ERROR: ' + err.message, 'error');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadProfile();
+});
+</script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/digipath-shell.js"></script>
+</body>
+</html>

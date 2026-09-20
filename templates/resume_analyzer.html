@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIGIPATH_AI // RESUME_ANALYZER</title>
+<title>DIGIPATH_AI // ENHANCV_5D_RESUME_ANALYZER</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -11,12 +11,12 @@
   :root {
     --neon-green: #00ff41;
     --neon-cyan: #00e5ff;
-    --neon-magenta: #ff00ff;
+    --neon-magenta: #ff0055;
     --neon-amber: #ffb300;
     --bg-dark: #000000;
     --bg-panel: #050f05;
     --bg-card: #020a02;
-    --border-green: #00ff4133;
+    --border-green: rgba(0, 255, 65, 0.25);
     --border-green-solid: #00ff41;
     --text-dim: #006620;
     --text-mid: #00aa2b;
@@ -32,11 +32,9 @@
     overflow: hidden;
   }
 
-  /* CRT scanline overlay */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: repeating-linear-gradient(
       0deg,
       var(--scan-line) 0px,
@@ -48,11 +46,9 @@
     z-index: 9999;
   }
 
-  /* grid bg */
   body::after {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image:
       linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
@@ -61,7 +57,6 @@
     z-index: 0;
   }
 
-  /* ─── LAYOUT ─── */
   .app-container {
     display: flex;
     height: 100vh;
@@ -70,7 +65,7 @@
     z-index: 1;
   }
 
-  /* ─── SIDEBAR ─── */
+  /* Sidebar */
   .sidebar {
     width: var(--sidebar-width);
     background: var(--bg-panel);
@@ -93,7 +88,10 @@
     color: var(--neon-green);
     letter-spacing: 0.1em;
     text-shadow: 0 0 10px rgba(0,255,65,0.5);
+    text-decoration: none;
+    display: block;
   }
+  .logo-title span { color: var(--neon-cyan); }
 
   .nav-list {
     flex: 1;
@@ -128,7 +126,7 @@
 
   .nav-icon { font-size: 16px; width: 20px; text-align: center; }
 
-  /* ─── MAIN CONTENT ─── */
+  /* Main Content */
   .main-content {
     flex: 1;
     display: flex;
@@ -144,137 +142,222 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 32px;
-    background: rgba(5, 15, 5, 0.8);
+    background: rgba(5, 15, 5, 0.85);
     backdrop-filter: blur(10px);
     position: sticky;
     top: 0;
     z-index: 10;
   }
 
-  /* ─── ANALYZER AREA ─── */
+  .status-tag {
+    font-size: 11px;
+    color: var(--neon-green);
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--neon-green);
+    box-shadow: 0 0 6px var(--neon-green);
+  }
+
   .content-area {
     padding: 32px;
-    max-width: 1200px;
+    max-width: 1250px;
     width: 100%;
     margin: 0 auto;
   }
 
   .page-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     color: var(--neon-green);
-    margin-bottom: 32px;
+    margin-bottom: 8px;
     letter-spacing: 2px;
   }
 
-  /* ─── DROPZONE ─── */
+  .page-subtitle {
+    font-size: 12px;
+    color: var(--text-mid);
+    margin-bottom: 28px;
+  }
+
+  /* Dropzone */
   .dropzone {
     background: var(--bg-card);
     border: 2px dashed var(--border-green);
-    padding: 60px;
+    padding: 40px 30px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s;
     position: relative;
-    margin-bottom: 40px;
+    margin-bottom: 24px;
   }
-  .dropzone:hover {
+  .dropzone:hover, .dropzone.dragover {
     border-color: var(--neon-green);
-    background: rgba(0,255,65,0.05);
-    box-shadow: inset 0 0 30px rgba(0,255,65,0.05);
+    background: rgba(0,255,65,0.06);
+    box-shadow: inset 0 0 30px rgba(0,255,65,0.08);
   }
-
-  .dropzone-icon { font-size: 48px; color: var(--neon-cyan); margin-bottom: 20px; }
-  .dropzone-text { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+  .dropzone-icon { font-size: 40px; color: var(--neon-cyan); margin-bottom: 12px; }
+  .dropzone-text { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
   .dropzone-text span { color: var(--neon-green); font-weight: bold; }
 
-  /* ─── RESULTS GRID ─── */
+  /* Scan Progress */
+  .scan-progress {
+    display: none;
+    margin-bottom: 30px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-green);
+    padding: 20px;
+  }
+  .progress-bg { height: 6px; background: #002200; width: 100%; position: relative; overflow: hidden; margin-top: 10px; }
+  .progress-fill { height: 100%; background: var(--neon-green); width: 0%; transition: width 0.15s; box-shadow: 0 0 10px var(--neon-green); }
+
+  /* Results Grid */
   .results-grid {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 32px;
+    display: none;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
     opacity: 0;
     transform: translateY(20px);
-    transition: all 0.5s;
+    transition: all 0.5s ease-out;
   }
-  .results-grid.show { opacity: 1; transform: translateY(0); }
+  .results-grid.show { display: grid; opacity: 1; transform: translateY(0); }
 
   .score-card {
     background: var(--bg-card);
     border: 1px solid var(--border-green);
     border-top: 2px solid var(--neon-green);
-    padding: 32px;
+    padding: 24px;
     text-align: center;
-    height: fit-content;
+    position: relative;
   }
 
   .circular-progress {
-    width: 150px; height: 150px;
-    border-radius: 50%;
-    background: conic-gradient(var(--neon-green) 88%, #002200 0);
-    margin: 0 auto 24px;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    box-shadow: 0 0 20px rgba(0,255,65,0.2);
-  }
-  .circular-progress::after {
-    content: '88%';
     width: 130px; height: 130px;
+    border-radius: 50%;
+    background: conic-gradient(var(--neon-green) 0%, #002200 0);
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 20px rgba(0,255,65,0.2);
+    transition: background 0.6s ease;
+  }
+  .circular-inner {
+    width: 108px; height: 108px;
     background: var(--bg-card);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 32px; font-weight: bold; font-family: 'Orbitron';
+    font-size: 26px; font-weight: bold; font-family: 'Orbitron', sans-serif;
     color: var(--neon-green);
   }
 
-  .score-label { font-size: 14px; color: var(--neon-cyan); letter-spacing: 2px; }
+  .score-label { font-size: 12px; color: var(--neon-cyan); letter-spacing: 2px; }
 
-  /* ─── FEEDBACK LIST ─── */
-  .feedback-section { display: flex; flex-direction: column; gap: 20px; }
+  /* 5D SCORE BREAKDOWN PROGRESS BARS */
+  .dimension-breakdown {
+    margin-top: 20px;
+    text-align: left;
+    border-top: 1px solid var(--border-green);
+    padding-top: 16px;
+  }
+  .dim-row { margin-bottom: 12px; }
+  .dim-label {
+    display: flex; justify-content: space-between; font-size: 10px; color: var(--text-mid); margin-bottom: 4px;
+  }
+  .dim-bar-track {
+    height: 6px; background: #001a00; border: 1px solid rgba(0,255,65,0.15); overflow: hidden;
+  }
+  .dim-bar-fill { height: 100%; transition: width 0.8s ease-in-out; }
+  .fill-green { background: var(--neon-green); box-shadow: 0 0 6px var(--neon-green); }
+  .fill-cyan { background: var(--neon-cyan); box-shadow: 0 0 6px var(--neon-cyan); }
+  .fill-amber { background: var(--neon-amber); box-shadow: 0 0 6px var(--neon-amber); }
+  .fill-magenta { background: var(--neon-magenta); box-shadow: 0 0 6px var(--neon-magenta); }
+
+  /* Feedback Section */
+  .feedback-section { display: flex; flex-direction: column; gap: 18px; }
 
   .feedback-card {
     background: var(--bg-panel);
     border: 1px solid var(--border-green);
-    padding: 24px;
+    padding: 20px 22px;
     position: relative;
   }
-  .feedback-title { font-size: 14px; color: var(--neon-green); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-  .feedback-title::before { content: '▶'; font-size: 10px; }
-  .feedback-desc { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+  .feedback-title {
+    font-size: 12px;
+    color: var(--neon-green);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+  }
+  .feedback-title::before { content: '▶'; font-size: 8px; color: var(--neon-cyan); }
+  .feedback-desc { font-size: 12px; color: var(--text-mid); line-height: 1.6; }
 
   .tag {
-    display: inline-block;
-    padding: 2px 8px;
-    font-size: 10px;
-    border: 1px solid;
-    margin-right: 5px;
+    display: inline-block; padding: 2px 8px; font-size: 10px;
+    border: 1px solid; margin-right: 6px; margin-top: 6px;
+  }
+  .tag-pos { color: var(--neon-green); border-color: rgba(0,255,65,0.4); background: rgba(0,255,65,0.05); }
+  .tag-neg { color: var(--neon-magenta); border-color: rgba(255,0,85,0.4); background: rgba(255,0,85,0.05); }
+  .tag-cyan { color: var(--neon-cyan); border-color: rgba(0,229,255,0.4); background: rgba(0,229,255,0.05); }
+  .tag-amber { color: var(--neon-amber); border-color: rgba(255,179,0,0.4); background: rgba(255,179,0,0.05); }
+
+  .action-btn {
+    background: transparent;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 11px;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
     margin-top: 10px;
   }
-  .tag-pos { color: var(--neon-green); border-color: var(--neon-green); }
-  .tag-neg { color: var(--neon-magenta); border-color: var(--neon-magenta); }
-
-  /* ─── PROGRESS BAR ─── */
-  .scan-progress {
-    display: none;
-    margin-bottom: 40px;
+  .action-btn:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 12px var(--neon-green);
   }
-  .progress-bg { height: 4px; background: #002200; width: 100%; position: relative; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--neon-green); width: 0%; transition: width 0.1s; box-shadow: 0 0 10px var(--neon-green); }
-
-  /* corner decorations */
-  .corner {
-    position: absolute;
-    width: 12px; height: 12px;
-    border-color: var(--neon-green);
-    border-style: solid;
-    opacity: 0.5;
+  .action-btn-cyan {
+    border-color: var(--neon-cyan); color: var(--neon-cyan);
   }
+  .action-btn-cyan:hover {
+    background: var(--neon-cyan); color: #000; box-shadow: 0 0 12px var(--neon-cyan);
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    z-index: 10000; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--neon-green);
+    max-width: 680px; width: 100%;
+    padding: 28px; position: relative;
+    max-height: 90vh; overflow-y: auto;
+  }
+
+  .corner { position: absolute; width: 8px; height: 8px; border-color: var(--neon-green); border-style: solid; }
   .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
   .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
   .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
   .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
 
+  @media (max-width: 900px) {
+    .results-grid { grid-template-columns: 1fr; }
+  }
 </style>
+<link rel="stylesheet" href="/static/css/digipath-shell.css">
 </head>
 <body>
 
@@ -282,7 +365,7 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-header">
-      <div class="logo-title">DIGIPATH_AI</div>
+      <a href="/" class="logo-title">DIGIPATH<span>_AI</span></a>
     </div>
     <nav class="nav-list">
       <a href="/dashboard" class="nav-item">
@@ -297,9 +380,17 @@
         <span class="nav-icon">◉</span>
         <span>INSTITUTES</span>
       </a>
+      <a href="/job-recommender" class="nav-item">
+        <span class="nav-icon">▤</span>
+        <span>JOB_MATCH</span>
+      </a>
       <a href="/resume-analyzer" class="nav-item active">
         <span class="nav-icon">▦</span>
-        <span>RESUME_AI</span>
+        <span>RESUME_5D_AI</span>
+      </a>
+      <a href="/resume-builder" class="nav-item">
+        <span class="nav-icon">⚡</span>
+        <span>RESUME_BUILDER</span>
       </a>
       <a href="/roadmap" class="nav-item">
         <span class="nav-icon">➹</span>
@@ -315,73 +406,134 @@
   <!-- MAIN -->
   <main class="main-content">
     <header class="header">
-      <div id="clock" style="font-size: 14px; color: var(--neon-cyan)"></div>
-      <div class="status-tag">NEURAL_DEEP_SCAN_ACTIVE</div>
+      <div id="clock" style="font-size: 13px; color: var(--neon-cyan)">&gt; TIME: --:--:--</div>
+      <div class="status-tag">
+        <span class="status-dot"></span>
+        <span>ENHANCV_5D_EVALUATION_CORE // ONLINE</span>
+      </div>
     </header>
 
     <div class="content-area">
-      <h2 class="page-title">RESUME_ANALYZER_v3.2</h2>
+      <h1 class="page-title">ENHANCV_5D_RESUME_ANALYZER</h1>
+      <p class="page-subtitle">Impact Metrics, Action Power Verbs, Technical ATS Keywords, Structure Completeness &amp; Style Brevity</p>
 
       <!-- Dropzone -->
-      <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+      <div class="dropzone" id="dropzone">
         <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
         <div class="corner corner-bl"></div><div class="corner corner-br"></div>
         <input type="file" id="fileInput" hidden accept=".pdf,.docx">
         <div class="dropzone-icon">☁</div>
         <div class="dropzone-text">
-          DRAG_&_DROP RESUME HERE OR <span>BROWSE_FILES</span><br>
-          <small style="color:var(--text-dim)">SUPPORTED: PDF, DOCX | MAX_SIZE: 5MB</small>
+          DRAG_&amp;_DROP RESUME HERE OR <span style="cursor:pointer;" onclick="document.getElementById('fileInput').click()">BROWSE_FILES</span><br>
+          <small style="color:var(--text-dim)">SUPPORTED: PDF, DOCX | 5D QUALITY AUDIT | OFFLINE NLP VECTOR EXTRACTION</small>
         </div>
       </div>
 
       <!-- Scan Progress -->
       <div class="scan-progress" id="scanProgress">
-        <div style="font-size: 11px; margin-bottom: 10px; color: var(--neon-green)">SCANNING_VECTORS... <span id="percentText">0%</span></div>
+        <div style="font-size: 11px; margin-bottom: 6px; color: var(--neon-green); display:flex; justify-content:space-between;">
+          <span>EXTRACTING 5-DIMENSION MATRICES &amp; QUANTIFIABLE METRICS...</span>
+          <span id="percentText">0%</span>
+        </div>
         <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
       </div>
 
-      <!-- Results -->
+      <!-- Results Grid -->
       <div class="results-grid" id="resultsGrid">
+
+        <!-- Score & 5D Breakdown Column -->
         <div class="score-card">
-          <div class="circular-progress"></div>
-          <div class="score-label">ATS_MATCH_SCORE</div>
-          <div style="font-size: 11px; color: var(--text-mid); margin-top: 15px;">Excellent! Your resume is highly optimized for target roles.</div>
+          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+
+          <div class="circular-progress" id="circularProgress">
+            <div class="circular-inner" id="scoreText">0%</div>
+          </div>
+          <div class="score-label">ENHANCV_OVERALL_SCORE</div>
+          <div id="scoreSummary" style="font-size: 11px; color: var(--text-mid); margin-top: 10px;">
+            5-Dimensional quality audit calculated against top engineering standards.
+          </div>
+
+          <!-- 5D Breakdown Progress Bars -->
+          <div class="dimension-breakdown" id="dimBreakdown">
+            <div class="dim-row">
+              <div class="dim-label"><span>1. IMPACT &amp; METRICS (30%)</span><span id="dimImpactVal">0/100</span></div>
+              <div class="dim-bar-track"><div class="dim-bar-fill fill-green" id="dimImpactBar" style="width:0%"></div></div>
+            </div>
+            <div class="dim-row">
+              <div class="dim-label"><span>2. ACTION POWER VERBS (20%)</span><span id="dimVerbVal">0/100</span></div>
+              <div class="dim-bar-track"><div class="dim-bar-fill fill-cyan" id="dimVerbBar" style="width:0%"></div></div>
+            </div>
+            <div class="dim-row">
+              <div class="dim-label"><span>3. ATS KEYWORDS (25%)</span><span id="dimKeywordVal">0/100</span></div>
+              <div class="dim-bar-track"><div class="dim-bar-fill fill-green" id="dimKeywordBar" style="width:0%"></div></div>
+            </div>
+            <div class="dim-row">
+              <div class="dim-label"><span>4. STRUCTURE &amp; SECTIONS (15%)</span><span id="dimStructVal">0/100</span></div>
+              <div class="dim-bar-track"><div class="dim-bar-fill fill-amber" id="dimStructBar" style="width:0%"></div></div>
+            </div>
+            <div class="dim-row">
+              <div class="dim-label"><span>5. STYLE &amp; BREVITY (10%)</span><span id="dimStyleVal">0/100</span></div>
+              <div class="dim-bar-track"><div class="dim-bar-fill fill-cyan" id="dimStyleBar" style="width:0%"></div></div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:8px; margin-top:16px;">
+            <button class="action-btn action-btn-cyan" onclick="openTailorModal()">
+              🎯 TAILOR_TO_JOB_DESCRIPTION
+            </button>
+            <a href="/resume-builder" class="action-btn">
+              ⚡ OPEN_IN_RESUME_BUILDER
+            </a>
+            <button class="action-btn" style="border-color:var(--border-green);" onclick="resetAnalyzer()">
+              ↻ ANALYZE_ANOTHER_RESUME
+            </button>
+          </div>
         </div>
 
-        <div class="feedback-section">
-          <div class="feedback-card">
-            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-            <div class="feedback-title">KEYWORD_OPTIMIZATION</div>
-            <div class="feedback-desc">Matched 14/18 industry-standard keywords. Strong presence of "Data Structures", "Cloud Computing", and "CI/CD".</div>
-            <span class="tag tag-pos">STRONG_TECH_STACK</span>
-            <span class="tag tag-pos">DOMAIN_RELEVANCE</span>
-          </div>
-
-          <div class="feedback-card">
-            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-            <div class="feedback-title">STRUCTURAL_ANALYSIS</div>
-            <div class="feedback-desc">Clear hierarchical structure. Sections are well-defined and machine-readable. Bullet points are concise.</div>
-            <span class="tag tag-pos">READABLE_BY_ATS</span>
-          </div>
-
-          <div class="feedback-card">
-            <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-            <div class="feedback-title">IMPROVEMENT_SUGGESTIONS</div>
-            <div class="feedback-desc">Consider adding more quantifiable achievements (e.g. "Improved efficiency by 20%"). Your summary section could be more impact-driven.</div>
-            <span class="tag tag-neg">MISSING_METRICS</span>
-            <span class="tag tag-neg">SUMMARY_GENERIC</span>
-          </div>
+        <!-- Feedback & 5D Intelligence Column -->
+        <div class="feedback-section" id="feedbackSection">
+          <!-- Dynamically populated -->
         </div>
+
       </div>
     </div>
   </main>
 </div>
 
+<!-- JOB TAILORING MODAL -->
+<div class="modal-overlay" id="tailorModal">
+  <div class="modal-card">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h2 style="font-family:'Orbitron',sans-serif; font-size:14px; color:var(--neon-cyan);">🎯 RESUME_JOB_TAILORING_ENGINE</h2>
+      <button onclick="closeTailorModal()" style="background:none; border:none; color:var(--neon-magenta); font-size:16px; cursor:pointer;">✕</button>
+    </div>
+
+    <div style="font-size:11px; color:var(--text-mid); margin-bottom:12px;">
+      Paste the target Job Description (JD) below to compare keyword coverage, identify missing technical skills, and generate line-by-line bullet rewrites.
+    </div>
+
+    <textarea id="jdInput" style="width:100%; min-height:120px; background:#000; border:1px solid rgba(0,229,255,0.3); color:var(--neon-cyan); font-family:'Share Tech Mono',monospace; font-size:11px; padding:10px; outline:none; margin-bottom:14px;" placeholder="Paste job requirements, responsibilities, and qualifications here..."></textarea>
+
+    <button class="action-btn action-btn-cyan" onclick="runJobTailoring()">
+      ⚡ GENERATE_TAILORED_MATCH_REPORT
+    </button>
+
+    <div id="tailorResult" style="margin-top:18px; display:none;"></div>
+  </div>
+</div>
+
+<script src="/static/js/app.js"></script>
+<script src="/static/js/digipath-shell.js"></script>
 <script>
 // Clock
-function updateClock(){
+function updateClock() {
   const now = new Date();
-  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
+  const el = document.getElementById('clock');
+  if (el) el.textContent = '> TIME: ' + now.toLocaleTimeString('en-IN', { hour12: false });
 }
 setInterval(updateClock, 1000);
 updateClock();
@@ -393,106 +545,302 @@ const progressFill = document.getElementById('progressFill');
 const percentText = document.getElementById('percentText');
 const resultsGrid = document.getElementById('resultsGrid');
 
+let lastExtractedText = "";
+
+// Drag and drop events
+['dragenter', 'dragover'].forEach(eventName => {
+  dropzone.addEventListener(eventName, (e) => {
+    e.preventDefault(); e.stopPropagation();
+    dropzone.classList.add('dragover');
+  }, false);
+});
+['dragleave', 'drop'].forEach(eventName => {
+  dropzone.addEventListener(eventName, (e) => {
+    e.preventDefault(); e.stopPropagation();
+    dropzone.classList.remove('dragover');
+  }, false);
+});
+dropzone.addEventListener('drop', (e) => {
+  const files = e.dataTransfer.files;
+  if (files.length > 0) runAnalysis(files[0]);
+});
+dropzone.addEventListener('click', (e) => {
+  if (e.target.tagName !== 'SPAN') fileInput.click();
+});
 fileInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
-  if(file) runAnalysis(file);
+  if (file) runAnalysis(file);
 });
 
+function resetAnalyzer() {
+  dropzone.style.display = 'block';
+  resultsGrid.classList.remove('show');
+  scanProgress.style.display = 'none';
+  fileInput.value = '';
+}
+
 async function runAnalysis(file) {
+  if (!file) return;
+
   dropzone.style.display = 'none';
   scanProgress.style.display = 'block';
-  
-  // Create FormData
+  progressFill.style.width = '10%';
+  percentText.textContent = '10%';
+
+  let progress = 10;
+  const interval = setInterval(() => {
+    if (progress < 90) {
+      progress += Math.random() * 8;
+      progressFill.style.width = Math.min(progress, 90) + '%';
+      percentText.textContent = Math.round(Math.min(progress, 90)) + '%';
+    }
+  }, 150);
+
   const formData = new FormData();
   formData.append('file', file);
 
-  // Fake progress bar while uploading/processing
-  let progress = 0;
-  const interval = setInterval(() => {
-    if(progress < 90) {
-        progress += Math.random() * 5;
-        progressFill.style.width = progress + '%';
-        percentText.textContent = Math.round(progress) + '%';
-    }
-  }, 200);
-
   try {
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token.replace(/^Bearer\s+/i, '').trim()}`;
+
     const response = await fetch('/api/resume/analyze', {
-        method: 'POST',
-        body: formData
+      method: 'POST',
+      headers: headers,
+      credentials: 'include',
+      body: formData
     });
-    
-    if(!response.ok) throw new Error("Analysis Failed");
-    
+
+    if (!response.ok) {
+      let errDetail = `HTTP ${response.status}`;
+      try {
+        const errJson = await response.json();
+        errDetail = errJson.detail || errJson.message || errDetail;
+      } catch (e) {
+        const txt = await response.text();
+        if (txt) errDetail = txt;
+      }
+      throw new Error(errDetail);
+    }
+
     const data = await response.json();
     clearInterval(interval);
     progressFill.style.width = '100%';
     percentText.textContent = '100%';
-    
+
     setTimeout(() => {
-        renderResults(data);
-    }, 500);
+      render5DResults(data);
+    }, 350);
 
   } catch (err) {
-    alert("Error analyzing resume. Please ensure you are logged in.");
+    clearInterval(interval);
+    console.error("Resume analysis error:", err);
+    alert(`Error analyzing resume: ${err.message}`);
     dropzone.style.display = 'block';
     scanProgress.style.display = 'none';
-    clearInterval(interval);
   }
 }
 
-function renderResults(data) {
+function render5DResults(data) {
   scanProgress.style.display = 'none';
   resultsGrid.classList.add('show');
-  
-  // Update Score
-  const scoreCircle = document.querySelector('.circular-progress');
-  scoreCircle.style.background = `conic-gradient(var(--neon-green) ${data.ats_score}%, #002200 0)`;
-  
-  // This is a hack to update the percentage in the CSS-based circle
-  const style = document.createElement('style');
-  style.innerHTML = `.circular-progress::after { content: '${Math.round(data.ats_score)}%'; }`;
-  document.head.appendChild(style);
 
-  // Update Feedback Cards
-  const feedbackSection = document.querySelector('.feedback-section');
+  const atsScore = Math.round(data.ats_score || 0);
+  const scoreCircle = document.getElementById('circularProgress');
+  const scoreText = document.getElementById('scoreText');
+  const scoreSummary = document.getElementById('scoreSummary');
+
+  let scoreColor = 'var(--neon-green)';
+  if (atsScore < 50) scoreColor = 'var(--neon-magenta)';
+  else if (atsScore < 75) scoreColor = 'var(--neon-cyan)';
+
+  scoreCircle.style.background = `conic-gradient(${scoreColor} ${atsScore}%, #002200 0)`;
+  scoreText.textContent = `${atsScore}%`;
+  scoreText.style.color = scoreColor;
+
+  if (atsScore >= 75) {
+    scoreSummary.textContent = "High Enhancv alignment! Strong quantifiable impact, technical depth and active phrasing.";
+  } else if (atsScore >= 50) {
+    scoreSummary.textContent = "Moderate ATS compatibility. Improve power verbs, add metrics, and fill missing sections.";
+  } else {
+    scoreSummary.textContent = "Low match score. Missing key structural elements and domain keyword density.";
+  }
+
+  // Populate 5D Dimensions Progress Bars
+  const e5d = data.evaluation_5d || {};
+  const dims = e5d.dimensions || {};
+
+  const impact = dims.impact || { score: 50 };
+  const verbs = dims.action_verbs || { score: 60 };
+  const keywords = dims.ats_keywords || { score: 70 };
+  const struct = dims.structure || { score: 80 };
+  const style = dims.style || { score: 90 };
+
+  document.getElementById('dimImpactVal').textContent = `${impact.score}/100`;
+  document.getElementById('dimImpactBar').style.width = `${impact.score}%`;
+
+  document.getElementById('dimVerbVal').textContent = `${verbs.score}/100`;
+  document.getElementById('dimVerbBar').style.width = `${verbs.score}%`;
+
+  document.getElementById('dimKeywordVal').textContent = `${keywords.score}/100`;
+  document.getElementById('dimKeywordBar').style.width = `${keywords.score}%`;
+
+  document.getElementById('dimStructVal').textContent = `${struct.score}/100`;
+  document.getElementById('dimStructBar').style.width = `${struct.score}%`;
+
+  document.getElementById('dimStyleVal').textContent = `${style.score}/100`;
+  document.getElementById('dimStyleBar').style.width = `${style.score}%`;
+
+  // Render Intelligence Feedback Cards
+  const feedbackSection = document.getElementById('feedbackSection');
+  const skillsList = data.extracted_skills || data.skills_detected || [];
+  const jobRoles = data.recommended_job_roles || data.recommended_roles || [];
+  const skillGaps = data.skill_gaps || [];
+  const suggestions = data.improvement_suggestions || [];
+  const weakVerbs = verbs.weak_verbs_found || [];
+  const missingSecs = struct.missing_sections || [];
+
   feedbackSection.innerHTML = `
+    <!-- Weak Verbs & Power Verbs Audit -->
     <div class="feedback-card">
-        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-        <div class="feedback-title">DOMAIN_&_SKILLS</div>
-        <div class="feedback-desc">Detected Domain: <b>${data.domain}</b><br>
-        Extracted Skills: ${data.extracted_skills.join(', ')}</div>
-        <span class="tag tag-pos">ATS_MATCH: ${data.skill_score}/40</span>
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="feedback-title">ACTION_VERBS_&amp;_POWER_PHRASING</div>
+      <div class="feedback-desc">
+        Strong Action Verbs Detected: <b style="color:var(--neon-green)">${verbs.strong_verbs_count || 0}</b><br>
+        ${weakVerbs.length > 0 ? `
+          <div style="margin-top: 8px;">
+            <b style="color:var(--neon-magenta)">Weak Action Verbs Flagged:</b>
+            <div style="margin-top: 4px; display:flex; flex-direction:column; gap:4px;">
+              ${weakVerbs.map(w => `<div style="font-size:11px;">• Found: <span class="tag tag-neg">${w.found}</span> → Recommendation: <span class="tag tag-pos">${w.recommendation}</span></div>`).join('')}
+            </div>
+          </div>
+        ` : '<div style="color:var(--neon-green); margin-top:4px;">✓ Excellent active phrasing — no weak verbs detected.</div>'}
+      </div>
     </div>
 
-    <div class="feedback-card">
+    <!-- Missing Sections / Structure -->
+    ${missingSecs.length > 0 ? `
+      <div class="feedback-card" style="border-left:3px solid var(--neon-magenta);">
         <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-        <div class="feedback-title">CAREER_RECOMMENDATIONS</div>
+        <div class="feedback-title" style="color:var(--neon-magenta)">STRUCTURE_AUDIT_WARNING</div>
         <div class="feedback-desc">
-            <b>Job Roles:</b> ${data.recommended_job_roles.join(', ')}<br>
-            <b>Target Industries:</b> ${data.industry_recommendations.join(', ')}<br>
-            <b>Skill Gaps:</b> ${data.skill_gaps.join(', ') || 'None Detected'}
+          Missing Essential ATS Sections:
+          <div style="margin-top:4px;">
+            ${missingSecs.map(sec => `<span class="tag tag-neg">${sec}</span>`).join('')}
+          </div>
         </div>
+      </div>
+    ` : ''}
+
+    <!-- Domain & Skills Extraction -->
+    <div class="feedback-card">
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="feedback-title">TECHNICAL_SKILLS_&amp;_DOMAIN_ALIGNMENT</div>
+      <div class="feedback-desc">
+        Target Domain Identified: <b style="color:var(--neon-cyan);">${data.domain || 'Software Engineering'}</b><br>
+        Extracted Technical Keywords:
+        <div style="margin-top: 6px;">
+          ${skillsList.map(s => `<span class="tag tag-pos">${s}</span>`).join('')}
+        </div>
+        ${skillGaps.length > 0 ? `
+          <div style="margin-top: 8px;">
+            <b style="color:var(--neon-magenta)">Missing Domain Keywords:</b>
+            <div style="margin-top: 4px;">
+              ${skillGaps.map(g => `<span class="tag tag-neg">${g}</span>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+      </div>
     </div>
 
+    <!-- Suggestions -->
     <div class="feedback-card">
-        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-        <div class="feedback-title">IMPROVEMENT_SUGGESTIONS</div>
-        <div class="feedback-desc">
-            <ul style="padding-left: 20px;">
-                ${data.improvement_suggestions.map(s => `<li>${s}</li>`).join('')}
-            </ul>
-        </div>
-    </div>
-
-    <div class="feedback-card" style="border-top: 2px solid var(--neon-cyan)">
-        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-        <div class="feedback-title" style="color: var(--neon-cyan)">LEARNING_ROADMAP</div>
-        <div class="feedback-desc">
-            ${data.learning_roadmap.map(r => `<div>[STEP ${r.step}] ${r.task}</div>`).join('')}
-        </div>
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="feedback-title">ACTIONABLE_ENHANCV_IMPROVEMENTS</div>
+      <div class="feedback-desc">
+        <ul style="padding-left: 18px; display: flex; flex-direction: column; gap: 6px;">
+          ${suggestions.map(s => `<li>${s}</li>`).join('')}
+        </ul>
+      </div>
     </div>
   `;
+}
+
+function openTailorModal() {
+  document.getElementById('tailorModal').classList.add('show');
+}
+function closeTailorModal() {
+  document.getElementById('tailorModal').classList.remove('show');
+}
+
+async function runJobTailoring() {
+  const jd = document.getElementById('jdInput').value.trim();
+  if (!jd || jd.length < 20) {
+    alert('Please enter a realistic Job Description (at least 20 characters).');
+    return;
+  }
+
+  const resultDiv = document.getElementById('tailorResult');
+  resultDiv.style.display = 'block';
+  resultDiv.innerHTML = '<div style="color:var(--neon-cyan);">>> Analyzing semantic match and missing requirements...</div>';
+
+  try {
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token.replace(/^Bearer\s+/i, '').trim()}`;
+
+    // Synthesize text from extracted skills/domain or standard profile
+    const resumeSummaryText = (document.getElementById('feedbackSection').innerText || 'Software Engineer with experience in Python, FastAPI, React, SQL, Docker');
+
+    const res = await fetch('/api/resume/tailor', {
+      method: 'POST',
+      headers: headers,
+      credentials: 'include',
+      body: JSON.stringify({
+        resume_text: resumeSummaryText,
+        job_description: jd
+      })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    resultDiv.innerHTML = `
+      <div style="background:rgba(0,229,255,0.05); border:1px solid rgba(0,229,255,0.3); padding:14px; margin-top:10px;">
+        <div style="font-size:12px; color:var(--neon-cyan); font-weight:bold; margin-bottom:6px;">
+          MATCH_COVERAGE: ${data.skill_coverage_pct}% | TAILORED_ATS_SCORE: ${data.tailored_ats_score}/100
+        </div>
+        <div style="font-size:11px; color:var(--text-mid); margin-bottom:10px;">
+          ${data.summary_recommendation}
+        </div>
+
+        ${data.missing_skills && data.missing_skills.length > 0 ? `
+          <div style="margin-bottom:10px;">
+            <b style="color:var(--neon-magenta); font-size:11px;">Missing Target Skills:</b>
+            <div style="margin-top:4px;">
+              ${data.missing_skills.map(s => `<span class="tag tag-neg">${s}</span>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        ${data.bullet_rewrites && data.bullet_rewrites.length > 0 ? `
+          <div>
+            <b style="color:var(--neon-green); font-size:11px;">Recommended Bullet Rewrites:</b>
+            ${data.bullet_rewrites.map(b => `
+              <div style="background:#000; border:1px dashed rgba(0,255,65,0.3); padding:8px; margin-top:6px; font-size:11px;">
+                <div style="color:var(--text-dim); text-decoration:line-through;">❌ ${b.original_bullet}</div>
+                <div style="color:var(--neon-green); margin-top:2px;">✔ ${b.optimized_bullet}</div>
+                <div style="color:var(--neon-cyan); font-size:10px; margin-top:2px;">> ${b.reason}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `;
+
+  } catch (err) {
+    resultDiv.innerHTML = `<div style="color:var(--neon-magenta);">Error: ${err.message}</div>`;
+  }
 }
 </script>
 </body>

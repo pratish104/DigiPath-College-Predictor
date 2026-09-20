@@ -14,14 +14,22 @@ class User(Base):
     full_name = Column(String(120), nullable=False, index=True)
     email = Column(String(255), nullable=False, unique=True, index=True)
     hashed_password = Column(String(512), nullable=False)
-    role = Column(String(20), nullable=False, default="USER", index=True)
+    role = Column(String(30), nullable=False, default="USER", index=True)
+    admin_level = Column(Integer, nullable=False, default=0)
+    credits_balance = Column(Integer, nullable=False, default=50)
     career_interests = Column(JSON, default=list)
+    # Profile settings stored as JSON to avoid MySQL migration risk.
+    # Schema: {roll_number, preferred_branch, category, target_city,
+    #          saved_colleges: [...], saved_jobs: [...]}
+    profile_settings = Column(JSON, default=dict)
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     predictions = relationship("Prediction", back_populates="user")
     resume_analyses = relationship("ResumeAnalysis", back_populates="user")
     scam_reports = relationship("ScamReport", back_populates="user")
     chat_histories = relationship("ChatHistory", back_populates="user")
     roadmaps = relationship("Roadmap", back_populates="user")
+    transactions = relationship("Transaction", back_populates="user", cascade="all, delete-orphan")
+    error_logs = relationship("SystemErrorLog", back_populates="user")
 
 
 class Institute(Base):
@@ -124,3 +132,30 @@ class Roadmap(Base):
     steps = Column(JSON)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     user = relationship("User", back_populates="roadmaps")
+
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    order_id = Column(String(100), unique=True, nullable=False, index=True)
+    amount = Column(Float, default=50.0, nullable=False)
+    credits_added = Column(Integer, default=300, nullable=False)
+    payment_status = Column(String(32), default="PENDING", nullable=False, index=True)  # PENDING, PAID, FAILED
+    cf_payment_id = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+    user = relationship("User", back_populates="transactions")
+
+
+class SystemErrorLog(Base):
+    __tablename__ = "system_error_logs"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
+    module_name = Column(String(64), nullable=False, index=True)  # PREDICTOR, CHAT_RAG, CASHFREE_PAYMENT
+    error_message = Column(Text, nullable=False)
+    stack_trace = Column(Text, nullable=True)
+    status = Column(String(32), default="UNRESOLVED", nullable=False, index=True)  # UNRESOLVED, RESOLVED
+    timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+    user = relationship("User", back_populates="error_logs")

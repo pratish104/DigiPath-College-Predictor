@@ -9,18 +9,18 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --neon-green: #00ff41;
+    --neon-green: #00ff66;
     --neon-cyan: #00e5ff;
-    --neon-magenta: #ff00ff;
+    --neon-magenta: #ff0055;
     --neon-amber: #ffb300;
-    --bg-dark: #000000;
-    --bg-panel: #050f05;
-    --bg-card: #020a02;
-    --border-green: #00ff4133;
-    --border-green-solid: #00ff41;
-    --text-dim: #006620;
-    --text-mid: #00aa2b;
-    --scan-line: rgba(0, 255, 65, 0.03);
+    --bg-dark: #0a0e14;
+    --bg-panel: #0d121b;
+    --bg-card: #080c12;
+    --border-green: rgba(0, 255, 102, 0.2);
+    --border-green-solid: #00ff66;
+    --text-dim: #008833;
+    --text-mid: #00cc55;
+    --scan-line: rgba(0, 255, 102, 0.03);
     --sidebar-width: 260px;
   }
 
@@ -48,20 +48,19 @@
     z-index: 9999;
   }
 
-  /* grid bg */
+  /* grid background */
   body::after {
     content: '';
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
+      linear-gradient(rgba(0,255,102,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,102,0.04) 1px, transparent 1px);
+    background-size: 36px 36px;
     pointer-events: none;
     z-index: 0;
   }
 
-  /* ─── LAYOUT ─── */
   .app-container {
     display: flex;
     height: 100vh;
@@ -70,7 +69,7 @@
     z-index: 1;
   }
 
-  /* ─── SIDEBAR ─── */
+  /* SIDEBAR */
   .sidebar {
     width: var(--sidebar-width);
     background: var(--bg-panel);
@@ -92,7 +91,7 @@
     font-weight: 900;
     color: var(--neon-green);
     letter-spacing: 0.1em;
-    text-shadow: 0 0 10px rgba(0,255,65,0.5);
+    text-shadow: 0 0 12px rgba(0,255,102,0.6);
   }
 
   .nav-list {
@@ -115,26 +114,26 @@
   }
 
   .nav-item:hover {
-    background: rgba(0,255,65,0.05);
+    background: rgba(0,255,102,0.05);
     color: var(--neon-green);
   }
 
   .nav-item.active {
-    background: rgba(0,255,65,0.1);
+    background: rgba(0,255,102,0.1);
     color: var(--neon-green);
     border-left-color: var(--neon-green);
-    box-shadow: inset 5px 0 15px rgba(0,255,65,0.05);
+    box-shadow: inset 5px 0 15px rgba(0,255,102,0.05);
   }
 
   .nav-icon { font-size: 16px; width: 20px; text-align: center; }
 
-  /* ─── MAIN CONTENT ─── */
+  /* MAIN CONTENT */
   .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: rgba(0,0,0,0.6);
+    background: rgba(10,14,20,0.85);
   }
 
   .header {
@@ -144,44 +143,63 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 32px;
-    background: rgba(5, 15, 5, 0.8);
+    background: rgba(13, 18, 27, 0.9);
     backdrop-filter: blur(10px);
     z-index: 10;
   }
 
-  /* ─── FILTERS BAR ─── */
+  /* FILTERS BAR */
   .filters-bar {
-    padding: 20px 32px;
+    padding: 16px 32px;
     border-bottom: 1px solid var(--border-green);
     display: flex;
-    gap: 20px;
+    gap: 16px;
     align-items: center;
     flex-wrap: wrap;
+    background: rgba(8, 12, 18, 0.95);
   }
 
   .search-input {
     flex: 1;
-    min-width: 300px;
-    background: #000;
-    border: 1px solid #00ff4140;
+    min-width: 280px;
+    background: #05080c;
+    border: 1px solid var(--border-green);
     color: var(--neon-green);
     font-family: 'Share Tech Mono', monospace;
-    padding: 10px 15px;
+    padding: 10px 14px;
     outline: none;
+    transition: all 0.2s;
   }
-  .search-input:focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0,255,65,0.2); }
+  .search-input:focus { border-color: var(--neon-green); box-shadow: 0 0 12px rgba(0,255,102,0.25); }
 
   .filter-select {
-    background: #000;
-    border: 1px solid #00ff4140;
+    background: #05080c;
+    border: 1px solid var(--border-green);
     color: var(--neon-green);
     font-family: 'Share Tech Mono', monospace;
-    padding: 10px;
+    padding: 10px 12px;
     outline: none;
-    min-width: 150px;
+    min-width: 140px;
   }
 
-  /* ─── INSTITUTE LIST ─── */
+  .query-btn {
+    background: transparent;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .query-btn:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon-green);
+  }
+
+  /* INSTITUTE LIST */
   .content-scroll {
     flex: 1;
     overflow-y: auto;
@@ -190,48 +208,52 @@
 
   .institute-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
     gap: 24px;
   }
 
   .institute-card {
     background: var(--bg-card);
     border: 1px solid var(--border-green);
+    border-top: 2px solid var(--neon-green);
     padding: 24px;
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 14px;
     transition: all 0.2s;
   }
   .institute-card:hover {
     border-color: var(--neon-green);
     transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(0,255,65,0.1);
+    box-shadow: 0 0 20px rgba(0,255,102,0.15);
   }
 
-  .inst-header { display: flex; justify-content: space-between; align-items: flex-start; }
-  .inst-name { font-family: 'Orbitron', sans-serif; font-size: 16px; color: var(--neon-green); }
-  .inst-dte { font-size: 10px; color: var(--text-dim); border: 1px solid var(--text-dim); padding: 2px 5px; }
+  .inst-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .inst-name { font-family: 'Orbitron', sans-serif; font-size: 15px; color: var(--neon-green); line-height: 1.3; }
+  .inst-dte { font-size: 11px; color: var(--neon-cyan); border: 1px solid var(--neon-cyan); padding: 2px 6px; white-space: nowrap; }
 
-  .inst-loc { font-size: 12px; color: var(--neon-cyan); }
+  .inst-loc { font-size: 12px; color: var(--text-mid); }
 
   .inst-stats {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    background: rgba(0,255,65,0.05);
-    padding: 12px;
+    gap: 8px;
+    background: rgba(0,255,102,0.04);
+    border: 1px solid rgba(0,255,102,0.1);
+    padding: 10px;
   }
   .inst-stat-item { text-align: center; }
-  .stat-label { font-size: 9px; color: var(--text-dim); margin-bottom: 4px; }
-  .stat-val { font-size: 14px; color: var(--neon-green); font-weight: bold; }
+  .stat-label { font-size: 9px; color: var(--text-dim); margin-bottom: 2px; }
+  .stat-val { font-size: 13px; color: var(--neon-green); font-weight: bold; }
 
   .inst-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0,255,102,0.1);
   }
 
   .view-btn {
@@ -239,32 +261,75 @@
     border: 1px solid var(--neon-green);
     color: var(--neon-green);
     font-family: 'Share Tech Mono', monospace;
-    padding: 8px 16px;
+    padding: 6px 14px;
     font-size: 11px;
     cursor: pointer;
     transition: all 0.2s;
   }
   .view-btn:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 10px var(--neon-green); }
 
-  /* corner decorations */
+  /* MODAL DRAWER */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .modal-dialog {
+    background: #080c12;
+    border: 1px solid var(--neon-green);
+    box-shadow: 0 0 30px rgba(0,255,102,0.25);
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 32px;
+    position: relative;
+    animation: modalPop 0.25s ease-out;
+  }
+  @keyframes modalPop {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: transparent;
+    border: 1px solid var(--neon-magenta);
+    color: var(--neon-magenta);
+    font-size: 16px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .modal-close-btn:hover { background: var(--neon-magenta); color: #fff; }
+
+  /* CORNERS */
   .corner {
     position: absolute;
     width: 8px; height: 8px;
     border-color: var(--neon-green);
     border-style: solid;
-    opacity: 0.5;
+    opacity: 0.6;
   }
   .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
   .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
   .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
   .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
 
-  /* ─── SCROLLBAR ─── */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg-dark); }
-  ::-webkit-scrollbar-thumb { background: var(--border-green); }
-
+  ::-webkit-scrollbar-thumb { background: rgba(0,255,102,0.3); }
 </style>
+<link rel="stylesheet" href="/static/css/digipath-shell.css">
 </head>
 <body>
 
@@ -287,6 +352,10 @@
         <span class="nav-icon">◉</span>
         <span>INSTITUTES</span>
       </a>
+      <a href="/job-recommender" class="nav-item">
+        <span class="nav-icon">▤</span>
+        <span>JOB_MATCH</span>
+      </a>
       <a href="/resume-analyzer" class="nav-item">
         <span class="nav-icon">▦</span>
         <span>RESUME_AI</span>
@@ -294,6 +363,10 @@
       <a href="/roadmap" class="nav-item">
         <span class="nav-icon">➹</span>
         <span>ROADMAP</span>
+      </a>
+      <a href="/company-verification" class="nav-item">
+        <span class="nav-icon">✓</span>
+        <span>VERIFY_CORP</span>
       </a>
       <a href="/scam-detector" class="nav-item">
         <span class="nav-icon">⚠</span>
@@ -305,133 +378,61 @@
   <!-- MAIN -->
   <main class="main-content">
     <header class="header">
-      <div style="font-size: 14px; color: var(--neon-cyan)" id="clock"></div>
-      <div style="font-size: 11px; color: var(--text-mid)">DB_VERSION: 2026.06.01_STABLE</div>
+      <div style="font-size: 14px; color: var(--neon-cyan)" id="clock">&gt; TIME: --:--:--</div>
+      <div style="font-size: 11px; color: var(--text-mid)">DB_STATUS: LIVE // MAHARASHTRA_CAP</div>
     </header>
 
     <div class="filters-bar">
-      <input type="text" class="search-input" placeholder="SEARCH_BY_NAME_OR_DTE_CODE..." id="instSearch">
+      <input type="text" class="search-input" placeholder="SEARCH_BY_NAME_OR_DTE_CODE (e.g. 03175, VJTI)..." id="instSearch">
       <select class="filter-select" id="cityFilter">
         <option value="ALL">ALL_CITIES</option>
-        <option value="MUMBAI">MUMBAI</option>
-        <option value="PUNE">PUNE</option>
-        <option value="NAGPUR">NAGPUR</option>
       </select>
       <select class="filter-select" id="typeFilter">
-        <option value="ALL">ALL_TYPES</option>
-        <option value="GOVERNMENT">GOVERNMENT</option>
-        <option value="PRIVATE">PRIVATE</option>
-        <option value="AUTONOMOUS">AUTONOMOUS</option>
+        <option value="ALL">ALL_STATUSES</option>
       </select>
-      <div style="font-size: 11px; color: var(--text-dim); margin-left: auto;">TOTAL_RECORDS: 414</div>
+      <button class="query-btn" id="searchBtn">QUERY</button>
+      <div style="font-size: 11px; color: var(--text-dim); margin-left: auto;" id="matchCount">LOADING...</div>
     </div>
 
     <div class="content-scroll">
       <div class="institute-grid" id="instGrid">
-        <!-- Institute 1 -->
-        <div class="institute-card">
-          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-          <div class="inst-header">
-            <h3 class="inst-name">COEP Technological University</h3>
-            <span class="inst-dte">DTE: 6006</span>
-          </div>
-          <div class="inst-loc">SHIVAJINAGAR, PUNE | Autonomous (Govt.)</div>
-          <div class="inst-stats">
-            <div class="inst-stat-item">
-              <div class="stat-label">AVG_PACKAGE</div>
-              <div class="stat-val">11.4 LPA</div>
-            </div>
-            <div class="inst-stat-item">
-              <div class="stat-label">PLACEMENT</div>
-              <div class="stat-val">94%</div>
-            </div>
-            <div class="inst-stat-item">
-              <div class="stat-label">ESTD</div>
-              <div class="stat-val">1854</div>
-            </div>
-          </div>
-          <div class="inst-actions">
-            <span style="font-size: 10px; color: var(--neon-magenta);">AI_PREDICTION: AVAILABLE</span>
-            <button class="view-btn">VIEW_DETAILS &gt;</button>
-          </div>
-        </div>
-
-        <!-- Institute 2 -->
-        <div class="institute-card">
-          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-          <div class="inst-header">
-            <h3 class="inst-name">Veermata Jijabai Technological Institute</h3>
-            <span class="inst-dte">DTE: 3012</span>
-          </div>
-          <div class="inst-loc">MATUNGA, MUMBAI | Autonomous (Govt.)</div>
-          <div class="inst-stats">
-            <div class="inst-stat-item">
-              <div class="stat-label">AVG_PACKAGE</div>
-              <div class="stat-val">12.2 LPA</div>
-            </div>
-            <div class="inst-stat-item">
-              <div class="stat-label">PLACEMENT</div>
-              <div class="stat-val">96%</div>
-            </div>
-            <div class="inst-stat-item">
-              <div class="stat-label">ESTD</div>
-              <div class="stat-val">1887</div>
-            </div>
-          </div>
-          <div class="inst-actions">
-            <span style="font-size: 10px; color: var(--neon-magenta);">AI_PREDICTION: AVAILABLE</span>
-            <button class="view-btn">VIEW_DETAILS &gt;</button>
-          </div>
-        </div>
-
-        <!-- Institute 3 -->
-        <div class="institute-card">
-          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-          <div class="inst-header">
-            <h3 class="inst-name">PICT, Pune</h3>
-            <span class="inst-dte">DTE: 6271</span>
-          </div>
-          <div class="inst-loc">DHANKAWADI, PUNE | Private (Aided)</div>
-          <div class="inst-stats">
-            <div class="inst-stat-item">
-              <div class="stat-label">AVG_PACKAGE</div>
-              <div class="stat-val">10.8 LPA</div>
-            </div>
-            <div class="inst-stat-item">
-              <div class="stat-label">PLACEMENT</div>
-              <div class="stat-val">98%</div>
-            </div>
-            <div class="inst-stat-item">
-              <div class="stat-label">ESTD</div>
-              <div class="stat-val">1983</div>
-            </div>
-          </div>
-          <div class="inst-actions">
-            <span style="font-size: 10px; color: var(--neon-magenta);">AI_PREDICTION: AVAILABLE</span>
-            <button class="view-btn">VIEW_DETAILS &gt;</button>
-          </div>
-        </div>
+        <!-- Cards populated dynamically via static/js/app.js / API -->
       </div>
     </div>
   </main>
 </div>
 
+<!-- MODAL DRAWER FOR DETAILED INSTITUTE INTELLIGENCE -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-dialog">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <button class="modal-close-btn" onclick="closeDetailModal()">✕ CLOSE</button>
+    <div id="modalContent">
+      <!-- Injected by app.js -->
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/app.js"></script>
+<script src="/static/js/digipath-shell.js"></script>
 <script>
-// Clock
 function updateClock(){
   const now = new Date();
-  document.getElementById('clock').textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
+  const el = document.getElementById('clock');
+  if(el) el.textContent = '> TIME: ' + now.toLocaleTimeString('en-IN',{hour12:false});
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-// Mock Search Logic
-document.getElementById('instSearch').addEventListener('input', (e) => {
-  console.log('Searching for:', e.target.value);
-});
+function closeDetailModal() {
+  const m = document.getElementById('detailModal');
+  if (m) m.style.display = 'none';
+}
+window.onclick = function(event) {
+  const m = document.getElementById('detailModal');
+  if (event.target === m) m.style.display = 'none';
+};
 </script>
 </body>
 </html>
