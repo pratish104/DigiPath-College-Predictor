@@ -35,6 +35,8 @@
   .app-container {
     display: flex;
     min-height: 100vh;
+    /* Natural vertical page scroll — no height cap, no overflow clamp */
+    align-items: flex-start;
   }
 
   /* ─── SIDEBAR ─── */
@@ -44,6 +46,7 @@
     border-right: 1px solid var(--border-green);
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
   }
   .sidebar-header {
     padding: 20px;
@@ -456,7 +459,20 @@
           <div class="form-group">
             <label class="form-label">RESERVATION CATEGORY</label>
             <select id="category_select" class="form-input w-full p-2.5 rounded text-sm mono cyber-input">
-                <option value="OPEN">Open</option>
+                <option value="OPEN">Open (GOPEN / LOPEN for women)</option>
+                <option value="SC">SC — Scheduled Caste (GSC / LSC for women)</option>
+                <option value="ST">ST — Scheduled Tribe (GST / LST for women)</option>
+                <option value="OBC">OBC — Other Backward Class (GOBC / LOBC for women)</option>
+                <option value="VJ_DT">VJ / DT — Vimukta Jati &amp; Denotified Tribe (GVJ / LVJ for women)</option>
+                <option value="NT1">NT-B / NT-1 — Nomadic Tribe B (GNT1 / LNT1 for women)</option>
+                <option value="NT2">NT-C / NT-2 — Nomadic Tribe C (GNT2 / LNT2 for women)</option>
+                <option value="NT3">NT-D / NT-3 — Nomadic Tribe D (GNT3 / LNT3 for women)</option>
+                <option value="SEBC">SEBC — Socially &amp; Educationally Backward Class (GSEBC / LSEBC for women)</option>
+                <option value="EWS">EWS — Economically Weaker Section</option>
+                <option value="TFWS">TFWS — Tuition Fee Waiver Scheme</option>
+                <option value="DEF">DEF — Defence Reservation (uses Open/OBC/SC CAP records with DEF prefix)</option>
+                <option value="PWD">PWD — Persons with Disability (uses category CAP records with PWD prefix)</option>
+                <option value="MI">MI — Minority (Religious / Linguistic)</option>
             </select>
             <p style="margin-top:6px;color:var(--text-mid);font-size:10px;line-height:1.45;">Your category can be considered against applicable Open, Reserved and (where eligible) Ladies or special CAP seat records according to Maharashtra CAP rules.</p>
           </div>
@@ -799,7 +815,7 @@ function createCardHTML(item, rankNum) {
     const diffVal = item.score_diff != null ? Number(item.score_diff) : (Number(scoreVal) - Number(prevVal));
     const diffText = Number.isFinite(diffVal) ? `${diffVal >= 0 ? '+' : ''}${diffVal.toFixed(2)}` : 'N/A';
     const accentColor = item.accent_color || (item.status === 'SAFE' ? '#00FF66' : (item.status === 'MODERATE' ? '#FFB300' : '#FF3366'));
-    const matchLabel = item.status === 'SAFE' ? 'SAFE — HIGHER HISTORICAL ADMISSION CHANCE' : (item.status === 'MODERATE' ? 'MODERATE — COMPETITIVE ADMISSION CHANCE' : 'DREAM — MORE COMPETITIVE / LOWER HISTORICAL CHANCE');
+    const matchLabel = item.status === 'SAFE' ? 'SAFE' : (item.status === 'MODERATE' ? 'MODERATE' : 'DREAM');
 
     return `
         <div class="result-card" style="border-color: #064e3b;" onmouseenter="this.style.borderColor='${accentColor}'" onmouseleave="this.style.borderColor='#064e3b'">
@@ -935,7 +951,7 @@ function renderResults(data) {
     if (predictionState.target_zone.length > 0) {
         html += `
             <div class="zone-header" style="margin-top: 26px; border-left: 3px solid #FFB300; padding-left: 14px; margin-bottom: 14px;">
-                <div style="color: #FFB300; font-family: 'Orbitron', sans-serif; font-size: 15px; letter-spacing: 1.5px; font-weight: 700;">[ MODERATE — COMPETITIVE ADMISSION CHANCE ] (${predictionState.target_zone.length})</div>
+                <div style="color: #FFB300; font-family: 'Orbitron', sans-serif; font-size: 15px; letter-spacing: 1.5px; font-weight: 700;">[ MODERATE ] (${predictionState.target_zone.length})</div>
             </div>
             <div id="target_cards" class="zone-container" style="border: 1px solid #FFB30044; box-shadow: 0 0 14px #FFB30022 inset; padding: 4px 4px 0 4px; margin-bottom: 6px;"></div>
             <div id="target_pagination" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 11px; font-family: 'Share Tech Mono', monospace;"></div>
@@ -946,7 +962,7 @@ function renderResults(data) {
     if (predictionState.safe_zone.length > 0) {
         html += `
             <div class="zone-header" style="margin-top: 26px; border-left: 3px solid #00FF66; padding-left: 14px; margin-bottom: 14px;">
-                <div style="color: #00FF66; font-family: 'Orbitron', sans-serif; font-size: 15px; letter-spacing: 1.5px; font-weight: 700;">[ SAFE — HIGHER HISTORICAL ADMISSION CHANCE ] (${predictionState.safe_zone.length})</div>
+                <div style="color: #00FF66; font-family: 'Orbitron', sans-serif; font-size: 15px; letter-spacing: 1.5px; font-weight: 700;">[ SAFE ] (${predictionState.safe_zone.length})</div>
             </div>
             <div id="safe_cards" class="zone-container" style="border: 1px solid #00FF6644; box-shadow: 0 0 14px #00FF6622 inset; padding: 4px 4px 0 4px; margin-bottom: 6px;"></div>
             <div id="safe_pagination" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 11px; font-family: 'Share Tech Mono', monospace;"></div>
@@ -957,7 +973,7 @@ function renderResults(data) {
     if (predictionState.dream_zone.length > 0) {
         html += `
             <div class="zone-header" style="margin-top: 26px; border-left: 3px solid #FF3366; padding-left: 14px; margin-bottom: 14px;">
-                <div style="color: #FF3366; font-family: 'Orbitron', sans-serif; font-size: 15px; letter-spacing: 1.5px; font-weight: 700;">[ DREAM — MORE COMPETITIVE / LOWER HISTORICAL CHANCE ] (${predictionState.dream_zone.length})</div>
+                <div style="color: #FF3366; font-family: 'Orbitron', sans-serif; font-size: 15px; letter-spacing: 1.5px; font-weight: 700;">[ DREAM ] (${predictionState.dream_zone.length})</div>
             </div>
             <div id="dream_cards" class="zone-container" style="border: 1px solid #FF336644; box-shadow: 0 0 14px #FF336622 inset; padding: 4px 4px 0 4px; margin-bottom: 6px;"></div>
             <div id="dream_pagination" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 11px; font-family: 'Share Tech Mono', monospace;"></div>
