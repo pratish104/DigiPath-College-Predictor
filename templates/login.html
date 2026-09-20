@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+  (function(){try{var t=localStorage.getItem('digipath_theme')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.setAttribute('data-theme',d?'dark':'light');document.documentElement.setAttribute('data-theme-setting',t);document.documentElement.style.colorScheme=d?'dark':'light';}catch(e){}})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DIGIPATH_AI // AUTHENTICATION_TERMINAL</title>
@@ -196,6 +199,7 @@
     background: rgba(255,0,85,0.05); text-align: center;
   }
 </style>
+<link rel="stylesheet" href="/static/css/digipath-shell.css">
 </head>
 <body>
 
@@ -488,5 +492,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+<script src="/static/js/digipath-shell.js"></script>
 </body>
 </html>
