@@ -19,6 +19,19 @@ DigiPath is shaped by the implementation challenges visible in the repository:
 
 The application therefore remains a server-rendered monolith: one FastAPI process serves pages, APIs, static assets, datasets, and feature services. Its route, service, predictor, and data-loader boundaries keep that deployment model manageable.
 
+## Project evolution
+
+An earlier DigiPath version was built to address the practical difficulty of comparing college-selection and admission information. During 2025, some friends and their contacts used that earlier version while considering college-selection and admission decisions. Feedback from the project guide and teachers, including a teacher from another college, helped identify where the experience and scope could improve.
+
+This repository is a substantial redesign and expansion of that earlier work. The 2025 usage describes the earlier version, not the redesigned platform in this repository. The current design broadens the original admission decision-support focus into institute exploration, resume workflows, job recommendations, scam screening, profiles, and an in-app assistant. Its intended student benefit is to reduce fragmentation between admission exploration and related career-readiness workflows by giving students one place to explore historical admission data, institutes, resumes, jobs, and suspicious-offer screening.
+
+### Recognition and academic validation
+
+- DigiPath received 3rd prize in a project presentation.
+- The related implementation/paper presentation received 1st prize in an IEEE paper presentation/implementation presentation context.
+
+These are project milestones; they do not establish predictor accuracy, current usage, or external endorsement of the redesigned repository.
+
 ## Modules
 
 | Module | Current implementation | Status |
@@ -39,7 +52,7 @@ The application therefore remains a server-rendered monolith: one FastAPI proces
 
 ```mermaid
 flowchart LR
-  B[Browser] --> P[FastAPI page routes\nJinja templates]
+  B[Browser] --> P[FastAPI page routes<br/>Jinja templates]
   B --> A[FastAPI JSON APIs]
   P --> S[Static CSS and JavaScript]
   A --> R[Feature routers and services]
@@ -162,8 +175,10 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Ke
 app.py                 Application assembly, lifecycle, page routes, and middleware
 *_routes.py            API route groups and HTTP contracts
 *_service.py           Feature/domain services
-cet_predictor.py       CET and Diploma/DSE prediction classes
 data_loader.py         Admission-data manifest, normalization, and filtering
+cet_predictor.py       CET predictor and category/seat-code filtering
+diploma_predictor.py   Diploma/DSE predictor support
+prediction_service.py  Authenticated prediction persistence support
 data/                  Bundled admission, institute, job, and supporting datasets
 models.py              SQLAlchemy persistence models
 database.py            Engine/session lifecycle and startup schema work
