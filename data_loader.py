@@ -307,7 +307,7 @@ def _clean_and_resolve_city(
         return _DISTRICT_LOWER_MAP[s]
 
     # 4. Search for district keyword in city string
-    for dist in MAHARASHTRA_DISTRICTS:
+    for dist in sorted(MAHARASHTRA_DISTRICTS, key=len, reverse=True):
         if re.search(r"\b" + re.escape(dist.lower()) + r"\b", s):
             return dist
 
@@ -316,16 +316,10 @@ def _clean_and_resolve_city(
         if len(town) >= 4 and re.search(r"\b" + re.escape(town) + r"\b", s):
             return dist
 
-    # 6. Fallback to institute metadata via DTE code
-    if code_city_map and college_code:
-        zcode = str(college_code).strip().zfill(5)
-        inst_city = code_city_map.get(zcode)
-        if inst_city and inst_city in _MAHA_DISTRICT_SET:
-            return "Dharashiv" if inst_city == "Osmanabad" else inst_city
-
-    # 7. Fallback: search college name for district or town
+    # 6. The official college heading is more specific than registry data
+    # when the same DTE institute occurs in multiple historical datasets.
     cname = str(college_name or "").lower()
-    for dist in MAHARASHTRA_DISTRICTS:
+    for dist in sorted(MAHARASHTRA_DISTRICTS, key=len, reverse=True):
         if re.search(r"\b" + re.escape(dist.lower()) + r"\b", cname):
             return dist
 
@@ -333,12 +327,19 @@ def _clean_and_resolve_city(
         if len(town) >= 4 and re.search(r"\b" + re.escape(town) + r"\b", cname):
             return dist
 
+    # 7. Fall back to institute metadata only when neither the published city
+    # nor college title provides a location.
+    if code_city_map and college_code:
+        zcode = str(college_code).strip().zfill(5)
+        inst_city = code_city_map.get(zcode)
+        if inst_city and inst_city in _MAHA_DISTRICT_SET:
+            return "Dharashiv" if inst_city == "Osmanabad" else inst_city
+
     return None
 
 
 # ── 2. BRANCH NOISE CLEANING & CANONICAL MAPPING ──────────────────────────────
 _NOISE_TOKEN_PATTERNS: tuple[re.Pattern[str], ...] = (
-    re.compile(r"\b5G\b", re.I),
     re.compile(r"\b\d{6}\b"),
     re.compile(r"\b(?:1st|2nd)\s+Shift\b", re.I),
     re.compile(r"\bShift-I+\b", re.I),
@@ -801,7 +802,12 @@ class DataLoader:
             )
             for c_val, name_val, code_val in zip(city_source, college_name, college_code)
         ]
-        city_series = pd.Series(cleaned_cities, index=frame.index, dtype="string")
+        # A published CAP row can be valid even when the source does not state
+        # an unambiguous district and no local metadata exists. Retain that
+        # admission evidence instead of silently excluding its college from
+        # all-pathway results; city-specific filters continue to use only the
+        # recognized Maharashtra districts.
+        city_series = pd.Series(cleaned_cities, index=frame.index, dtype="string").fillna("Unknown")
 
         # ── 2. Branch noise cleaning only (AIML/AIDS/CSE/IT/EXTC preserved) ──
         branch_source = frame[COL_BRANCH]
@@ -850,8 +856,8 @@ class DataLoader:
         )
 
         # Retention
-        valid_city_mask = normalized[COL_CITY].isin(_MAHA_DISTRICT_SET)
-        valid_branch_mask = normalized[COL_BRANCH].notna() & (normalized[COL_BRANCH].str.len() > 2)
+        valid_city_mask = normalized[COL_CITY].notna()
+        valid_branch_mask = normalized[COL_BRANCH].notna() & (normalized[COL_BRANCH].str.len() > 1)
         valid_rows = valid_cutoff & valid_city_mask & valid_branch_mask & normalized[[COL_COLLEGE_CODE, COL_COLLEGE_NAME]].notna().all(axis=1)
 
         cleaned_df = normalized.loc[valid_rows].copy()
