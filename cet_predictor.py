@@ -448,6 +448,46 @@ def _adjacent_cities(city_name: str) -> list[str]:
     return [city_name]
 
 
+def _progressively_expand_regions(frame: pd.DataFrame, city_name: str) -> tuple[pd.DataFrame, list[str]]:
+    """Build an ordered, deduplicated nearby-city pool from configured links.
+
+    The configured adjacency list is the first nearby ring and is kept intact.
+    If that ring is still below the existing fallback minimum, continue through
+    the next graph ring.  This preserves the project's verified proximity
+    ordering without using distant cities merely to inflate the result count.
+    """
+    selected: list[str] = []
+    queued: list[str] = [city_name]
+    seen: set[str] = set()
+
+    while queued:
+        current_ring = queued
+        queued = []
+        for candidate in current_ring:
+            key = candidate.casefold()
+            if key in seen:
+                continue
+            seen.add(key)
+            selected.append(candidate)
+
+        # Queue only relationships present in the existing configuration for
+        # the next ring; do not stop part-way through the current ring.
+        for candidate in current_ring:
+            for neighbor in _adjacent_cities(candidate):
+                key = neighbor.casefold()
+                if key not in seen and all(key != queued_city.casefold() for queued_city in queued):
+                    queued.append(neighbor)
+
+        expanded = frame.loc[frame[COL_CITY].isin(selected)]
+        # REGIONAL_FALLBACK_MIN is the existing product threshold.  Once the
+        # selected city plus the nearest configured locations meet it, stop;
+        # expanding farther would add distant colleges merely for quantity.
+        if expanded[COL_COLLEGE_CODE].nunique() >= REGIONAL_FALLBACK_MIN:
+            return expanded, selected
+
+    return frame.loc[frame[COL_CITY].isin(selected)], selected
+
+
 def _score_and_serialize(
     data_loader: DataLoader,
     frame: pd.DataFrame,
@@ -680,10 +720,9 @@ def _execute_prediction_engine(
         exact_college_count = city_frame[COL_COLLEGE_CODE].nunique()
         result_cities = [resolved_city]
         if exact_college_count < REGIONAL_FALLBACK_MIN:
-            nearby_cities = _adjacent_cities(resolved_city)
-            expanded_frame = frame.loc[frame[COL_CITY].isin(nearby_cities)]
-            # Mark an expansion only when the mapping genuinely widens the
-            # result set; an unmapped city must stay an exact-city search.
+            expanded_frame, nearby_cities = _progressively_expand_regions(frame, resolved_city)
+            # Mark an expansion only when configured neighbors genuinely
+            # widen the scope; an unmapped city remains an exact-city search.
             if len(nearby_cities) > 1:
                 city_frame = expanded_frame
                 regional_fallback = True
