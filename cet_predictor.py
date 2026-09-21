@@ -325,10 +325,12 @@ def _empty_response(pathway: str, **extra: Any) -> dict[str, Any]:
     payload = {
         "pathway": pathway,
         "total_found": 0,
+        "unique_college_count": 0,
         "safe_zone": [],
         "target_zone": [],
         "dream_zone": [],
         "results": [],
+        "recommendations": [],
         "status": "success",
         "regional_fallback": False,
     }
@@ -672,6 +674,7 @@ def _execute_prediction_engine(
         # representative historical record is selected for each card.  CAP
         # rows are retained unchanged by the serializer below.
         exact_college_count = city_frame[COL_COLLEGE_CODE].nunique()
+        result_cities = [resolved_city]
         if exact_college_count < REGIONAL_FALLBACK_MIN:
             nearby_cities = _adjacent_cities(resolved_city)
             expanded_frame = frame.loc[frame[COL_CITY].isin(nearby_cities)]
@@ -680,9 +683,17 @@ def _execute_prediction_engine(
             if len(nearby_cities) > 1:
                 city_frame = expanded_frame
                 regional_fallback = True
-        return _score_and_serialize(
+                result_cities = nearby_cities
+        response = _score_and_serialize(
             data_loader, city_frame, candidate_score, clean_pathway, regional_fallback, category
         )
+        # Keep the geographic scope alongside the serialized recommendation
+        # list.  This makes it explicit to every API/UI consumer that cards
+        # came from the expanded frame, not the original exact-city subset.
+        response["exact_city_unique_college_count"] = int(exact_college_count)
+        response["expanded_unique_college_count"] = int(response["unique_college_count"])
+        response["result_cities"] = result_cities
+        return response
 
     return _score_and_serialize(data_loader, frame, candidate_score, clean_pathway, regional_fallback, category)
 

@@ -1,11 +1,19 @@
 """Regression checks for CSV-backed CAP category interpretation."""
 
 import unittest
+from pathlib import Path
 
 from pydantic import ValidationError
 
-from cet_predictor import CETPredictor, DiplomaPredictor, PredictRequest, _match_category_or_seat_code
-from data_loader import COL_CITY, COL_ROUND, COL_SEAT_CODE, DataLoader
+from cet_predictor import (
+    CETPredictor,
+    DiplomaPredictor,
+    PredictRequest,
+    _adjacent_cities,
+    _match_branch,
+    _match_category_or_seat_code,
+)
+from data_loader import COL_CITY, COL_COLLEGE_CODE, COL_ROUND, COL_SEAT_CODE, DataLoader
 
 
 class PredictorCategoryTests(unittest.TestCase):
@@ -149,6 +157,44 @@ class PredictorCategoryTests(unittest.TestCase):
                 response = self.cet.predict(percentile=90, category="SC", branch=branch, city=city)
                 self.assertEqual(response["total_found"], len(response["results"]))
                 self.assertEqual(response["unique_college_count"], len(response["recommendations"]))
+
+    def test_reported_city_cases_keep_the_expanded_college_set_through_serialization(self):
+        cases = (
+            (98, "OPEN", "Computer Engineering", "Mumbai"),
+            (98, "SC", "Computer Engineering", "Navi Mumbai"),
+            (98, "OBC", "Computer Engineering", "Navi Mumbai"),
+            (98, "ST", "Computer Engineering", "Navi Mumbai"),
+            (90, "SC", "Information Technology", "Mumbai"),
+            (80, "OBC", "Electronics & Telecommunication", "Thane"),
+            (65, "ST", "Mechanical Engineering", "Pune"),
+        )
+        data = self.loader.get_combined_cet_data()
+        for score, category, branch, city in cases:
+            with self.subTest(category=category, branch=branch, city=city):
+                eligible = _match_category_or_seat_code(data, category)
+                eligible = eligible.loc[_match_branch(eligible["branch"], branch)]
+                exact = eligible.loc[eligible[COL_CITY].eq(city)]
+                expected_cities = _adjacent_cities(city) if exact[COL_COLLEGE_CODE].nunique() < 15 else [city]
+                expected = eligible.loc[eligible[COL_CITY].isin(expected_cities)]
+
+                response = self.cet.predict(score, category, branch=branch, city=city, college_type="Any Type")
+                recommendation_codes = {row[COL_COLLEGE_CODE] for row in response["recommendations"]}
+                self.assertEqual(recommendation_codes, set(expected[COL_COLLEGE_CODE]))
+                self.assertEqual(response["expanded_unique_college_count"], len(recommendation_codes))
+                self.assertEqual(response["result_cities"], expected_cities)
+                self.assertEqual(response["regional_fallback"], len(expected_cities) > 1)
+
+    def test_frontend_cet_endpoint_returns_the_full_recommendation_set(self):
+        response = self.cet.predict(98, "OPEN", branch="Computer Engineering", city="Mumbai", college_type="Any Type")
+        self.assertTrue(response["regional_fallback"])
+        self.assertGreater(response["unique_college_count"], response["exact_city_unique_college_count"])
+        self.assertEqual(len(response["recommendations"]), response["expanded_unique_college_count"])
+        self.assertEqual(
+            {row[COL_COLLEGE_CODE] for row in response["recommendations"]},
+            {row[COL_COLLEGE_CODE] for row in response["results"]},
+        )
+        template = (Path(__file__).resolve().parents[1] / "templates" / "predictor.html").read_text(encoding="utf-8")
+        self.assertIn("data.recommendations || data.results", template)
 
     def test_other_special_seats_need_their_own_selection(self):
         fe = self.loader.get_combined_cet_data()
