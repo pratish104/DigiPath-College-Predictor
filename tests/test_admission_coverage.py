@@ -34,16 +34,40 @@ class AdmissionCoverageTests(unittest.TestCase):
         self.assertEqual(fe_2025["college_code"].nunique(), self.source["College Code"].nunique())
         self.assertIn("5g", set(fe_2025["branch"]))
 
+    def test_official_fe_2024_export_keeps_all_row_level_cap_fields(self):
+        source_2024 = pd.read_csv("data/fe_2024.csv", dtype=str)
+        expected = {"College Code", "Choice Code", "Course Name", "Stage", "Category", "Cutoff Rank", "Percentile", "City"}
+        self.assertTrue(expected.issubset(source_2024.columns))
+        self.assertEqual(len(source_2024), 30881)
+        self.assertEqual(source_2024["College Code"].nunique(), 343)
+        self.assertFalse(source_2024.duplicated(["College Code", "Choice Code", "Stage", "Category", "Cutoff Rank", "Percentile"]).any())
+        self.assertTrue(source_2024["College Code"].str.fullmatch(r"\d{5}").all())
+        self.assertTrue(source_2024["Choice Code"].str.fullmatch(r"\d{10}").all())
+        self.assertTrue(source_2024["Stage"].isin({"I", "II"}).all())
+        self.assertFalse(source_2024["Category"].str.fullmatch(r"I|II|III|IV|\d+").any())
+        self.assertFalse(pd.to_numeric(source_2024["Cutoff Rank"], errors="coerce").isna().any())
+        self.assertFalse(pd.to_numeric(source_2024["Percentile"], errors="coerce").isna().any())
+
+    def test_loader_retains_complete_2024_fe_coverage(self):
+        source_2024 = pd.read_csv("data/fe_2024.csv", dtype=str)
+        fe_2024 = self.fe.loc[self.fe["year"].eq(2024)]
+        self.assertEqual(len(fe_2024), len(source_2024))
+        self.assertEqual(fe_2024["college_code"].nunique(), source_2024["College Code"].nunique())
+
     def test_known_navi_mumbai_colleges_are_fe_and_dse_without_mixing(self):
         codes = {"03190", "03197", "03211"}
-        fe_known = self.fe.loc[(self.fe["year"].eq(2025)) & self.fe["college_code"].isin(codes)]
+        fe_known_2025 = self.fe.loc[(self.fe["year"].eq(2025)) & self.fe["college_code"].isin(codes)]
+        fe_known_2024 = self.fe.loc[(self.fe["year"].eq(2024)) & self.fe["college_code"].isin(codes)]
         dse_known = self.dse.loc[self.dse["college_code"].isin(codes)]
-        self.assertEqual(set(fe_known["college_code"]), codes)
-        self.assertEqual(set(fe_known["city"]), {"Navi Mumbai"})
+        self.assertEqual(set(fe_known_2025["college_code"]), codes)
+        self.assertEqual(set(fe_known_2025["city"]), {"Navi Mumbai"})
+        self.assertEqual(set(fe_known_2024["college_code"]), codes)
+        self.assertEqual(set(fe_known_2024["city"]), {"Navi Mumbai"})
         self.assertEqual(set(dse_known["college_code"]), codes)
         self.assertEqual(set(self.fe["exam_type"]), {"CET"})
         self.assertTrue(set(self.dse["exam_type"]).issubset({"DIPLOMA", "DSE"}))
-        self.assertNotIn("GOPEN", set(fe_known["seat_code"]))
+        self.assertNotIn("GOPEN", set(fe_known_2025["seat_code"]))
+        self.assertNotIn("GOPEN", set(fe_known_2024["seat_code"]))
         self.assertIn("GOPEN", set(dse_known["seat_code"]))
 
     def test_dse_keeps_all_percentage_backed_records_by_pathway(self):
