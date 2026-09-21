@@ -597,6 +597,10 @@ def _score_and_serialize(
         code = str(recommendation.get("dte_code") or recommendation.get(COL_COLLEGE_CODE) or "").strip().zfill(5)
         recommendation["historical_records"] = records_by_college.get(code, [])
         recommendation["historical_record_count"] = len(recommendation["historical_records"])
+        recommendation["historical_status_counts"] = {
+            status: sum(record.get("status") == status for record in recommendation["historical_records"])
+            for status in ("SAFE", "MODERATE", "DREAM")
+        }
 
     return {
         "pathway": clean_pathway,

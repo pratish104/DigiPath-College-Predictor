@@ -195,6 +195,43 @@ class PredictorCategoryTests(unittest.TestCase):
         )
         template = (Path(__file__).resolve().parents[1] / "templates" / "predictor.html").read_text(encoding="utf-8")
         self.assertIn("data.recommendations || data.results", template)
+        self.assertIn("historical_status_counts", template)
+
+    def test_higher_cutoffs_are_retained_and_classified_as_dream_records(self):
+        response = self.cet.predict(90, "SC", branch="Computer Engineering", city="Navi Mumbai", college_type="Any Type")
+        self.assertGreater(len(response["dream_zone"]), 0)
+        self.assertEqual(
+            len(response["safe_zone"]) + len(response["target_zone"]) + len(response["dream_zone"]),
+            response["total_found"],
+        )
+        self.assertEqual(
+            sum(sum(card["historical_status_counts"].values()) for card in response["recommendations"]),
+            response["total_found"],
+        )
+        self.assertTrue(any(
+            record["status"] == "DREAM"
+            for card in response["recommendations"]
+            for record in card["historical_records"]
+        ))
+
+    def test_college_cards_cover_every_applicable_college_at_each_score(self):
+        for score in (99, 98, 95, 90):
+            with self.subTest(score=score):
+                response = self.cet.predict(score, "SC", branch="Computer Engineering", city="Navi Mumbai", college_type="Any Type")
+                card_count = sum(
+                    sum(card["status"] == status for card in response["recommendations"])
+                    for status in ("SAFE", "MODERATE", "DREAM")
+                )
+                self.assertEqual(card_count, response["unique_college_count"])
+                self.assertEqual(
+                    {record[COL_COLLEGE_CODE] for record in response["results"]},
+                    {card[COL_COLLEGE_CODE] for card in response["recommendations"]},
+                )
+                if score == 90:
+                    self.assertEqual(
+                        {card["status"] for card in response["recommendations"]},
+                        {"SAFE", "MODERATE", "DREAM"},
+                    )
 
     def test_other_special_seats_need_their_own_selection(self):
         fe = self.loader.get_combined_cet_data()

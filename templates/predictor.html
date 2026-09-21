@@ -819,6 +819,16 @@ function createCardHTML(item, rankNum) {
     const diffText = Number.isFinite(diffVal) ? `${diffVal >= 0 ? '+' : ''}${diffVal.toFixed(2)}` : 'N/A';
     const accentColor = item.accent_color || (item.status === 'SAFE' ? '#00FF66' : (item.status === 'MODERATE' ? '#FFB300' : '#FF3366'));
     const matchLabel = item.status === 'SAFE' ? 'SAFE' : (item.status === 'MODERATE' ? 'MODERATE' : 'DREAM');
+    const historicalRecords = Array.isArray(item.historical_records) ? item.historical_records : [];
+    const historicalCounts = item.historical_status_counts || {};
+    const historicalSummary = `SAFE ${historicalCounts.SAFE || 0} | MODERATE ${historicalCounts.MODERATE || 0} | DREAM ${historicalCounts.DREAM || 0}`;
+    const historicalRows = historicalRecords.map(record => {
+        const cutoff = record.cutoff != null ? record.cutoff : (record.previous_cutoff || 'N/A');
+        return `<div style="padding:5px 0;border-top:1px solid #064e3b;display:flex;justify-content:space-between;gap:10px;">
+            <span>${record.year || 'N/A'} // ${record.round || 'CAP'} // ${record.seat_code || 'N/A'}</span>
+            <span>${cutoff} // ${record.status || 'N/A'}</span>
+        </div>`;
+    }).join('');
 
     return `
         <div class="result-card" style="border-color: #064e3b;" onmouseenter="this.style.borderColor='${accentColor}'" onmouseleave="this.style.borderColor='#064e3b'">
@@ -842,6 +852,8 @@ function createCardHTML(item, rankNum) {
                     <span class="meta-tag tag-dte">CAP RECORDS: ${item.historical_record_count || 1}</span>
                 </div>
                 <div style="margin-top:8px;color:var(--text-mid);font-size:10px;line-height:1.4;">${item.seat_context || 'Applicable CAP opportunity'}</div>
+                <div style="margin-top:5px;color:var(--text-dim);font-size:9px;letter-spacing:.5px;">HISTORICAL OUTCOMES: ${historicalSummary}</div>
+                ${historicalRows ? `<details style="margin-top:7px;color:var(--text-mid);font-size:10px;"><summary style="cursor:pointer;color:var(--neon-cyan);">VIEW ${historicalRecords.length} APPLICABLE CAP RECORDS</summary><div style="margin-top:5px;max-height:180px;overflow-y:auto;">${historicalRows}</div></details>` : ''}
             </div>
 
             <!-- Right: historical-cutoff match summary -->
