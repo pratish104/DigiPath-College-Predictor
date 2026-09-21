@@ -488,6 +488,39 @@ def _progressively_expand_regions(frame: pd.DataFrame, city_name: str) -> tuple[
     return frame.loc[frame[COL_CITY].isin(selected)], selected
 
 
+def _geographic_city_order(frame: pd.DataFrame, city_name: str) -> list[str]:
+    """Return every dataset city, ordered by verified proximity to the choice.
+
+    Geography is a stable ordering preference, never a result-set filter.  The
+    configured adjacency graph supplies the nearby order; any remaining
+    locations in the already-filtered dataset follow in source order.
+    """
+    available = [str(value) for value in frame[COL_CITY].dropna().drop_duplicates()]
+    available_by_key = {value.casefold(): value for value in available}
+    ordered: list[str] = []
+    queued: list[str] = [city_name]
+    seen: set[str] = set()
+
+    while queued:
+        current = queued.pop(0)
+        key = current.casefold()
+        if key in seen:
+            continue
+        seen.add(key)
+        canonical = available_by_key.get(key)
+        if canonical:
+            ordered.append(canonical)
+        for neighbor in _adjacent_cities(current):
+            if neighbor.casefold() not in seen:
+                queued.append(neighbor)
+
+    for value in available:
+        if value.casefold() not in seen:
+            ordered.append(value)
+            seen.add(value.casefold())
+    return ordered
+
+
 def _score_and_serialize(
     data_loader: DataLoader,
     frame: pd.DataFrame,
@@ -495,6 +528,7 @@ def _score_and_serialize(
     clean_pathway: str,
     regional_fallback: bool,
     candidate_category: Optional[str],
+    city_order: Optional[list[str]] = None,
 ) -> dict[str, Any]:
     if frame.empty:
         return _empty_response(clean_pathway, regional_fallback=regional_fallback)
@@ -572,15 +606,20 @@ def _score_and_serialize(
     full_df["institute_type"] = full_df[COL_TYPE]
     full_df["category_used"] = full_df[COL_CATEGORY]
     full_df["seat_context"] = full_df[COL_SEAT_CODE].map(lambda code: _seat_applicability_reason(str(code), candidate_category))
+    if city_order:
+        city_rank = {city.casefold(): rank for rank, city in enumerate(city_order)}
+        full_df["geographic_rank"] = full_df[COL_CITY].astype("string").str.casefold().map(city_rank).fillna(len(city_rank))
+    else:
+        full_df["geographic_rank"] = 0
 
     safe_df = full_df.loc[full_df["status"] == "SAFE"].sort_values(
-        ["forecast_2026", "previous_cutoff"], ascending=[False, False], kind="stable"
+        ["geographic_rank", "forecast_2026", "previous_cutoff"], ascending=[True, False, False], kind="stable"
     ).reset_index(drop=True)
     target_df = full_df.loc[full_df["status"] == "MODERATE"].sort_values(
-        ["forecast_2026", "score_diff"], ascending=[True, False], kind="stable"
+        ["geographic_rank", "forecast_2026", "score_diff"], ascending=[True, True, False], kind="stable"
     ).reset_index(drop=True)
     dream_df = full_df.loc[full_df["status"] == "DREAM"].sort_values(
-        ["forecast_2026"], ascending=[True], kind="stable"
+        ["geographic_rank", "forecast_2026"], ascending=[True, True], kind="stable"
     ).reset_index(drop=True)
 
     safe_df["rank"] = safe_df.index + 1
@@ -619,7 +658,7 @@ def _score_and_serialize(
     display_df["_display_rank"] = display_df["status"].map(display_rank).fillna(0)
     display_df["_distance"] = display_df["score_diff"].abs()
     display_df = display_df.sort_values(
-        ["_display_rank", "_distance", "forecast_2026"], ascending=[False, True, False], kind="stable"
+        ["geographic_rank", "_display_rank", "_distance", "forecast_2026"], ascending=[True, False, True, False], kind="stable"
     )
     display_df["historical_record_count"] = display_df.groupby(COL_COLLEGE_CODE)[COL_COLLEGE_CODE].transform("size")
     display_df = display_df.drop_duplicates(subset=[COL_COLLEGE_CODE], keep="first").reset_index(drop=True)
@@ -654,6 +693,12 @@ def _score_and_serialize(
         "recommendations": recommendations,
         "status": "success",
         "regional_fallback": regional_fallback,
+        "pagination": {
+            "page_size": 15,
+            "total_pages": int(np.ceil(len(recommendations) / 15)) if recommendations else 0,
+            "total_colleges": len(recommendations),
+            "applies_after_grouping": True,
+        },
     }
 
 
@@ -718,17 +763,14 @@ def _execute_prediction_engine(
         # representative historical record is selected for each card.  CAP
         # rows are retained unchanged by the serializer below.
         exact_college_count = city_frame[COL_COLLEGE_CODE].nunique()
-        result_cities = [resolved_city]
-        if exact_college_count < REGIONAL_FALLBACK_MIN:
-            expanded_frame, nearby_cities = _progressively_expand_regions(frame, resolved_city)
-            # Mark an expansion only when configured neighbors genuinely
-            # widen the scope; an unmapped city remains an exact-city search.
-            if len(nearby_cities) > 1:
-                city_frame = expanded_frame
-                regional_fallback = True
-                result_cities = nearby_cities
+        # Geographic relevance controls ordering only.  Never discard valid
+        # records outside the nearest ring merely to keep the response small.
+        city_frame = frame
+        result_cities = _geographic_city_order(frame, resolved_city)
+        regional_fallback = len(result_cities) > 1
         response = _score_and_serialize(
-            data_loader, city_frame, candidate_score, clean_pathway, regional_fallback, category
+            data_loader, city_frame, candidate_score, clean_pathway, regional_fallback, category,
+            city_order=result_cities,
         )
         # Keep the geographic scope alongside the serialized recommendation
         # list.  This makes it explicit to every API/UI consumer that cards

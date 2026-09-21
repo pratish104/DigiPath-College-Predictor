@@ -12,6 +12,7 @@ from cet_predictor import (
     REGIONAL_FALLBACK_MIN,
     _match_branch,
     _match_category_or_seat_code,
+    _geographic_city_order,
     _progressively_expand_regions,
 )
 from data_loader import COL_CITY, COL_COLLEGE_CODE, COL_ROUND, COL_SEAT_CODE, DataLoader
@@ -47,7 +48,8 @@ class PredictorCategoryTests(unittest.TestCase):
         self.assertGreater(response["total_found"], 0)
         self.assertTrue(all(row["year"] == 2024 and row[COL_ROUND] == "Stage-I" for row in response["results"]))
         self.assertTrue(all(row["branch"] == "Computer Science and Engineering" for row in response["results"]))
-        self.assertTrue({row["city"] for row in response["results"]}.issubset({"Amravati", "Akola", "Wardha", "Nagpur", "Yavatmal"}))
+        self.assertEqual(response["recommendations"][0]["city"], "Amravati")
+        self.assertIn("Wardha", response["result_cities"])
 
     def test_dse_nt_subtypes_remain_distinct(self):
         response = self.dse.predict(percentage=90, category="NT-A")
@@ -141,15 +143,17 @@ class PredictorCategoryTests(unittest.TestCase):
         self.assertEqual(response["total_found"], len(response["results"]))
         self.assertEqual(response["unique_college_count"], len(response["recommendations"]))
         self.assertGreaterEqual(response["unique_college_count"], 15)
-        self.assertTrue({row[COL_CITY] for row in response["results"]}.issubset({"Navi Mumbai", "Mumbai", "Thane", "Raigad"}))
+        self.assertGreater(response["unique_college_count"], response["exact_city_unique_college_count"])
+        self.assertEqual(response["recommendations"][0][COL_CITY], "Navi Mumbai")
         self.assertEqual(
             sum(row["historical_record_count"] for row in response["recommendations"]), response["total_found"]
         )
 
-    def test_city_with_enough_unique_colleges_does_not_expand(self):
+    def test_city_with_enough_unique_colleges_stays_first_without_hiding_other_results(self):
         response = self.cet.predict(percentile=98, category="OPEN", branch="Computer Engineering", city="Pune")
-        self.assertFalse(response["regional_fallback"])
-        self.assertEqual({row[COL_CITY] for row in response["results"]}, {"Pune"})
+        self.assertTrue(response["regional_fallback"])
+        self.assertEqual(response["recommendations"][0][COL_CITY], "Pune")
+        self.assertGreater(response["unique_college_count"], response["exact_city_unique_college_count"])
         self.assertGreaterEqual(response["unique_college_count"], 15)
 
     def test_backend_counts_match_frontend_card_and_record_collections_for_multiple_queries(self):
@@ -175,11 +179,8 @@ class PredictorCategoryTests(unittest.TestCase):
                 eligible = _match_category_or_seat_code(data, category)
                 eligible = eligible.loc[_match_branch(eligible["branch"], branch)]
                 exact = eligible.loc[eligible[COL_CITY].eq(city)]
-                if exact[COL_COLLEGE_CODE].nunique() < REGIONAL_FALLBACK_MIN:
-                    expected, expected_cities = _progressively_expand_regions(eligible, city)
-                else:
-                    expected_cities = [city]
-                    expected = exact
+                expected = eligible
+                expected_cities = _geographic_city_order(eligible, city)
 
                 response = self.cet.predict(score, category, branch=branch, city=city, college_type="Any Type")
                 recommendation_codes = {row[COL_COLLEGE_CODE] for row in response["recommendations"]}
@@ -209,6 +210,9 @@ class PredictorCategoryTests(unittest.TestCase):
             {row[COL_COLLEGE_CODE] for row in response["recommendations"]},
             {row[COL_COLLEGE_CODE] for row in response["results"]},
         )
+        self.assertGreater(response["unique_college_count"], 24)
+        self.assertEqual(response["pagination"]["total_colleges"], response["unique_college_count"])
+        self.assertTrue(response["pagination"]["applies_after_grouping"])
         template = (Path(__file__).resolve().parents[1] / "templates" / "predictor.html").read_text(encoding="utf-8")
         self.assertIn("data.recommendations || data.results", template)
         self.assertIn("historical_status_counts", template)
@@ -273,6 +277,17 @@ class PredictorCategoryTests(unittest.TestCase):
     def test_exact_nonexistent_filters_return_no_fabricated_result(self):
         response = self.cet.predict(percentile=90, category="OPEN", branch="Not a real engineering branch", city="Amravati")
         self.assertEqual(response["total_found"], 0)
+
+    def test_all_branch_result_has_no_24_college_ceiling_and_keeps_dream_records(self):
+        response = self.cet.predict(98, "SC", branch="All", city="Navi Mumbai", college_type="Any Type")
+        self.assertGreater(response["unique_college_count"], 24)
+        self.assertEqual(response["unique_college_count"], len(response["recommendations"]))
+        self.assertEqual(response["pagination"]["total_pages"], (response["unique_college_count"] + 14) // 15)
+        self.assertEqual(response["recommendations"][0][COL_CITY], "Navi Mumbai")
+        self.assertEqual(
+            {row[COL_CITY] for row in response["recommendations"][:8]},
+            set(response["result_cities"][:1]),
+        )
 
 
 if __name__ == "__main__":
