@@ -41,18 +41,64 @@ except ImportError:
 
 # ── Data Normalization Helpers ───────────────────────────────────────────────
 
-def normalize_prediction_results(results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Normalize prediction result dictionaries to a consistent tabular structure."""
+def canonical_export_results(results: Any) -> List[Dict[str, Any]]:
+    """Extract the complete unique-college result set for exports.
+
+    The predictor response is a payload containing ``recommendations`` (one
+    card per college) and ``results`` (flat historical CAP facts).  Exports
+    must use the former when available so historical rows do not become
+    duplicate college rows.  The fallback groups a legacy flat list by DTE
+    code and retains every row as that college's historical evidence.
+    """
+    if isinstance(results, dict):
+        recommendations = results.get("recommendations")
+        if isinstance(recommendations, list) and recommendations:
+            return [row for row in recommendations if isinstance(row, dict)]
+        results = results.get("results", [])
+    if not isinstance(results, list):
+        return []
+    if results and all(isinstance(row, dict) for row in results) and any(
+        "historical_records" in row for row in results
+    ):
+        return [row for row in results if isinstance(row, dict)]
+
+    grouped: dict[str, Dict[str, Any]] = {}
+    order: list[str] = []
+    for row in results:
+        if not isinstance(row, dict):
+            continue
+        code = str(row.get("college_code") or row.get("dte_code") or row.get("code") or "").strip().zfill(5)
+        if code not in grouped:
+            grouped[code] = dict(row)
+            grouped[code]["historical_records"] = []
+            order.append(code)
+        grouped[code]["historical_records"].append(dict(row))
+    canonical: list[Dict[str, Any]] = []
+    for code in order:
+        row = grouped[code]
+        records = row.get("historical_records") or []
+        row["historical_record_count"] = len(records)
+        row["historical_status_counts"] = {
+            status: sum(record.get("status") == status for record in records)
+            for status in ("SAFE", "MODERATE", "DREAM")
+        }
+        canonical.append(row)
+    return canonical
+
+
+def normalize_prediction_results(results: Any) -> List[Dict[str, Any]]:
+    """Normalize the current canonical predictor cards for report formats."""
+    results = canonical_export_results(results)
     normalized: List[Dict[str, Any]] = []
     for idx, item in enumerate(results, start=1):
         if not isinstance(item, dict):
             continue
         rank = item.get("rank") or idx
         dte_code = str(item.get("college_code") or item.get("dte_code") or item.get("code") or "00000").zfill(5)
-        college_name = str(item.get("college_name") or item.get("name") or "Maharashtra Institute of Technology").strip()
-        branch = str(item.get("branch") or "Engineering").strip()
-        city = str(item.get("city") or item.get("location") or "Maharashtra").strip()
-        college_type = str(item.get("status_name") or item.get("college_type") or item.get("status") or item.get("type") or "Un-Aided").strip()
+        college_name = str(item.get("college_name") or item.get("name") or "N/A").strip()
+        branch = str(item.get("branch") or "N/A").strip()
+        city = str(item.get("city") or item.get("location") or "N/A").strip()
+        college_type = str(item.get("status_name") or item.get("college_type") or item.get("type") or "N/A").strip()
         
         cutoff_24 = item.get("cutoff_2024") or item.get("actual_2024")
         cutoff_24_str = f"{cutoff_24}%" if cutoff_24 is not None else "N/A"
@@ -63,11 +109,18 @@ def normalize_prediction_results(results: List[Dict[str, Any]]) -> List[Dict[str
         pred_26 = item.get("predicted_2026") or item.get("predicted_cutoff") or item.get("forecast_2026")
         pred_26_str = f"{pred_26}%" if pred_26 is not None else "N/A"
         
-        prob = item.get("probability_percent") or item.get("probability") or 50
-        prob_str = f"{prob}%"
+        prob = item.get("probability_percent") if item.get("probability_percent") is not None else item.get("probability")
+        prob_str = f"{prob}%" if prob is not None else "N/A"
         
         status = str(item.get("status") or item.get("classification") or "TARGET").upper()
-        fees = str(item.get("open_fees") or item.get("fees") or "₹1,25,000 / Year")
+        fees = str(item.get("open_fees") or item.get("fees") or "N/A")
+        status_counts = item.get("historical_status_counts") or {}
+        historical_count = item.get("historical_record_count")
+        if historical_count is None:
+            historical_count = len(item.get("historical_records") or [])
+        historical_summary = "; ".join(
+            f"{key}: {status_counts.get(key, 0)}" for key in ("SAFE", "MODERATE", "DREAM")
+        ) or "N/A"
         
         normalized.append({
             "rank": rank,
@@ -82,6 +135,8 @@ def normalize_prediction_results(results: List[Dict[str, Any]]) -> List[Dict[str
             "probability_percent": prob_str,
             "classification": status,
             "open_fees": fees,
+            "historical_record_count": historical_count,
+            "historical_status_counts": historical_summary,
         })
     return normalized
 
@@ -93,7 +148,7 @@ def results_to_dataframe(results: List[Dict[str, Any]]) -> pd.DataFrame:
         return pd.DataFrame(columns=[
             "Rank", "DTE Code", "College Name", "Branch", "City",
             "College Type", "2024 Cutoff", "2025 Cutoff", "2026 AI Forecast",
-            "Probability", "Classification", "Open Fees"
+            "Probability", "Classification", "Historical CAP Records", "Historical Status Counts", "Open Fees"
         ])
     df = pd.DataFrame(norm)
     rename_map = {
@@ -108,6 +163,8 @@ def results_to_dataframe(results: List[Dict[str, Any]]) -> pd.DataFrame:
         "predicted_2026": "2026 AI Forecast",
         "probability_percent": "Probability",
         "classification": "Classification",
+        "historical_record_count": "Historical CAP Records",
+        "historical_status_counts": "Historical Status Counts",
         "open_fees": "Open Fees",
     }
     df.rename(columns=rename_map, inplace=True)
@@ -122,6 +179,7 @@ def generate_csv_report(
 ) -> Tuple[bytes, str, str]:
     """Generate a structured CSV report byte stream with audit metadata."""
     meta = metadata or {}
+    canonical = canonical_export_results(results)
     timestamp_slug = int(time.time())
     filename = f"DigiPath_Admission_Report_{timestamp_slug}.csv"
     
@@ -135,7 +193,7 @@ def generate_csv_report(
     writer.writerow([f"# Candidate Score: {meta.get('score') or meta.get('percentile') or meta.get('percentage') or 'N/A'}"])
     writer.writerow([f"# Category: {meta.get('category') or 'OPEN'}"])
     writer.writerow([f"# Branch Preference: {meta.get('branch_preference') or meta.get('branch') or 'All'}"])
-    writer.writerow([f"# Total Recommendations: {len(results)}"])
+    writer.writerow([f"# Total Colleges: {len(canonical)}"])
     writer.writerow([])  # blank separator
     
     df = results_to_dataframe(results)
@@ -157,6 +215,7 @@ def generate_excel_report(
         return generate_csv_report(results, metadata)
     
     meta = metadata or {}
+    canonical = canonical_export_results(results)
     timestamp_slug = int(time.time())
     filename = f"DigiPath_Admission_Report_{timestamp_slug}.xlsx"
     
@@ -175,7 +234,8 @@ def generate_excel_report(
                 {"Parameter": "Category", "Value": str(meta.get("category") or "OPEN")},
                 {"Parameter": "Branch Preference", "Value": str(meta.get("branch_preference") or meta.get("branch") or "All")},
                 {"Parameter": "Generated At", "Value": str(meta.get("timestamp") or datetime.now(timezone.utc).isoformat())},
-                {"Parameter": "Total Records", "Value": str(len(results))},
+                {"Parameter": "Total Colleges", "Value": str(len(canonical))},
+                {"Parameter": "Historical CAP Records", "Value": str(sum(row.get("historical_record_count", 0) for row in canonical))},
             ]
             meta_df = pd.DataFrame(meta_rows)
             meta_df.to_excel(writer, sheet_name="Audit_Metadata", index=False)
@@ -204,6 +264,7 @@ def generate_pdf_report(
         return generate_csv_report(results, metadata)
     
     meta = metadata or {}
+    canonical = canonical_export_results(results)
     timestamp_slug = int(time.time())
     filename = f"DigiPath_Admission_Report_{timestamp_slug}.pdf"
     
@@ -285,7 +346,8 @@ def generate_pdf_report(
         ))
         elements.append(Paragraph(
             f"<b>Generated At:</b> {gen_time} &nbsp;|&nbsp; "
-            f"<b>Total Ranked Matches:</b> {len(results)}",
+            f"<b>Total Colleges:</b> {len(canonical)} &nbsp;|&nbsp; "
+            f"<b>Historical CAP Records:</b> {sum(row.get('historical_record_count', 0) for row in canonical)}",
             meta_style,
         ))
         elements.append(Spacer(1, 10))
@@ -298,27 +360,27 @@ def generate_pdf_report(
                 Paragraph("<b>DTE</b>", cell_header_style),
                 Paragraph("<b>College Name</b>", cell_header_style),
                 Paragraph("<b>Branch</b>", cell_header_style),
-                Paragraph("<b>'25 Cutoff</b>", cell_header_style),
-                Paragraph("<b>'26 Forecast</b>", cell_header_style),
-                Paragraph("<b>Prob %</b>", cell_header_style),
+                Paragraph("<b>Location</b>", cell_header_style),
+                Paragraph("<b>Type</b>", cell_header_style),
+                Paragraph("<b>CAP Records</b>", cell_header_style),
                 Paragraph("<b>Class</b>", cell_header_style),
             ]
         ]
         
-        norm_results = normalize_prediction_results(results)
-        for r in norm_results[:80]:  # Up to top 80 recommendations
+        norm_results = normalize_prediction_results(canonical)
+        for r in norm_results:
             table_data.append([
                 Paragraph(str(r["rank"]), cell_center_style),
                 Paragraph(str(r["dte_code"]), cell_center_style),
                 Paragraph(str(r["college_name"])[:48], cell_body_style),
                 Paragraph(str(r["branch"])[:30], cell_body_style),
-                Paragraph(str(r["cutoff_2025"]), cell_center_style),
-                Paragraph(str(r["predicted_2026"]), cell_center_style),
-                Paragraph(str(r["probability_percent"]), cell_center_style),
+                Paragraph(str(r["city"])[:22], cell_body_style),
+                Paragraph(str(r["college_type"])[:18], cell_body_style),
+                Paragraph(str(r["historical_record_count"]), cell_center_style),
                 Paragraph(str(r["classification"]), cell_center_style),
             ])
             
-        col_widths = [30, 38, 190, 120, 50, 52, 42, 42]
+        col_widths = [28, 36, 150, 100, 70, 62, 50, 52]
         t = Table(table_data, colWidths=col_widths, repeatRows=1)
         t.setStyle(TableStyle([
             ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#00ff66")),
@@ -362,7 +424,7 @@ def generate_json_report(
             "score": meta.get("score") or meta.get("percentile") or meta.get("percentage"),
             "category": meta.get("category") or "OPEN",
             "branch_preference": meta.get("branch_preference") or meta.get("branch") or "All",
-            "total_matches": len(results),
+            "total_matches": len(canonical_export_results(results)),
         },
         "results": normalize_prediction_results(results),
     }
