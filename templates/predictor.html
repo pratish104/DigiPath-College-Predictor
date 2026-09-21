@@ -839,6 +839,7 @@ function createCardHTML(item, rankNum) {
                     <span class="meta-tag tag-loc">LOC: ${item.location || item.city || 'Maharashtra'}</span>
                     <span class="meta-tag tag-branch">SEAT: ${item.seat_code || item.category_used || 'N/A'}</span>
                     <span class="meta-tag tag-dte">YEAR: ${item.year || 'N/A'} ${item.round ? `// ${item.round}` : ''}</span>
+                    <span class="meta-tag tag-dte">CAP RECORDS: ${item.historical_record_count || 1}</span>
                 </div>
                 <div style="margin-top:8px;color:var(--text-mid);font-size:10px;line-height:1.4;">${item.seat_context || 'Applicable CAP opportunity'}</div>
             </div>
@@ -932,6 +933,7 @@ function renderResults(data) {
     predictionState.currentPage = { target: 1, safe: 1, dream: 1 };
 
     const totalFound = data.unique_college_count != null ? data.unique_college_count : (predictionState.safe_zone.length + predictionState.target_zone.length + predictionState.dream_zone.length);
+    const historicalCount = data.total_found != null ? data.total_found : totalFound;
 
     if (totalFound === 0) {
         resultsDiv.innerHTML = `
@@ -945,7 +947,7 @@ function renderResults(data) {
 
     let html = `
         <div style="font-size: 12px; color: var(--neon-cyan); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-green); padding-bottom: 10px;">
-            <span>FOUND: <strong style="color:var(--neon-green)">${totalFound}</strong> COLLEGES (SAFE: ${predictionState.safe_zone.length} | MODERATE: ${predictionState.target_zone.length} | DREAM: ${predictionState.dream_zone.length})</span>
+            <span>FOUND: <strong style="color:var(--neon-green)">${totalFound}</strong> COLLEGES / <strong style="color:var(--neon-cyan)">${historicalCount}</strong> HISTORICAL CAP RECORDS (SAFE: ${predictionState.safe_zone.length} | MODERATE: ${predictionState.target_zone.length} | DREAM: ${predictionState.dream_zone.length})</span>
             <span style="color: var(--text-dim); font-size: 10px; letter-spacing: 1px;">HISTORICAL_CAP_COMPARISON</span>
         </div>
     `;

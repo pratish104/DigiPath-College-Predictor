@@ -111,7 +111,7 @@ CATEGORY_MAP: dict[str, list[str]] = {
 # CAP allotment legend: https://fe2025.mahacet.org/CAP-I/CAPR-I_05370.pdf
 _STUDENT_CATEGORY_TO_FAMILY: Mapping[str, str] = MappingProxyType({
     "OPEN": "OPEN", "OBC": "OBC", "SC": "SC", "ST": "ST",
-    "VJ-A": "VJ", "VJ-DT": "VJ", "VJ": "VJ", "NT": "NT",
+    "VJ-A": "VJ", "VJ-DT": "VJ", "VJ/DT": "VJ", "VJ/DT-NT(A)": "VJ", "VJ": "VJ", "NT": "NT",
     "NT-A": "NT-A", "NT-B": "NT-B", "NT-C": "NT-C", "NT-D": "NT-D",
     "SBC": "OBC", "SEBC": "SEBC", "EWS": "EWS",
 })
@@ -402,7 +402,11 @@ def _match_category_or_seat_code(
         return frame.loc[codes.eq(seat_code.strip().upper())]
 
     q = str(candidate_category or "OPEN").strip().upper()
-    if q in set(codes.unique()):
+    # A raw CAP code remains a supported compatibility input, except when it
+    # collides with a student-facing reservation category (notably ``EWS``).
+    # In that case EWS means the candidate category, not an instruction to
+    # hide merit-based Open records.
+    if q in set(codes.unique()) and q not in _STUDENT_CATEGORY_TO_FAMILY:
         # Backward compatible requests that passed a seat code through category.
         return frame.loc[codes.eq(q)]
     requested_family, selected_special = _parse_student_category(q)
@@ -554,6 +558,7 @@ def _score_and_serialize(
             "probability_percent", "probability_label", "classification", "status", "badge",
             "color", "accent_color", "score_diff", "seat_context", "fees", "open_fees", "naac", "naac_grade",
             "hostel", "avg_pkg", "avg_package", "highest_pkg", "highest_package", COL_YEAR,
+            "historical_record_count",
         ]
         avail = [c for c in cols if c in df_slice.columns]
         return df_slice[avail].replace({np.nan: None, pd.NA: None}).to_dict(orient="records")
@@ -578,6 +583,18 @@ def _score_and_serialize(
     display_df = display_df.drop_duplicates(subset=[COL_COLLEGE_CODE], keep="first").reset_index(drop=True)
     display_df["rank"] = display_df.index + 1
     recommendations = clean_records(display_df)
+
+    # Keep every raw, applicable CAP fact attached to the college-level card.
+    # ``results`` remains the flat audit/export view, while this association
+    # gives callers a direct way to inspect the rows represented by a card.
+    records_by_college: dict[str, list[dict[str, Any]]] = {}
+    for record in all_records:
+        code = str(record.get("dte_code") or record.get(COL_COLLEGE_CODE) or "").strip().zfill(5)
+        records_by_college.setdefault(code, []).append(record)
+    for recommendation in recommendations:
+        code = str(recommendation.get("dte_code") or recommendation.get(COL_COLLEGE_CODE) or "").strip().zfill(5)
+        recommendation["historical_records"] = records_by_college.get(code, [])
+        recommendation["historical_record_count"] = len(recommendation["historical_records"])
 
     return {
         "pathway": clean_pathway,
@@ -651,7 +668,21 @@ def _execute_prediction_engine(
     if city and city.strip().casefold() not in ("all", "all cities", ""):
         resolved_city = _clean_and_resolve_city(city.strip()) or city.strip()
         city_frame = frame.loc[frame[COL_CITY].eq(resolved_city)]
-        return _score_and_serialize(data_loader, city_frame, candidate_score, clean_pathway, False, category)
+        # Decide proximity expansion from actual institutes, before a
+        # representative historical record is selected for each card.  CAP
+        # rows are retained unchanged by the serializer below.
+        exact_college_count = city_frame[COL_COLLEGE_CODE].nunique()
+        if exact_college_count < REGIONAL_FALLBACK_MIN:
+            nearby_cities = _adjacent_cities(resolved_city)
+            expanded_frame = frame.loc[frame[COL_CITY].isin(nearby_cities)]
+            # Mark an expansion only when the mapping genuinely widens the
+            # result set; an unmapped city must stay an exact-city search.
+            if len(nearby_cities) > 1:
+                city_frame = expanded_frame
+                regional_fallback = True
+        return _score_and_serialize(
+            data_loader, city_frame, candidate_score, clean_pathway, regional_fallback, category
+        )
 
     return _score_and_serialize(data_loader, frame, candidate_score, clean_pathway, regional_fallback, category)
 
