@@ -407,7 +407,7 @@ async function handleLogin(e) {
       })
     });
 
-    const data = await res.json();
+    const data = await parseAuthResponse(res);
     if (!res.ok) {
       throw new Error(data.detail || 'Authentication failed. Please verify credentials.');
     }
@@ -445,6 +445,29 @@ async function handleLogin(e) {
   } catch (err) {
     showAlert(err.message, true);
   }
+}
+
+async function parseAuthResponse(res) {
+  const contentType = (res.headers.get('content-type') || '').toLowerCase();
+  const rawBody = await res.text();
+
+  if (!rawBody) {
+    return {};
+  }
+
+  if (contentType.includes('application/json')) {
+    try {
+      return JSON.parse(rawBody);
+    } catch (err) {
+      return { detail: 'Authentication service returned malformed JSON. Please try again.' };
+    }
+  }
+
+  return {
+    detail: res.ok
+      ? 'Authentication service returned an unexpected response. Please try again.'
+      : 'Authentication service is temporarily unavailable. Please try again.'
+  };
 }
 
 async function handleRegister(e) {
