@@ -930,6 +930,8 @@ async def export_prediction_report_get(
     authorization: Annotated[Optional[str], Header()] = None,
 ) -> Response:
     """Download prediction audit report (PDF, CSV, EXCEL, JSON) via GET query parameters."""
+    if _extract_optional_user(request, db, authorization) is None:
+        raise HTTPException(status_code=401, detail="Authentication required.")
     results, meta = _resolve_report_data(
         percentile=percentile, percentage=percentage, score=score, category=category,
         branch=branch, city=city, college_type=college_type, pathway=pathway,
@@ -958,6 +960,8 @@ async def export_prediction_report_post(
     authorization: Annotated[Optional[str], Header()] = None,
 ) -> Response:
     """Download prediction audit report (PDF, CSV, EXCEL, JSON) via POST JSON payload."""
+    if _extract_optional_user(request, db, authorization) is None:
+        raise HTTPException(status_code=401, detail="Authentication required.")
     results, meta = _resolve_report_data(
         percentile=payload.percentile, percentage=payload.percentage, score=payload.score,
         category=payload.category, branch=payload.branch, city=payload.city,
